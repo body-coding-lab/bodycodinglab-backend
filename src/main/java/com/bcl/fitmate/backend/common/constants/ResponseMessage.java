@@ -66,4 +66,19 @@ public interface ResponseMessage {
     String NOT_EXISTS_ONE_DAY_TICKET = "체험권이 존재하지 않습니다.";
     String NOT_TRIAL_CHANCE_LEFT = "체험권 유효 횟수가 부족합니다.";
     String INVALID_TICKET_STATUS = "체험권의 상태가 유효하지 않습니다.";
+
+    String NOT_EXISTS_COUPON = "쿠폰이 존재하지 않습니다.";
+
+    String NOT_EXISTS_FORM = "작성된 폼이 존재하지 않습니다.";
+
+    String ALREADY_EXISTS_MATCH = "이미 매칭 되어있습니다.";
+    String NOT_EXISTS_MATCH_WAITING_LIST = "매칭 대기 목록이 존재하지 않습니다.";
+    String NOT_EXISTS_MATCH = "매칭 기록이 존재하지 않습니다.";
+
+    String NOT_EXISTS_PAYMENT = "주문 내역이 존재하지 않습니다.";
+    String ALREADY_EXISTS_PAYMENT = "이미 처리된 결제입니다.";
+
+    String NOT_EXISTS_SUBSCRIPTION = "구독 기록이 존재하지 않습니다.";
+
+
 }
