@@ -66,4 +66,17 @@ public interface ResponseCode {
     String NOT_EXISTS_ONE_DAY_TICKET = "NET";
     String NOT_TRIAL_CHANCE_LEFT = "TCL";
     String INVALID_TICKET_STATUS = "ITS";
+
+    String NOT_EXISTS_COUPON = "NEC";
+
+    String NOT_EXISTS_FORM = "NEF";
+
+    String ALREADY_EXISTS_MATCH = "AEM";
+    String NOT_EXISTS_MATCH_WAITING_LIST = "NEMWL";
+    String NOT_EXISTS_MATCH = "NEM";
+
+    String NOT_EXISTS_PAYMENT = "NEP";
+    String ALREADY_EXISTS_PAYMENT = "AEP";
+
+    String NOT_EXISTS_SUBSCRIPTION = "NES";
 }
