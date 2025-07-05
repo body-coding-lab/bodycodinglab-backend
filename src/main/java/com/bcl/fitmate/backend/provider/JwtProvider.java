@@ -2,10 +2,7 @@ package com.bcl.fitmate.backend.provider;
 
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
 import com.bcl.fitmate.backend.common.enums.user.UserRole;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +31,6 @@ public class JwtProvider {
         this.jwtResetPasswordExpirationMs = jwtResetPasswordExpirationMs;
     }
 
-    // UserPrincipal 구현 후, 수정 예정
     public String generateJwtToken(Long userId, UserRole role) {
         return Jwts.builder()
                 .claim("userId", userId)
@@ -62,18 +58,14 @@ public class JwtProvider {
         return token.substring("Bearer ".length());
     }
 
-    public boolean isValidJwtToken(String token) {
+    public void validateJwtToken(String token) {
         try {
             getClaims(token);
-            return true;
+        } catch (ExpiredJwtException e) {
+            throw new JwtException(ResponseMessage.TOKEN_EXPIRED, e);
         } catch (Exception e) {
-            return false;
+            throw new JwtException(ResponseMessage.INVALID_TOKEN, e);
         }
-    }
-
-    public String getEmailFromJwtToken(String token) {
-        Claims claims = getClaims(token);
-        return claims.get("email", String.class);
     }
 
     public Claims getClaims(String token) {
@@ -82,4 +74,15 @@ public class JwtProvider {
                 .build();
         return jwtParser.parseClaimsJws(token).getBody();
     }
+
+    public Long getUserIdFromJwtToken(String token) {
+        Claims claims = getClaims(token);
+        return claims.get("userId", Long.class);
+    }
+
+    public String getEmailFromJwtToken(String token) {
+        Claims claims = getClaims(token);
+        return claims.get("email", String.class);
+    }
+
 }
