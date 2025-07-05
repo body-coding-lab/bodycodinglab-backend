@@ -10,6 +10,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -33,6 +34,11 @@ public class GlobalExceptionHandler {
         return logAndRespond(ResponseCode.VALIDATION_FAIL, errorMessage, HttpStatus.BAD_REQUEST, e);
     }
 
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ResponseDto<?>> handleUsernameNotFoundException(UsernameNotFoundException e) {
+        return logAndRespond(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED, e);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ResponseDto<?>> handleAccessDeniedException(AccessDeniedException e) {
         return logAndRespond(ResponseCode.NO_PERMISSION, ResponseMessage.NO_PERMISSION, HttpStatus.FORBIDDEN, e);
@@ -42,7 +48,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResponseDto<?>> handleEntityNotFoundException(EntityNotFoundException e) {
         return logAndRespond(ResponseCode.RESOURCE_NOT_FOUND, ResponseMessage.RESOURCE_NOT_FOUND, HttpStatus.NOT_FOUND, e);
     }
-
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ResponseDto<?>> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
