@@ -1,9 +1,9 @@
 package com.bcl.fitmate.backend.repository;
 
-import com.bcl.fitmate.backend.entity.User;
+import com.bcl.fitmate.backend.entity.UploadFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UploadFileRepository extends JpaRepository<UploadFile, Long> {
 }
