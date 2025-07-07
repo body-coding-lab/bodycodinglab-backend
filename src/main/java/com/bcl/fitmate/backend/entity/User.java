@@ -56,12 +56,12 @@ public class User extends BaseTime {
     @JoinColumn(name = "profile_image_id")
     private UploadFile profileImage;
 
-//    @OneToOne(
-//            mappedBy = "user",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true
-//    )
-//    private Trainer trainer;
+    @OneToOne(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Trainer trainer;
 
     @OneToOne(
             mappedBy = "user",
