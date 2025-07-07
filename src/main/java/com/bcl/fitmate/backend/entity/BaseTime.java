@@ -18,7 +18,7 @@ public abstract class BaseTime {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     @LastModifiedDate
     private LocalDateTime updatedAt;
 }
