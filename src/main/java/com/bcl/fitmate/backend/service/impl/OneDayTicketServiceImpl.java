@@ -1,0 +1,42 @@
+package com.bcl.fitmate.backend.service.impl;
+
+import com.bcl.fitmate.backend.dto.ResponseDto;
+import com.bcl.fitmate.backend.dto.oneDayTicket.request.TicketCancelRequestDto;
+import com.bcl.fitmate.backend.dto.oneDayTicket.request.TicketIssueRequestDto;
+import com.bcl.fitmate.backend.dto.oneDayTicket.request.TicketUseRequestDto;
+import com.bcl.fitmate.backend.dto.oneDayTicket.response.GetMemberAllTicketsResultDto;
+import com.bcl.fitmate.backend.dto.oneDayTicket.response.GetTrainerAllTicketsResponseDto;
+import com.bcl.fitmate.backend.service.OneDayTicketService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@RequiredArgsConstructor
+@Service
+public class OneDayTicketServiceImpl implements OneDayTicketService {
+    @Override
+    public ResponseDto<GetMemberAllTicketsResultDto> getMemberAllTickets(Long id) {
+        return null;
+    }
+
+    @Override
+    public ResponseDto<List<GetTrainerAllTicketsResponseDto>> getTrainerAllTickets(Long id) {
+        return null;
+    }
+
+    @Override
+    public ResponseDto<Void> issueOneDayTicket(Long id, TicketIssueRequestDto dto) {
+        return null;
+    }
+
+    @Override
+    public ResponseDto<Void> useOneDayTicket(Long id, Long ticketId, TicketUseRequestDto dto) {
+        return null;
+    }
+
+    @Override
+    public ResponseDto<Void> cancelOneDayTicket(Long id, Long ticketId, TicketCancelRequestDto dto) {
+        return null;
+    }
+}

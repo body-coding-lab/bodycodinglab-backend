@@ -4,8 +4,8 @@ import com.bcl.fitmate.backend.common.enums.trainer.TrainerStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
 @AllArgsConstructor
+@Getter
 public class GetUserInfoResponseDto {
     private Long id;
     private String role;

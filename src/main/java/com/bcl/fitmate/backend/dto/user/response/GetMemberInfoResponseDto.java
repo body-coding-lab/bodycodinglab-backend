@@ -6,8 +6,8 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 
-@Getter
 @AllArgsConstructor
+@Getter
 public class GetMemberInfoResponseDto {
     private String username;
     private String name;

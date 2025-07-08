@@ -11,11 +11,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Setter
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "users")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
 public class User extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -146,5 +146,13 @@ public class User extends BaseTime {
 
     public void removeTrainerMatches(Match match) {
         trainerMatches.remove(match);
+    }
+
+    public void addMemberCoupons(Coupon coupon) {
+        memberCoupons.add(coupon);
+    }
+
+    public void addTrainerCoupons(Coupon coupon) {
+        trainerCoupons.add(coupon);
     }
 }

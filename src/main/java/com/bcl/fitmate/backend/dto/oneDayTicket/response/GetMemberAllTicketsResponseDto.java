@@ -7,9 +7,9 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 
+@AllArgsConstructor
 @Getter
 @Builder
-@AllArgsConstructor
 public class GetMemberAllTicketsResponseDto {
     private Long id;
     private Long trainerId;

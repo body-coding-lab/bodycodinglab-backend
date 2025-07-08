@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class RecoverUsernameRequestDto {
     @NotBlank(message = "이름은 필수 항목입니다.")
     @Pattern(regexp = Regex.NAME_KOREAN, message = "이름은 총 2~10자 이내의 한글이어야 합니다.")

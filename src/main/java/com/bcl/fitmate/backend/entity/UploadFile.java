@@ -6,10 +6,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "upload_files")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class UploadFile extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

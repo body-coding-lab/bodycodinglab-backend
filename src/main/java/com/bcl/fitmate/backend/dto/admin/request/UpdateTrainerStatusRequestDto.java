@@ -7,9 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class UpdateTrainerStatusRequestDto {
     @NotNull(message = "상태를 선택해 주세요.")
     private TrainerStatus newStatus;

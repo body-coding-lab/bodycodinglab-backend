@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class SignUpMemberRequestDto {
     @NotBlank(message = "아이디는 필수 항목입니다.")
     @Pattern(regexp = Regex.USER_NAME, message = "아이디는 영문자로 시작하며, 총 5~12자 이내의 영문과 숫자 조합이어야 합니다.")
