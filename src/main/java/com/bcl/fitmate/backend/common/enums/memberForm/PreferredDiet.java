@@ -5,5 +5,6 @@ public enum PreferredDiet {
     VEGAN,
     KITO,
     MEDITERRANEAN,
-    CARNIVORE
+    CARNIVORE,
+    NOT_APPLICABLE;
 }
