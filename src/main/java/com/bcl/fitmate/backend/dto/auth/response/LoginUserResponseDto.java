@@ -4,8 +4,8 @@ import com.bcl.fitmate.backend.common.enums.user.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
 @AllArgsConstructor
+@Getter
 public class LoginUserResponseDto {
     private String token;
     private long exprTime;

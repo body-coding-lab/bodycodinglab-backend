@@ -6,8 +6,8 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 
-@Getter
 @AllArgsConstructor
+@Getter
 public class GetAllTrainersResponseDto {
     private Long trainerId;
     private String username;

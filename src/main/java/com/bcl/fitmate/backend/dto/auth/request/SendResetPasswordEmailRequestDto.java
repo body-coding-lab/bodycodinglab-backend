@@ -7,9 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class SendResetPasswordEmailRequestDto {
     @NotBlank(message = "이메일은 필수 항목입니다.")
     @Pattern(regexp = Regex.EMAIL, message = "example@mail.com 형식이어야 합니다.")

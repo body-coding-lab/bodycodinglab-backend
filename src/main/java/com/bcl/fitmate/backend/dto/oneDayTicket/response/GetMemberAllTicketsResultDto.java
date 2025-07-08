@@ -6,9 +6,9 @@ import lombok.Getter;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Getter
 @Builder
-@AllArgsConstructor
 public class GetMemberAllTicketsResultDto {
     private int count;
     private List<GetMemberAllTicketsResponseDto> tickets;

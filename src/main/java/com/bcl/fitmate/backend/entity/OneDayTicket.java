@@ -9,11 +9,11 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Setter
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "one_day_tickets")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
 public class OneDayTicket extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
