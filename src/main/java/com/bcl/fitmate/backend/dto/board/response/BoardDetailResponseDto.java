@@ -22,7 +22,7 @@ public class BoardDetailResponseDto {
     private String content;
     private String writerName;
     private Long viewCount;
-    private Long like;
+    private Long likeCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<FileResponseDto> boardImages;

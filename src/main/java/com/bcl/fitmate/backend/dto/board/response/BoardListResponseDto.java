@@ -14,9 +14,10 @@ public class BoardListResponseDto {
     private Long boardId;
     private Category category;
     private String title;
-    private String content;
+    private String contentPreview;
     private String writerName;
     private Long viewCount;
-    private Long postLike;
+    private Long likeCount;
     private LocalDateTime createdAt;
+    private String thumbnailUrl;
 }
