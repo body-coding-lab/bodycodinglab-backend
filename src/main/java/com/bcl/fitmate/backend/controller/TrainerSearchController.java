@@ -24,7 +24,7 @@ public class TrainerSearchController {
     private static final String GET_TRAINER_LICENSE = "/licenses";
     private static final String GET_ALL_TRAINER_INFO = "/trainers";
     private static final String GET_TRAINER_INFO = "/{trainerId}";
-    private static final String GET_TRAINER_NAME = "/search-name";
+    private static final String GET_TRAINER_BY_NAME = "/search-name";
     private static final String GET_TRAINER_BY_ADDRESS = "/search-address";
 
     @GetMapping(GET_TRAINER_CAREER)
@@ -53,7 +53,7 @@ public class TrainerSearchController {
         return ResponseDto.toResponseEntity(HttpStatus.OK, trainerSearchService.getTrainerById(trainerId));
     }
 
-    @GetMapping(GET_TRAINER_NAME)
+    @GetMapping(GET_TRAINER_BY_NAME)
     public ResponseEntity<ResponseDto<List<TrainerListResponseDto>>> searchTrainerByName(
             @RequestParam String name
     ) {

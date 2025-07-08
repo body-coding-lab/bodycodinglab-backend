@@ -41,5 +41,5 @@ public class Board extends BaseTime {
     private Long viewCount = 0L;
 
     @Column(nullable = false, name = "like")
-    private Long like = 0L;
+    private Long likeCount = 0L;
 }
