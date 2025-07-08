@@ -13,8 +13,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class TrainerLicenseRequestDto {
-    private Long id;
-
     @NotBlank(message = "자격증 종류는 필수 항목입니다.")
     private LicenseType licenseType;
 
