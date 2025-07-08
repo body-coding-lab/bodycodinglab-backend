@@ -1,5 +1,6 @@
 package com.bcl.fitmate.backend.entity;
 
+import com.bcl.fitmate.backend.common.enums.trainer.TrainerStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,22 +21,24 @@ public class TrainerStatusLog {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "trainer_id", nullable = false)
-    private Long trainerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trainer_id", nullable = true)
+    private Trainer trainer;
 
-    @Column(name = "username")
+    @Column(name = "username", nullable = false)
     private String username;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "prev_status")
-//    private TrainerStatus prevStatus;
-//
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "new_status")
-//    private TrainerStatus newStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "prev_status")
+    private TrainerStatus prevStatus;
 
-    @Column(name = "changed_by")
-    private Long changedBy;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "new_status")
+    private TrainerStatus newStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "changed_by", nullable = true)
+    private User changedBy;
 
     @Column(name = "changed_by_username")
     private String changedByUsername;

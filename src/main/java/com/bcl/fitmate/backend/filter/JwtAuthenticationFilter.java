@@ -2,10 +2,10 @@ package com.bcl.fitmate.backend.filter;
 
 import com.bcl.fitmate.backend.common.constants.ResponseCode;
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
+import com.bcl.fitmate.backend.config.security.CustomUserDetailsServiceImpl;
 import com.bcl.fitmate.backend.config.security.UserPrincipal;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.provider.JwtProvider;
-import com.bcl.fitmate.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final static Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     private final static ObjectMapper mapper = new ObjectMapper();
     private final JwtProvider jwtProvider;
-    private final UserRepository userRepository;
+    private final CustomUserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void doFilterInternal(
@@ -52,10 +52,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 jwtProvider.validateJwtToken(token);
 
                 Long userId = jwtProvider.getUserIdFromJwtToken(token);
-                userRepository.findById(userId).ifPresent(user -> {
-                    UserPrincipal userPrincipal = new UserPrincipal(user);
-                    setAuthenticationContext(request, userPrincipal);
-                });
+                UserPrincipal userPrincipal = userDetailsService.loadUserById(userId);
+                setAuthenticationContext(request, userPrincipal);
             }
         } catch (Exception e) {
             String message = e.getMessage();
@@ -75,7 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void setAuthenticationContext(HttpServletRequest request, UserPrincipal userPrincipal) {
         Collection<? extends GrantedAuthority> authorities
-                = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + userPrincipal.getRole().getName().name()));
+                = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + userPrincipal.getRole()));
 
         AbstractAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(userPrincipal, null, authorities);
