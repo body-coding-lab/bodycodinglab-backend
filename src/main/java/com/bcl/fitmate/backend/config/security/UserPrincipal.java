@@ -1,7 +1,7 @@
 package com.bcl.fitmate.backend.config.security;
 
-import com.bcl.fitmate.backend.entity.Role;
 import com.bcl.fitmate.backend.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,25 +15,22 @@ import java.util.Collections;
 @ToString(exclude = "password")
 public class UserPrincipal implements UserDetails {
     private final Long id;
-    private final Role role;
+    private final String role;
     private final String username;
+
+    @JsonIgnore
     private final String password;
-    private final String profileImageUrl;
 
     public UserPrincipal(User user) {
         this.id = user.getId();
-        this.role = user.getRole();
+        this.role = user.getRole().getName().name();
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.profileImageUrl = user.getProfileImage() != null
-                // 경로 수정 예정
-                ? user.getProfileImage().getFilePath()
-                : null;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
     @Override

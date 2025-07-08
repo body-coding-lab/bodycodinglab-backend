@@ -33,6 +33,7 @@ public class JwtProvider {
 
     public String generateJwtToken(Long userId, UserRole role) {
         return Jwts.builder()
+                .setSubject(userId.toString())
                 .claim("userId", userId)
                 .claim("role", role.name())
                 .setIssuedAt(new Date())

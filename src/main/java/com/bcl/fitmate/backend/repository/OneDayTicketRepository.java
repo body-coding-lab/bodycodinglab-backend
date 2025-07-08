@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 public interface OneDayTicketRepository extends JpaRepository<OneDayTicket, Long> {
     List<OneDayTicket> findByMemberId(Long id);
-
     List<OneDayTicket> findByTrainerId(Long id);
 }
