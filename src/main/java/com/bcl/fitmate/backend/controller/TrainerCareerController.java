@@ -1,6 +1,7 @@
 package com.bcl.fitmate.backend.controller;
 
 import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
+import com.bcl.fitmate.backend.config.security.UserPrincipal;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.trainer.request.TrainerCareerRequestDto;
 import com.bcl.fitmate.backend.dto.trainer.response.TrainerCareerResponseDto;
@@ -31,52 +32,58 @@ public class TrainerCareerController {
     @PreAuthorize("hasRole('TRAINER')")
     @PostMapping(POST_TRAINER_CAREER)
     public ResponseEntity<ResponseDto<TrainerCareerResponseDto>> postTrainerCareer(
-            @AuthenticationPrincipal Long id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @Valid @RequestBody TrainerCareerRequestDto dto
     ) {
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.CREATED, trainerCareerService.postTrainerCareer(id, dto));
     }
 
     @PreAuthorize("hasRole('TRAINER')")
     @PutMapping(UPDATE_TRAINER_CAREER)
     public ResponseEntity<ResponseDto<TrainerCareerResponseDto>> updateTrainerCareer(
-            @AuthenticationPrincipal Long id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long careerId,
             @Valid @RequestBody TrainerCareerRequestDto dto
     ) {
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, trainerCareerService.updateTrainerCareer(id, careerId, dto));
     }
 
     @PreAuthorize("hasRole('TRAINER')")
     @DeleteMapping(DELETE_TRAINER_CAREER)
     public ResponseEntity<ResponseDto<TrainerCareerResponseDto>> deleteTrainerCareer(
-            @AuthenticationPrincipal Long id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long careerId
     ) {
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, trainerCareerService.deleteTrainerCareer(id, careerId));
     }
 
     @PreAuthorize("hasRole('TRAINER')")
     @DeleteMapping(DELETE_ALL_TRAINER_CAREER)
     public ResponseEntity<ResponseDto<Void>> deleteAllTrainerCareer(
-            @AuthenticationPrincipal Long id
+            @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, trainerCareerService.deleteAllTrainerCareer(id));
     }
 
     @PreAuthorize("hasRole('TRAINER')")
     @GetMapping(GET_ALL_TRAINER_CAREER)
     public ResponseEntity<ResponseDto<List<TrainerCareerResponseDto>>> getAllTrainerCareer(
-            @AuthenticationPrincipal Long id
+            @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, trainerCareerService.getAllTrainerCareer(id));
     }
 
     @PreAuthorize("hasRole('TRAINER')")
     @GetMapping(GET_RECENT_TRAINER_CAREER)
     public ResponseEntity<ResponseDto<TrainerCareerResponseDto>> getRecentTrainerCareer(
-            @AuthenticationPrincipal Long id
+            @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, trainerCareerService.getRecentTrainerCareer(id));
     }
 }

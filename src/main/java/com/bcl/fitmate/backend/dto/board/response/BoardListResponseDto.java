@@ -12,12 +12,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BoardListResponseDto {
     private Long boardId;
+    private Long matchId;
     private Category category;
     private String title;
-    private String contentPreview;
     private String writerName;
     private Long viewCount;
     private Long likeCount;
     private LocalDateTime createdAt;
-    private String thumbnailUrl;
 }
