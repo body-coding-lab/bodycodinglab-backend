@@ -13,10 +13,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class BoardRequestDto {
-    private Long boardId;
-    private Long matchId;
-    private Long writerId;
-
     @NotBlank(message = "카테고리는 필수 항목입니다.")
     private Category category;
 

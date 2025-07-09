@@ -1,6 +1,7 @@
 package com.bcl.fitmate.backend.controller;
 
 import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
+import com.bcl.fitmate.backend.config.security.UserPrincipal;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.trainer.request.TrainerCareerRequestDto;
 import com.bcl.fitmate.backend.dto.trainer.request.TrainerLicenseRequestDto;
@@ -33,54 +34,60 @@ public class TrainerLicenseController {
     @PreAuthorize("hasRole('TRAINER')")
     @PostMapping(POST_TRAINER_LICENSE)
     public ResponseEntity<ResponseDto<TrainerLicenseResponseDto>> postTrainerLicense(
-            @AuthenticationPrincipal Long id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @ModelAttribute TrainerLicenseRequestDto dto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.CREATED, trainerLicenseService.postTrainerLicense(id, dto, files));
     }
 
     @PreAuthorize("hasRole('TRAINER')")
     @PutMapping(UPDATE_TRAINER_LICENSE)
     public ResponseEntity<ResponseDto<TrainerLicenseResponseDto>> updateTrainerLicense(
-            @AuthenticationPrincipal Long id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long licenseId,
             @ModelAttribute TrainerLicenseRequestDto dto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, trainerLicenseService.updateTrainerLicense(id, licenseId, dto, files));
     }
 
     @PreAuthorize("hasRole('TRAINER')")
     @DeleteMapping(DELETE_TRAINER_LICENSE)
     public ResponseEntity<ResponseDto<TrainerLicenseResponseDto>> deleteTrainerLicense(
-            @AuthenticationPrincipal Long id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long licenseId
     ) {
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, trainerLicenseService.deleteTrainerLicense(id, licenseId));
     }
 
     @PreAuthorize("hasRole('TRAINER')")
     @DeleteMapping(DELETE_ALL_TRAINER_LICENSE)
     public ResponseEntity<ResponseDto<Void>> deleteAllTrainerLicense(
-            @AuthenticationPrincipal Long id
+            @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, trainerLicenseService.deleteAllTrainerLicense(id));
     }
 
     @PreAuthorize("hasRole('TRAINER')")
     @GetMapping(GET_ALL_TRAINER_LICENSE)
     public ResponseEntity<ResponseDto<List<TrainerLicenseResponseDto>>> getAllTrainerLicense(
-            @AuthenticationPrincipal Long id
+            @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, trainerLicenseService.getAllTrainerLicense(id));
     }
 
     @PreAuthorize("hasRole('TRAINER')")
     @GetMapping(GET_RECENT_TRAINER_LICENSE)
     public ResponseEntity<ResponseDto<TrainerLicenseResponseDto>> getRecentTrainerLicense(
-            @AuthenticationPrincipal Long id
+            @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, trainerLicenseService.getRecentTrainerLicense(id));
     }
 }
