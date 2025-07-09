@@ -2,10 +2,7 @@ package com.bcl.fitmate.backend.service.impl;
 
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.auth.request.*;
-import com.bcl.fitmate.backend.dto.auth.response.GetResetPasswordUserResponseDto;
-import com.bcl.fitmate.backend.dto.auth.response.LoginUserResponseDto;
-import com.bcl.fitmate.backend.dto.auth.response.RecoverUsernameResponseDto;
-import com.bcl.fitmate.backend.dto.auth.response.SignUpMemberResponseDto;
+import com.bcl.fitmate.backend.dto.auth.response.*;
 import com.bcl.fitmate.backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +17,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseDto<SignUpMemberResponseDto> signUpTrainer(SignUpTrainerRequestDto dto, MultipartFile attachmentFile, MultipartFile profileImage) {
+    public ResponseDto<SignUpTrainerResponseDto> signUpTrainer(SignUpTrainerRequestDto dto, MultipartFile attachmentFile, MultipartFile profileImage) {
         return null;
     }
 
@@ -40,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseDto<String> resetPassword(String token, ResetPasswordRequestDto dto) {
+    public ResponseDto<Void> resetPassword(String token, ResetPasswordRequestDto dto) {
         return null;
     }
 

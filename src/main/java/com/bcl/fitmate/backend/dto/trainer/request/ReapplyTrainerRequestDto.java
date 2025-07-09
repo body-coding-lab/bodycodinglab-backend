@@ -1,4 +1,4 @@
-package com.bcl.fitmate.backend.dto.auth.request;
+package com.bcl.fitmate.backend.dto.trainer.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

@@ -3,10 +3,7 @@ package com.bcl.fitmate.backend.controller;
 import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.auth.request.*;
-import com.bcl.fitmate.backend.dto.auth.response.GetResetPasswordUserResponseDto;
-import com.bcl.fitmate.backend.dto.auth.response.LoginUserResponseDto;
-import com.bcl.fitmate.backend.dto.auth.response.RecoverUsernameResponseDto;
-import com.bcl.fitmate.backend.dto.auth.response.SignUpMemberResponseDto;
+import com.bcl.fitmate.backend.dto.auth.response.*;
 import com.bcl.fitmate.backend.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +38,7 @@ public class AuthController {
     }
 
     @PostMapping(SIGNUP_TRAINER)
-    public ResponseEntity<ResponseDto<SignUpMemberResponseDto>> signUpTrainer(
+    public ResponseEntity<ResponseDto<SignUpTrainerResponseDto>> signUpTrainer(
             @Valid @RequestPart(value = "dto") SignUpTrainerRequestDto dto,
             @RequestPart(value = "attachmentFile") MultipartFile attachmentFile,
             @RequestPart(value = "profile", required = false) MultipartFile profileImage
@@ -65,7 +62,7 @@ public class AuthController {
     }
 
     @PostMapping(PASSWORD_RESET)
-    public ResponseEntity<ResponseDto<String>> resetPassword(
+    public ResponseEntity<ResponseDto<Void>> resetPassword(
             @RequestParam String token,
             @Valid @RequestBody ResetPasswordRequestDto dto
     ) {

@@ -3,7 +3,7 @@ package com.bcl.fitmate.backend.controller;
 import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.config.security.UserPrincipal;
 import com.bcl.fitmate.backend.dto.ResponseDto;
-import com.bcl.fitmate.backend.dto.auth.request.ReapplyTrainerRequestDto;
+import com.bcl.fitmate.backend.dto.trainer.request.ReapplyTrainerRequestDto;
 import com.bcl.fitmate.backend.dto.trainer.request.TrainerInfoRequestDto;
 import com.bcl.fitmate.backend.dto.trainer.response.TrainerInfoResponseDto;
 import com.bcl.fitmate.backend.service.TrainerService;

@@ -18,20 +18,21 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(ApiMappingPattern.BOARD_COMMENT_API)
+@RequestMapping(ApiMappingPattern.BOARD_API)
 public class CommentController {
     private final CommentService commentService;
 
-    private static final String COMMENT = "/{commentId}";
+    private static final String BOARD_COMMENTS = "/{boardId}/comments";
+    private static final String BOARD_COMMENT_DETAIL = BOARD_COMMENTS + "/{commentId}";
 
     @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
-    @GetMapping
+    @GetMapping(BOARD_COMMENTS)
     public ResponseEntity<ResponseDto<List<GetCommentResponseDto>>> getComments(@PathVariable Long boardId) {
         return ResponseDto.toResponseEntity(HttpStatus.OK, commentService.getComments(boardId));
     }
 
     @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
-    @PostMapping
+    @PostMapping(BOARD_COMMENTS)
     public ResponseEntity<ResponseDto<Void>> createComment(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long boardId,
@@ -42,7 +43,7 @@ public class CommentController {
     }
 
     @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
-    @PutMapping(COMMENT)
+    @PutMapping(BOARD_COMMENT_DETAIL)
     public ResponseEntity<ResponseDto<Void>> updateComment(
         @AuthenticationPrincipal UserPrincipal userPrincipal,
         @PathVariable Long boardId,
@@ -54,7 +55,7 @@ public class CommentController {
     }
 
     @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
-    @DeleteMapping(COMMENT)
+    @DeleteMapping(BOARD_COMMENT_DETAIL)
     public ResponseEntity<ResponseDto<Void>> deleteComment(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long boardId,
