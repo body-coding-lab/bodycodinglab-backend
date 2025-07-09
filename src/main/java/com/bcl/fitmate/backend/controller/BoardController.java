@@ -2,6 +2,7 @@ package com.bcl.fitmate.backend.controller;
 
 import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.common.enums.board.Category;
+import com.bcl.fitmate.backend.config.security.UserPrincipal;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.board.request.BoardRequestDto;
 import com.bcl.fitmate.backend.dto.board.response.BoardDetailResponseDto;
@@ -24,65 +25,70 @@ import java.util.List;
 public class BoardController {
     private final BoardService boardService;
 
-    private static final String POST_POST = "/{matchId}";
+    private static final String CREATE_POST = "/{matchId}";
     private static final String UPDATE_POST = "/{matchId}";
     private static final String DELETE_POST = "/{matchId}/posts/{postId}";
     private static final String GET_POST_DETAIL = "/{matchId}/posts/{postId}";
     private static final String GET_POST_LIST = "/{matchId}/posts";
     private static final String SEARCH_POST = "/{matchId}/search";
 
-    @PostMapping(POST_POST)
+    @PostMapping(CREATE_POST)
     public ResponseEntity<ResponseDto<BoardDetailResponseDto>> createPost(
-            @AuthenticationPrincipal Long id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
             @ModelAttribute BoardRequestDto dto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ){
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.createPost(id, matchId, dto, files));
     }
 
     @PutMapping(UPDATE_POST)
     public ResponseEntity<ResponseDto<BoardDetailResponseDto>> updatePost(
-            @AuthenticationPrincipal Long id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
             @ModelAttribute BoardRequestDto dto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ){
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.updatePost(id, matchId, dto, files));
     }
 
     @DeleteMapping(DELETE_POST)
     public ResponseEntity<ResponseDto<Void>> deletePost(
-            @AuthenticationPrincipal Long id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
             @PathVariable Long postId
     ){
+        Long id = userPrincipal.getId();
         boardService.deletePost(id, matchId, postId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping(GET_POST_DETAIL)
     public ResponseEntity<ResponseDto<BoardDetailResponseDto>> getPost(
-            @AuthenticationPrincipal Long id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
             @PathVariable Long postId
     ){
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.getPost(id, matchId));
     }
 
     @GetMapping(GET_POST_LIST)
     public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> getPostList(
-            @AuthenticationPrincipal Long id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.getPostList(id, matchId, page, size));
     }
 
     @GetMapping(SEARCH_POST)
     public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> searchPost(
-            @AuthenticationPrincipal Long id,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
             @RequestParam Category category,
             @RequestParam(required = false) String writerName,
@@ -91,6 +97,7 @@ public class BoardController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
+        Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.searchPost(id, matchId, category, writerName, title, content, page, size));
     }
 
