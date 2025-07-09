@@ -10,7 +10,6 @@ public interface ApiMappingPattern {
     String TRAINER_ONE_DAY_TICKET_API = TRAINER_API + "/me/one-day-tickets";
     String MEMBER_ONE_DAY_TICKET_API = MEMBER_API + "/me/one-day-tickets";
     String BOARD_API = "/api/v2/boards";
-    String BOARD_COMMENT_API = BOARD_API + "/{boardId}/comments";
     String FILE_API = "/api/v2/files";
     String MEMBER_COUPON_API = MEMBER_API + "/me/coupons";
     String TRAINER_COUPON_API = TRAINER_API + "/me/coupons";
