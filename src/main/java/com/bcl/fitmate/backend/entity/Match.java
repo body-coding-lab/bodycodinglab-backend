@@ -27,7 +27,6 @@ public class Match {
     @JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false)
     private User member;
 
-
     @ManyToOne
     @JoinColumn(name = "trainer_id", referencedColumnName = "id", nullable = false)
     private User trainer;

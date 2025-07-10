@@ -10,10 +10,10 @@ import java.io.IOException;
 import java.util.List;
 
 public interface UploadFileService {
-    ResponseDto<List<FileResponseDto>> uploadMultiFiles(List<MultipartFile> files, Long targetId, TargetType targetType);
-    ResponseDto<List<FileResponseDto>> getMultiFiles(Long targetId, TargetType targetType);
-    ResponseDto<FileResponseDto> getSingleMultiFile(Long fileId);
-    ResponseDto<Void> deleteMultiFile(Long fileId);
+    List<FileResponseDto> uploadMultiFiles(List<MultipartFile> files, Long targetId, TargetType targetType);
+    List<FileResponseDto> getMultiFiles(Long targetId, TargetType targetType);
+    FileResponseDto getSingleMultiFile(Long fileId);
+    Void deleteMultiFile(Long fileId);
     UploadFile saveSingleFile(MultipartFile file, Long targetId, TargetType targetType) throws IOException;
     ResponseDto<FileResponseDto> updateSingleFile(Long fileId, MultipartFile newFile) throws IOException;
 }

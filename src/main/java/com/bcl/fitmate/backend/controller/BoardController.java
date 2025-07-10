@@ -30,7 +30,10 @@ public class BoardController {
     private static final String DELETE_POST = "/{matchId}/posts/{postId}";
     private static final String GET_POST_DETAIL = "/{matchId}/posts/{postId}";
     private static final String GET_POST_LIST = "/{matchId}/posts";
-    private static final String SEARCH_POST = "/{matchId}/search";
+    private static final String SEARCH_POST_NAME = "/{matchId}/search-name";
+    private static final String SEARCH_POST_TITLE = "/{matchId}/search-title";
+    private static final String SEARCH_POST_CONTENT = "/{matchId}/search-content";
+
 
     @PostMapping(CREATE_POST)
     public ResponseEntity<ResponseDto<BoardDetailResponseDto>> createPost(
@@ -47,11 +50,12 @@ public class BoardController {
     public ResponseEntity<ResponseDto<BoardDetailResponseDto>> updatePost(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
+            @PathVariable Long postId,
             @ModelAttribute BoardRequestDto dto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ){
         Long id = userPrincipal.getId();
-        return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.updatePost(id, matchId, dto, files));
+        return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.updatePost(id, matchId, postId, dto, files));
     }
 
     @DeleteMapping(DELETE_POST)
@@ -61,8 +65,7 @@ public class BoardController {
             @PathVariable Long postId
     ){
         Long id = userPrincipal.getId();
-        boardService.deletePost(id, matchId, postId);
-        return ResponseEntity.noContent().build();
+        return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.deletePost(id, matchId, postId));
     }
 
     @GetMapping(GET_POST_DETAIL)
@@ -72,35 +75,57 @@ public class BoardController {
             @PathVariable Long postId
     ){
         Long id = userPrincipal.getId();
-        return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.getPost(id, matchId));
+        return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.getPost(id, matchId, postId));
     }
 
     @GetMapping(GET_POST_LIST)
     public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> getPostList(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
+            @RequestParam Category category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
         Long id = userPrincipal.getId();
-        return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.getPostList(id, matchId, page, size));
+        return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.getPostList(id, matchId, category, page, size));
     }
 
-    @GetMapping(SEARCH_POST)
-    public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> searchPost(
+    @GetMapping(SEARCH_POST_NAME)
+    public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> searchPostByName(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
             @RequestParam Category category,
             @RequestParam(required = false) String writerName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Long id = userPrincipal.getId();
+        return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.searchPostByName(id, matchId, category, writerName, page, size));
+    }
+
+    @GetMapping(SEARCH_POST_NAME)
+    public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> searchPostByTitle(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable Long matchId,
+            @RequestParam Category category,
             @RequestParam(required = false) String title,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Long id = userPrincipal.getId();
+        return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.searchPostByTitle(id, matchId, category, title, page, size));
+    }
+
+    @GetMapping(SEARCH_POST_NAME)
+    public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> searchPostByContent(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable Long matchId,
+            @RequestParam Category category,
             @RequestParam(required = false) String content,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Long id = userPrincipal.getId();
-        return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.searchPost(id, matchId, category, writerName, title, content, page, size));
+        return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.searchPostByContent(id, matchId, category, content, page, size));
     }
-
-    // 대표 이미지가 없는 경우 null설정
-    // 검색 null 설정
 }
