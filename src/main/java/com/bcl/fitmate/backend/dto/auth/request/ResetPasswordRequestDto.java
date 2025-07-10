@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class ResetPasswordRequestDto {
     @NotBlank(message = "비밀번호는 필수 항목입니다.")
     @Pattern(regexp = Regex.PASSWORD, message = "비밀번호는 영문/숫자/특수문자(~!@#$%^&*()-_=+)를 포함한 8~15자 이내이어야 합니다.")
-    private String password;
+    private String newPassword;
 
     @NotBlank(message = "비밀번호 확인은 필수 항목입니다.")
     private String confirmPassword;

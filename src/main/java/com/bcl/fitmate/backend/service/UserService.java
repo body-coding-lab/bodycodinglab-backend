@@ -7,6 +7,7 @@ import com.bcl.fitmate.backend.dto.user.request.UpdateTrainerInfoRequestDto;
 import com.bcl.fitmate.backend.dto.user.response.GetMemberInfoResponseDto;
 import com.bcl.fitmate.backend.dto.user.response.GetTrainerInfoResponseDto;
 import com.bcl.fitmate.backend.dto.user.response.GetUserInfoResponseDto;
+import com.bcl.fitmate.backend.entity.User;
 import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,4 +20,5 @@ public interface UserService {
     ResponseDto<Void> deleteUser(Long id, @Valid DeleteUserRequestDto dto);
     ResponseDto<Void> updateProfileImage(Long id, MultipartFile profileImage);
     ResponseDto<Void> deleteProfileImage(Long id);
+    User getUser(Long id);
 }

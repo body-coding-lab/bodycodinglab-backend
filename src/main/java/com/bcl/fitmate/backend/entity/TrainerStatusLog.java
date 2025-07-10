@@ -3,6 +3,7 @@ package com.bcl.fitmate.backend.entity;
 import com.bcl.fitmate.backend.common.enums.trainer.TrainerStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -49,4 +50,15 @@ public class TrainerStatusLog {
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
     private LocalDateTime createdAt;
+
+    @Builder
+    public TrainerStatusLog(User user, Trainer trainer, TrainerStatus prevStatus, String changeReason) {
+        this.trainer = trainer;
+        this.username = trainer.getUser().getUsername();
+        this.prevStatus = prevStatus;
+        this.newStatus = trainer.getTrainerStatus();
+        this.changedBy = user;
+        this.changedByUsername = user.getUsername();
+        this.changeReason = changeReason;
+    }
 }
