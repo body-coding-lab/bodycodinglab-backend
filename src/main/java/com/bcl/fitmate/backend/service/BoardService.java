@@ -13,13 +13,17 @@ import java.util.List;
 public interface BoardService {
     ResponseDto<BoardDetailResponseDto> createPost(Long id, Long matchId, BoardRequestDto dto, List<MultipartFile> files);
 
-    ResponseDto<BoardDetailResponseDto> updatePost(Long id, Long matchId, BoardRequestDto dto, List<MultipartFile> files);
+    ResponseDto<BoardDetailResponseDto> updatePost(Long id, Long matchId, Long postId, BoardRequestDto dto, List<MultipartFile> files);
 
-    void deletePost(Long id, Long matchId, Long postId);
+    ResponseDto<Void> deletePost(Long id, Long matchId, Long postId);
 
-    ResponseDto<BoardDetailResponseDto> getPost(Long id, Long matchId);
+    ResponseDto<BoardDetailResponseDto> getPost(Long id, Long matchId, Long postId);
 
-    ResponseDto<Page<BoardListResponseDto>> getPostList(Long id, Long matchId, int page, int size);
+    ResponseDto<Page<BoardListResponseDto>> getPostList(Long id, Long matchId, Category category, int page, int size);
 
-    ResponseDto<Page<BoardListResponseDto>> searchPost(Long id, Long matchId, Category category, String writerName, String title, String content, int page, int size);
+    ResponseDto<Page<BoardListResponseDto>> searchPostByName(Long id, Long matchId, Category category, String writerName, int page, int size);
+
+    ResponseDto<Page<BoardListResponseDto>> searchPostByTitle(Long id, Long matchId, Category category, String title, int page, int size);
+
+    ResponseDto<Page<BoardListResponseDto>> searchPostByContent(Long id, Long matchId, Category category, String content, int page, int size);
 }

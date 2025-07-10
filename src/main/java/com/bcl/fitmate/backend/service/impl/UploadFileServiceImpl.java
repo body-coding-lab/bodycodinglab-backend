@@ -27,23 +27,24 @@ public class UploadFileServiceImpl implements UploadFileService {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+
     @Override
-    public ResponseDto<List<FileResponseDto>> uploadMultiFiles(List<MultipartFile> files, Long targetId, TargetType targetType) {
+    public List<FileResponseDto> uploadMultiFiles(List<MultipartFile> files, Long targetId, TargetType targetType) {
+        return List.of();
+    }
+
+    @Override
+    public List<FileResponseDto> getMultiFiles(Long targetId, TargetType targetType) {
+        return List.of();
+    }
+
+    @Override
+    public FileResponseDto getSingleMultiFile(Long fileId) {
         return null;
     }
 
     @Override
-    public ResponseDto<List<FileResponseDto>> getMultiFiles(Long targetId, TargetType targetType) {
-        return null;
-    }
-
-    @Override
-    public ResponseDto<FileResponseDto> getSingleMultiFile(Long fileId) {
-        return null;
-    }
-
-    @Override
-    public ResponseDto<Void> deleteMultiFile(Long fileId) {
+    public Void deleteMultiFile(Long fileId) {
         return null;
     }
 

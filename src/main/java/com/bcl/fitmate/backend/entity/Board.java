@@ -40,6 +40,7 @@ public class Board extends BaseTime {
     @Column(nullable = false, name = "view_count")
     private Long viewCount = 0L;
 
-    @Column(nullable = false, name = "like")
-    private Long likeCount = 0L;
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
 }

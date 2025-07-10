@@ -1,6 +1,8 @@
 package com.bcl.fitmate.backend.controller;
 
 import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
+import com.bcl.fitmate.backend.common.constants.ResponseCode;
+import com.bcl.fitmate.backend.common.constants.ResponseMessage;
 import com.bcl.fitmate.backend.common.enums.uploadFile.TargetType;
 import com.bcl.fitmate.backend.dto.FileResponseDto;
 import com.bcl.fitmate.backend.dto.ResponseDto;
@@ -32,7 +34,8 @@ public class UploadFileController {
             @RequestParam("targetId") Long targetId,
             @RequestParam("targetType")TargetType targetType
     ) {
-        return ResponseDto.toResponseEntity(HttpStatus.CREATED, uploadFileService.uploadMultiFiles(files, targetId, targetType));
+        uploadFileService.uploadMultiFiles(files, targetId, targetType);
+        return ResponseDto.toResponseEntity(HttpStatus.CREATED, ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS));
     }
 
     @GetMapping(GET_MULTI_FILES)
@@ -40,20 +43,23 @@ public class UploadFileController {
             @RequestParam("targetId") Long targetId,
             @RequestParam("targetType")TargetType targetType
     ) {
-        return ResponseDto.toResponseEntity(HttpStatus.OK, uploadFileService.getMultiFiles(targetId, targetType));
+        uploadFileService.getMultiFiles(targetId, targetType);
+        return ResponseDto.toResponseEntity(HttpStatus.OK, ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS));
     }
 
     @GetMapping(GET_SINGLE_MULTI_FILES)
     public ResponseEntity<ResponseDto<FileResponseDto>> getSingleMultiFile(
             @PathVariable Long fileId
     ) {
-        return ResponseDto.toResponseEntity(HttpStatus.OK, uploadFileService.getSingleMultiFile(fileId));
+        uploadFileService.getSingleMultiFile(fileId);
+        return ResponseDto.toResponseEntity(HttpStatus.OK, ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS));
     }
 
     @DeleteMapping(DELETE_MULTI_FILES)
     public ResponseEntity<ResponseDto<Void>> deleteMultiFile(
             @PathVariable Long fileId
     ) {
-        return ResponseDto.toResponseEntity(HttpStatus.OK, uploadFileService.deleteMultiFile(fileId));
+        uploadFileService.deleteMultiFile(fileId);
+        return ResponseDto.toResponseEntity(HttpStatus.OK, ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS));
     }
 }

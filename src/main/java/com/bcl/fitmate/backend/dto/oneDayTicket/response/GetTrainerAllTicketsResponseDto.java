@@ -21,5 +21,4 @@ public class GetTrainerAllTicketsResponseDto {
     private LocalDate canceledAt;
     private String cancelReason;
     private OneDayTicketStatus status;
-    private int count;
 }
