@@ -2,14 +2,14 @@ package com.bcl.fitmate.backend.entity;
 
 import com.bcl.fitmate.backend.common.enums.user.UserRole;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "roles")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Getter
+@Builder
 public class Role extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
