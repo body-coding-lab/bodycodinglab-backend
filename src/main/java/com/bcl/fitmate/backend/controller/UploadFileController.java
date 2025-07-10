@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -21,10 +22,19 @@ public class UploadFileController {
 
     private static final String PROFILE_URL = "/profile";
     private static final String TRAINER_ATTACHMENT_URL = "/trainer-attachment";
+    private static final String SINGLE_FILE = "/single/{fileId}";
     private static final String UPLOAD_MULTI_FILES = "/multi";
     private static final String GET_MULTI_FILES = "/multi";
     private static final String GET_SINGLE_MULTI_FILES = "/multi/{fileId}";
     private static final String DELETE_MULTI_FILES = "/multi/{fileId}";
+
+    @PutMapping(SINGLE_FILE)
+    public ResponseEntity<ResponseDto<FileResponseDto>> updateSingleFile(
+            @PathVariable Long fileId,
+            @RequestPart("file") MultipartFile newFile
+    ) throws IOException {
+        return ResponseDto.toResponseEntity(HttpStatus.OK, uploadFileService.updateSingleFile(fileId, newFile));
+    }
 
     @PostMapping(UPLOAD_MULTI_FILES)
     public ResponseEntity<ResponseDto<List<FileResponseDto>>> uploadMultiFiles(

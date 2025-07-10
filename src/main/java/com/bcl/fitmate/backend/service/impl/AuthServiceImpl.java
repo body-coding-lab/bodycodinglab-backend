@@ -1,5 +1,6 @@
 package com.bcl.fitmate.backend.service.impl;
 
+import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.common.constants.ResponseCode;
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
 import com.bcl.fitmate.backend.common.enums.member.MemberStatus;
@@ -9,17 +10,16 @@ import com.bcl.fitmate.backend.common.enums.user.UserRole;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.auth.request.*;
 import com.bcl.fitmate.backend.dto.auth.response.*;
-import com.bcl.fitmate.backend.entity.Member;
-import com.bcl.fitmate.backend.entity.Role;
-import com.bcl.fitmate.backend.entity.Trainer;
-import com.bcl.fitmate.backend.entity.User;
+import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.provider.JwtProvider;
 import com.bcl.fitmate.backend.repository.MemberRepository;
 import com.bcl.fitmate.backend.repository.RoleRepository;
 import com.bcl.fitmate.backend.repository.TrainerRepository;
 import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.AuthService;
+import com.bcl.fitmate.backend.service.MailService;
 import com.bcl.fitmate.backend.service.UploadFileService;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UploadFileService uploadFileService;
+    private final MailService mailService;
     private final JwtProvider jwtProvider;
 
     @Override
@@ -158,33 +159,135 @@ public class AuthServiceImpl implements AuthService {
             return ResponseDto.fail(ResponseCode.NO_EXIST_USER_ID, ResponseMessage.NO_EXIST_USER_ID);
         }
 
-//        if (!checkPassword())
-        return null;
+        if (!checkPassword(user, dto.getPassword())) {
+            return ResponseDto.fail(ResponseCode.NOT_CORRECT_PASSWORD, ResponseMessage.NOT_CORRECT_PASSWORD);
+        }
+
+        String profileImageUrl = null;
+        UploadFile profileImage = user.getProfileImage();
+        if (profileImage != null) {
+            profileImageUrl = ApiMappingPattern.FILE_API + "/profile/" + profileImage.getId() + "/" + profileImage.getFileType();
+        }
+
+        String token = jwtProvider.generateJwtToken(user.getId(), user.getRole().getName());
+
+        if (user.getRole().getName().equals(UserRole.TRAINER) && user.getTrainer().getTrainerStatus() == TrainerStatus.REJECTED) {
+            LoginRejectedTrainerResponseDto data  = LoginRejectedTrainerResponseDto.builder()
+                    .token(token)
+                    .exprTime(jwtProvider.getExpirationMs())
+                    .id(user.getId())
+                    .role(user.getRole().getName())
+                    .username(user.getUsername())
+                    .name(user.getName())
+                    .profileImageUrl(profileImageUrl)
+                    .trainerStatus(user.getTrainer().getTrainerStatus())
+                    .build();
+
+            return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
+        }
+
+        LoginUserResponseDto data = LoginUserResponseDto.builder()
+                .token(token)
+                .exprTime(jwtProvider.getExpirationMs())
+                .id(user.getId())
+                .role(user.getRole().getName())
+                .username(user.getUsername())
+                .name(user.getName())
+                .profileImageUrl(profileImageUrl)
+                .build();
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
     }
 
     @Override
     public ResponseDto<RecoverUsernameResponseDto> recoverUsername(RecoverUsernameRequestDto dto) {
-        return null;
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseDto.fail(ResponseCode.NO_EXIST_EMAIL, ResponseMessage.NO_EXIST_EMAIL);
+        }
+
+        if (!user.getName().equals(dto.getName()) || !user.getBirthdate().equals(dto.getBirthdate())) {
+            return ResponseDto.fail(ResponseCode.NOT_MATCH_INFORMATION, ResponseMessage.NOT_MATCH_INFORMATION);
+        }
+
+        RecoverUsernameResponseDto data = new RecoverUsernameResponseDto(user.getUsername());
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
     }
 
     @Override
     public ResponseDto<GetResetPasswordUserResponseDto> getResetPasswordUser(GetResetPasswordUserRequestDto dto) {
-        return null;
+        User user = userRepository.findByUsername(dto.getUsername())
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseDto.fail(ResponseCode.NO_EXIST_USER_ID, ResponseMessage.NO_EXIST_USER_ID);
+        }
+
+        if (!user.getName().equals(dto.getName())
+                || !user.getBirthdate().equals(dto.getBirthdate())
+                || !user.getEmail().equals(dto.getEmail())
+        ) {
+            return ResponseDto.fail(ResponseCode.NOT_MATCH_INFORMATION, ResponseMessage.NOT_MATCH_INFORMATION);
+        }
+
+        GetResetPasswordUserResponseDto data = GetResetPasswordUserResponseDto.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .build();
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
     }
 
     @Override
     public ResponseDto<Void> resetPassword(String token, ResetPasswordRequestDto dto) {
-        return null;
+        String email = jwtProvider.getEmailFromJwtToken(token);
+
+        if (email == null) {
+            return ResponseDto.fail(ResponseCode.INVALID_TOKEN, ResponseMessage.INVALID_TOKEN);
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseDto.fail(ResponseCode.NO_EXIST_EMAIL, ResponseMessage.NO_EXIST_EMAIL);
+        }
+
+        if (!dto.getNewPassword().equals(user.getPassword())) {
+            return ResponseDto.fail(ResponseCode.NOT_MATCH_PASSWORD, ResponseMessage.NOT_MATCH_PASSWORD);
+        }
+
+        user.setPassword(bCryptPasswordEncoder.encode(dto.getNewPassword()));
+        userRepository.save(user);
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
     @Override
-    public ResponseDto<Void> requestResetPasswordEmail(SendResetPasswordEmailRequestDto dto) {
-        return null;
+    public ResponseDto<Void> requestResetPasswordEmail(SendResetPasswordEmailRequestDto dto) throws MessagingException {
+        String token = jwtProvider.generateResetPasswordJwtToken(dto.getEmail());
+        mailService.sendResetPasswordEmail(dto.getEmail(), token);
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
     @Override
     public ResponseDto<Void> verifyEmail(String token) {
-        return null;
+        if (token == null) {
+            return ResponseDto.fail(ResponseCode.MISSING_TOKEN, ResponseMessage.MISSING_TOKEN);
+        }
+
+        String email = jwtProvider.getEmailFromJwtToken(token);
+        boolean isEmailVerified = checkEmail(email);
+
+        if (!isEmailVerified) {
+            return ResponseDto.fail(ResponseCode.NO_EXIST_EMAIL, ResponseMessage.NO_EXIST_EMAIL);
+        }
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
     @Override

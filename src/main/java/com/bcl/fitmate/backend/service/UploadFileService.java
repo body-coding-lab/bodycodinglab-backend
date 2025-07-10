@@ -15,4 +15,5 @@ public interface UploadFileService {
     ResponseDto<FileResponseDto> getSingleMultiFile(Long fileId);
     ResponseDto<Void> deleteMultiFile(Long fileId);
     UploadFile saveSingleFile(MultipartFile file, Long targetId, TargetType targetType) throws IOException;
+    ResponseDto<FileResponseDto> updateSingleFile(Long fileId, MultipartFile newFile) throws IOException;
 }

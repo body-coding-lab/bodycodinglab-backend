@@ -5,6 +5,7 @@ import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.auth.request.*;
 import com.bcl.fitmate.backend.dto.auth.response.*;
 import com.bcl.fitmate.backend.service.AuthService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -70,7 +71,7 @@ public class AuthController {
     }
 
     @PostMapping(PASSWORD_RESET_EMAIL)
-    public ResponseEntity<ResponseDto<Void>> requestResetPasswordEmail(@Valid @RequestBody SendResetPasswordEmailRequestDto dto) {
+    public ResponseEntity<ResponseDto<Void>> requestResetPasswordEmail(@Valid @RequestBody SendResetPasswordEmailRequestDto dto) throws MessagingException {
         return ResponseDto.toResponseEntity(HttpStatus.OK, authService.requestResetPasswordEmail(dto));
     }
 

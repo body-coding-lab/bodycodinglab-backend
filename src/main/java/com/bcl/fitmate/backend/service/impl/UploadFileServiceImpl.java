@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -75,5 +76,16 @@ public class UploadFileServiceImpl implements UploadFileService {
 
             return null;
         }
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<FileResponseDto> updateSingleFile(Long fileId, MultipartFile newFile) {
+        UploadFile existing = uploadFileRepository.findById(fileId).orElse(null);
+//        if (existing == null) {
+//            return saveSingleFile(newFile, )
+//        }
+
+        return null;
     }
 }
