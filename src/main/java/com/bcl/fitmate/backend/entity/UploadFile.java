@@ -2,14 +2,14 @@ package com.bcl.fitmate.backend.entity;
 
 import com.bcl.fitmate.backend.common.enums.uploadFile.TargetType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "upload_files")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
+@Builder
 public class UploadFile extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

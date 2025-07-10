@@ -49,9 +49,9 @@ public class Trainer extends BaseTime {
     @Column(name = "education_graduate")
     private String educationGraduate;
 
-    @OneToMany(mappedBy = "trainers", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL)
     private List<TrainerCareer> trainerCareers;
 
-    @OneToMany(mappedBy = "trainers", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL)
     private List<TrainerLicense> trainerLicenses;
 }

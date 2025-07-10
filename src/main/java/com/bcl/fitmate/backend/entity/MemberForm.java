@@ -77,7 +77,7 @@ public class MemberForm {
    private PullupLevel pullupLevel;
 
    @Enumerated(EnumType.STRING)
-   @Column(name = "pullup_level", nullable = false, length = 30)
+   @Column(name = "exercise_frequency", nullable = false, length = 30)
    private ExerciseFrequency exerciseFrequency;
 
    @Enumerated(EnumType.STRING)
