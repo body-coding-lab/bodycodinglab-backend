@@ -78,7 +78,7 @@ public interface ResponseCode {
 
     String NOT_EXISTS_PAYMENT = "NEP";
     String ALREADY_EXISTS_PAYMENT = "AEP";
-
+    String NOT_PROCESS_STATUS_PAYMENT = "NPSP";
     String NOT_EXISTS_SUBSCRIPTION = "NES";
 
     String NOT_EXISTS_NOTE = "NEN";

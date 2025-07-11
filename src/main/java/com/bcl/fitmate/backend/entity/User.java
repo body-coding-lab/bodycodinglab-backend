@@ -175,11 +175,11 @@ public class User extends BaseTime {
 
     public void removeTrainerCoupons(Coupon coupon) {trainerCoupons.remove(coupon);}
 
-    public void addWriterNotes(Note note){writerNotes.add;}
+    public void addWriterNotes(Note note){writerNotes.add(note);}
 
-    public void addReceiverNotes(Note note){receiverNotes.add;}
+    public void addReceiverNotes(Note note){receiverNotes.add(note);}
 
-    public void removeWriterNotes(Note note){writerNotes.remove;}
+    public void removeWriterNotes(Note note){writerNotes.remove(note);}
 
-    public void removeReceiverNotes(Note note){receiverNotes.remove;}
+    public void removeReceiverNotes(Note note){receiverNotes.remove(note);}
 }
