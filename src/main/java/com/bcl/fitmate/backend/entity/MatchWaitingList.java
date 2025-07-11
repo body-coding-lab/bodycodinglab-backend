@@ -36,4 +36,7 @@ public class MatchWaitingList {
     @Enumerated(EnumType.STRING)
     @Column(name = "approved_status", nullable = false)
     private ApprovedStatus approvedStatus;
+
+    @Column(name = "reject_response", nullable = true)
+    private String rejectResponse;
 }

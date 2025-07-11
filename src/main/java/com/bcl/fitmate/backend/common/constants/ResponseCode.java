@@ -73,10 +73,14 @@ public interface ResponseCode {
 
     String ALREADY_EXISTS_MATCH = "AEM";
     String NOT_EXISTS_MATCH_WAITING_LIST = "NEMWL";
+    String NOT_EXISTS_MATCH_WAITING_LIST_PERMISSION = "NEMWLP";
     String NOT_EXISTS_MATCH = "NEM";
 
     String NOT_EXISTS_PAYMENT = "NEP";
     String ALREADY_EXISTS_PAYMENT = "AEP";
 
     String NOT_EXISTS_SUBSCRIPTION = "NES";
+
+    String NOT_EXISTS_NOTE = "NEN";
+    String NOT_EXISTS_NOTE_PERMISSION = "NENP";
 }

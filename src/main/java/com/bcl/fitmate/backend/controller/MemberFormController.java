@@ -1,6 +1,7 @@
 package com.bcl.fitmate.backend.controller;
 
 import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
+import com.bcl.fitmate.backend.config.security.UserPrincipal;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.memberForm.request.CreateMemberFormRequestDto;
 import com.bcl.fitmate.backend.dto.memberForm.response.CreateMemberFormResponseDto;
@@ -23,22 +24,20 @@ public class MemberFormController {
     @PreAuthorize("hasRole('MEMBER')")
     @PostMapping
     public ResponseEntity<ResponseDto<CreateMemberFormResponseDto>> createMemberForm(
-            @AuthenticationPrincipal Long userId,
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @Valid @RequestBody CreateMemberFormRequestDto dto
             ){
-        ResponseDto<CreateMemberFormResponseDto> response = memberFormService.createMemberForm(userId, dto);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        Long userId = userPrincipal.getId();
+        return ResponseDto.toResponseEntity(HttpStatus.CREATED, memberFormService.createMemberForm(userId, dto));
     }
 
 
     @PreAuthorize("hasRole('MEMBER')")
     @GetMapping
     public ResponseEntity<ResponseDto<GetMemberFormResponseDto>> getMemberForm(
-            @AuthenticationPrincipal Long userId
+            @AuthenticationPrincipal UserPrincipal userPrincipal
     ){
-        ResponseDto<GetMemberFormResponseDto> response = memberFormService.getMemberForm(userId);
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        Long userId = userPrincipal.getId();
+        return ResponseDto.toResponseEntity(HttpStatus.OK, memberFormService.getMemberForm(userId));
     }
 }

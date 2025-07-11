@@ -3,54 +3,220 @@ package com.bcl.fitmate.backend.service.impl;
 import com.bcl.fitmate.backend.common.constants.ResponseCode;
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
 import com.bcl.fitmate.backend.common.enums.coupon.CouponStatus;
+import com.bcl.fitmate.backend.common.util.DateUtils;
 import com.bcl.fitmate.backend.dto.ResponseDto;
+import com.bcl.fitmate.backend.dto.coupon.request.PutCouponRequestDto;
 import com.bcl.fitmate.backend.dto.coupon.response.CreateCouponResponseDto;
+import com.bcl.fitmate.backend.dto.coupon.response.GetMemberCouponResponseDto;
+import com.bcl.fitmate.backend.dto.coupon.response.GetTrainerCouponResponseDto;
 import com.bcl.fitmate.backend.entity.Coupon;
 import com.bcl.fitmate.backend.entity.User;
 import com.bcl.fitmate.backend.repository.CouponRepository;
 import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.CouponService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
+@Service
 @RequiredArgsConstructor
 public class CouponServiceImpl implements CouponService {
-    private final UserRepository userRepository;
+
     private final CouponRepository couponRepository;
+    private final UserRepository userRepository;
 
-    public ResponseDto<CreateCouponResponseDto> creatCoupon(Long userId, Long trainerId){
-        CreateCouponResponseDto response = null;
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * *")
+    public void changeExpireCoupons(){
+        LocalDate today = LocalDate.now();
+        List<Coupon> couponsToExpire = couponRepository.findByExpirationPeriodBeforeAndCouponStatus(today, CouponStatus.NOT_USED);
 
-        User member = userRepository.findById(userId)
-                .orElse(null);
+       for (Coupon coupon : couponsToExpire){
+           coupon.setCouponStatus(CouponStatus.EXPIRED);
+
+           User member = coupon.getMember();
+           if(member != null){
+               member.removeMemberCoupons(coupon);
+               member.addMemberCoupons(coupon);
+           }
+       }
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * *")
+    public void deleteExpireCoupon() {
+        LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
+
+        List<Coupon> expiredCouponsToDelete = couponRepository.findByCouponStatusAndExpirationPeriodBefore(CouponStatus.EXPIRED, sixMonthsAgo);
+
+        for (Coupon coupon : expiredCouponsToDelete) {
+            User member = coupon.getMember();
+            if (member != null) {
+                member.removeMemberCoupons(coupon);
+            }
+        }
+        couponRepository.deleteAll(expiredCouponsToDelete);
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * *")
+    public void deleteCompleteCoupon(){
+        LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
+        LocalDateTime cutoffDateTime = sixMonthsAgo.atStartOfDay();
+
+        List<Coupon> oldCompleteCoupons = couponRepository.findByCouponStatusAndUsedDateBefore(CouponStatus.COMPLETE, cutoffDateTime);
+
+        for(Coupon coupon : oldCompleteCoupons){
+            User trainer = coupon.getTrainer();
+            if(trainer != null){
+                trainer.removeTrainerCoupons(coupon);
+            }
+        }
+
+        couponRepository.deleteAll(oldCompleteCoupons);
+    }
+
+    @Transactional
+    public void createCoupon(Long userId, Long trainerId){
+        User member = userRepository.findById(userId).orElse(null);
+
+        if(member == null){
+            throw new EntityNotFoundException(ResponseMessage.MEMBER_NOT_FOUND);
+        }
+
+        User trainer = userRepository.findById(trainerId).orElse(null);
+
+        if(trainer == null){
+            throw new EntityNotFoundException(ResponseMessage.MEMBER_NOT_FOUND);
+        }
+
+        Coupon coupon = Coupon.builder()
+                .member(member)
+                .trainer(trainer)
+                .expirationPeriod(LocalDate.now().plusMonths(3))
+                .usedDate(null)
+                .couponStatus(CouponStatus.NOT_USED)
+                .build();
+
+        member.addMemberCoupons(coupon);
+        couponRepository.save(coupon);
+    }
+
+    @Override
+    public ResponseDto<List<GetMemberCouponResponseDto>> getMemberCoupons(Long userId, CouponStatus status) {
+        List<GetMemberCouponResponseDto> responseCoupons = null;
+
+        User member = userRepository.findById(userId).orElse(null);
 
         if(member == null){
             return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.MEMBER_NOT_FOUND);
         }
 
-        User trainer = userRepository.findById(userId)
-                .orElse(null);
+        List<Coupon> coupons = member.getMemberCoupons();
+
+        List<Coupon> memberCoupons = coupons.stream()
+                .filter(coupon -> coupon.getCouponStatus().equals(status))
+                .toList();
+
+        responseCoupons = memberCoupons.stream()
+                .map(coupon -> new GetMemberCouponResponseDto(
+                        coupon.getId(),
+                        coupon.getTrainer().getName(),
+                        coupon.getExpirationPeriod(),
+                        coupon.getCouponStatus()
+                )).toList();
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, responseCoupons);
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<Void> putMemberCoupon(Long userId, Long couponId) {
+        User member = userRepository.findById(userId).orElse(null);
+
+        if(member == null){
+            return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.MEMBER_NOT_FOUND);
+        }
+
+        Coupon coupon = couponRepository.findById(couponId).orElse(null);
+
+        if(coupon == null){
+            return ResponseDto.fail(ResponseCode.NOT_EXISTS_COUPON, ResponseMessage.NOT_EXISTS_COUPON);
+        }
+
+        coupon.setCouponStatus(CouponStatus.APPLICATION);
+        couponRepository.save(coupon);
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+    }
+
+    @Override
+    public ResponseDto<List<GetTrainerCouponResponseDto>> getTrainerCoupons(Long userId, CouponStatus status) {
+        List<GetTrainerCouponResponseDto> responseCoupons = null;
+
+        User trainer = userRepository.findById(userId).orElse(null);
 
         if(trainer == null){
             return ResponseDto.fail(ResponseCode.TRAINER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
         }
 
+        List<Coupon> coupons = trainer.getTrainerCoupons();
 
-        Coupon coupon = new Coupon(
-                null,
-                member,
-                trainer,
-                LocalDate.now().plusMonths(3),
-                null,
-                CouponStatus.NOT_USED
-        );
+        List<Coupon> trainerCoupons = coupons.stream()
+                .filter(coupon -> coupon.getCouponStatus().equals(status))
+                .toList();
 
-        //member.addMemberCoupons(coupon);
+        if(status == CouponStatus.APPLICATION){
+            responseCoupons = trainerCoupons.stream()
+                    .map(coupon -> new GetTrainerCouponResponseDto(
+                            coupon.getId(),
+                            coupon.getMember().getName(),
+                            coupon.getExpirationPeriod(),
+                            coupon.getCouponStatus()
+                    )).collect(Collectors.toList());
+        }else if(status == CouponStatus.COMPLETE){
+            responseCoupons = trainerCoupons.stream()
+                    .map(coupon -> new GetTrainerCouponResponseDto(
+                            coupon.getId(),
+                            coupon.getMember().getName(),
+                            coupon.getExpirationPeriod(),
+                            coupon.getUsedDate(),
+                            coupon.getCouponStatus()
+                    )).collect(Collectors.toList());
+        }
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, responseCoupons);
+    }
+
+    @Override
+    public ResponseDto<Void> putTrainerCoupon(Long userId, Long couponId, PutCouponRequestDto dto) {
+        User trainer = userRepository.findById(userId).orElse(null);
+
+        if (trainer == null) {
+            return ResponseDto.fail(ResponseCode.TRAINER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
+        }
+
+        Coupon coupon = couponRepository.findById(couponId).orElse(null);
+
+        if(coupon == null){
+            return ResponseDto.fail(ResponseCode.NOT_EXISTS_COUPON, ResponseMessage.NOT_EXISTS_COUPON);
+        }
+
+        LocalDateTime usedDate = LocalDate.parse(dto.getUsedDate(), DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay();
+
+        coupon.setUsedDate(DateUtils.parse(DateUtils.format(usedDate)));
+        coupon.setCouponStatus(CouponStatus.COMPLETE);
+
         couponRepository.save(coupon);
 
-        response = new CreateCouponResponseDto(coupon.getId());
-
-        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, response);
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 }

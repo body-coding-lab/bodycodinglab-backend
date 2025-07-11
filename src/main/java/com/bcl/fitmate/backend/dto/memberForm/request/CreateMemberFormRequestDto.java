@@ -11,7 +11,7 @@ import lombok.Getter;
 @Valid
 public class CreateMemberFormRequestDto {
     @NotNull(message = "체형은 필수 입력란입니다.")
-    private BodyForm bodyFrom;
+    private BodyForm bodyForm;
     @NotNull(message = "목표는 필수 입력란입니다.")
     private Goal goal;
     @NotNull(message = "BMI는 필수 입력란입니다.")
