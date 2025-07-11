@@ -2,7 +2,9 @@ package com.bcl.fitmate.backend.service.impl;
 
 import com.bcl.fitmate.backend.common.constants.ResponseCode;
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
+import com.bcl.fitmate.backend.common.enums.trainer.TrainerStatus;
 import com.bcl.fitmate.backend.common.enums.uploadFile.TargetType;
+import com.bcl.fitmate.backend.common.enums.user.UserRole;
 import com.bcl.fitmate.backend.common.util.DateUtils;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.trainer.request.ReapplyTrainerRequestDto;
@@ -57,8 +59,8 @@ public class TrainerServiceImpl implements TrainerService {
         trainerInfo.setShortIntroduce(dto.getShortIntroduce());
         trainerInfo.setLongIntroduce(dto.getLongIntroduce());
         trainerInfo.setEducationName(dto.getEducationName());
-        trainerInfo.setEducationEntrance(dto.getEducationEntrance());
-        trainerInfo.setEducationGraduate(dto.getEducationGraduate());
+        trainerInfo.setEducationEntrance(formattedEntrance);
+        trainerInfo.setEducationGraduate(formattedGraduate);
 
         Trainer updatedInfo = trainerRepository.save(trainerInfo);
 
@@ -67,9 +69,10 @@ public class TrainerServiceImpl implements TrainerService {
                     .filter(file -> !file.isEmpty())
                     .collect(Collectors.toList());
 
-            if(!nonEmptyFiles.isEmpty()) {
+            if (!nonEmptyFiles.isEmpty()) {
                 uploadFileService.uploadMultiFiles(nonEmptyFiles, user.getTrainer().getId(), TargetType.INFO);
             }
+        }
         
         data = TrainerInfoResponseDto.builder()
                 .id(updatedInfo.getId())
@@ -85,6 +88,22 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public ResponseDto<Void> reapplyTrainer(Long id, ReapplyTrainerRequestDto dto, MultipartFile attachmentFile) {
-        return null;
+        User user = userRepository.findById(id)
+                .orElse(null);
+
+        if(user == null) {
+            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
+        }
+
+        if(!user.getRole().getName().equals(UserRole.TRAINER)) {
+            return ResponseDto.fail(ResponseCode.TRAINER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
+        }
+
+        user.getTrainer().setJobAddress(dto.getJobAddress());
+        user.getTrainer().setTrainerStatus(TrainerStatus.PENDING);
+//        user.getTrainer().setAttachmentFile(uploadFileService.updateSingleFile(fileId, user.getTrainer().getId()), TargetType.ATTACHMENT, attachmentFile);
+        userRepository.save(user);
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 }
