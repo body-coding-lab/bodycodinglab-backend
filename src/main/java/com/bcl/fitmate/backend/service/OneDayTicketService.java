@@ -12,7 +12,7 @@ import java.util.List;
 public interface OneDayTicketService {
     ResponseDto<GetMemberAllTicketsResultDto> getMemberAllTickets(Long id);
     ResponseDto<List<GetTrainerAllTicketsResponseDto>> getTrainerAllTickets(Long id);
-    ResponseDto<Void> issueOneDayTicket(Long id, TicketIssueRequestDto dto);
-    ResponseDto<Void> useOneDayTicket(Long id, Long ticketId, TicketUseRequestDto dto);
-    ResponseDto<Void> cancelOneDayTicket(Long id, Long ticketId, TicketCancelRequestDto dto);
+    ResponseDto<Void> issueOneDayTicket(Long id, TicketIssueRequestDto dto) throws Exception;
+    ResponseDto<Void> useOneDayTicket(Long id, Long ticketId, TicketUseRequestDto dto) throws Exception;
+    ResponseDto<Void> cancelOneDayTicket(Long id, Long ticketId, TicketCancelRequestDto dto) throws Exception;
 }

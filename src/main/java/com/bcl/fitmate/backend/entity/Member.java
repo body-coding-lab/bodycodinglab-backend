@@ -60,4 +60,8 @@ public class Member {
         }
         this.oneDayTicketCount--;
     }
+
+    public void plusOneDayTicketCount() {
+        this.oneDayTicketCount++;
+    }
 }
