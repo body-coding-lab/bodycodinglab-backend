@@ -81,6 +81,7 @@ public class MailServiceImpl implements MailService {
         message.setText(body, "utf-8", "html");
         return message;
     }
+
     private MimeMessage createTrainerApproveMail(String email) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         message.setFrom(sender);

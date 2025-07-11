@@ -11,14 +11,16 @@ import com.bcl.fitmate.backend.entity.User;
 import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 public interface UserService {
     ResponseDto<GetUserInfoResponseDto> getUserInfo(Long id);
     ResponseDto<GetMemberInfoResponseDto> getMemberInfo(Long id);
-    ResponseDto<GetMemberInfoResponseDto> updateMemberInfo(Long id, @Valid UpdateMemberInfoRequestDto dto);
+    ResponseDto<Void> updateMemberInfo(Long id, @Valid UpdateMemberInfoRequestDto dto);
     ResponseDto<GetTrainerInfoResponseDto> getTrainerInfo(Long id);
-    ResponseDto<GetTrainerInfoResponseDto> updateTrainerInfo(Long id, @Valid UpdateTrainerInfoRequestDto dto);
+    ResponseDto<Void> updateTrainerInfo(Long id, @Valid UpdateTrainerInfoRequestDto dto);
     ResponseDto<Void> deleteUser(Long id, @Valid DeleteUserRequestDto dto);
-    ResponseDto<Void> updateProfileImage(Long id, MultipartFile profileImage);
+    ResponseDto<Void> updateProfileImage(Long id, MultipartFile profileImage) throws IOException;
     ResponseDto<Void> deleteProfileImage(Long id);
     User getUser(Long id);
 }

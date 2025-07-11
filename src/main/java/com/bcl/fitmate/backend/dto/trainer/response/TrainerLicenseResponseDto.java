@@ -1,7 +1,7 @@
 package com.bcl.fitmate.backend.dto.trainer.response;
 
 import com.bcl.fitmate.backend.common.enums.trainer.LicenseType;
-import com.bcl.fitmate.backend.dto.FileResponseDto;
+import com.bcl.fitmate.backend.dto.uploadFile.response.FileResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

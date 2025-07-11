@@ -47,10 +47,10 @@ public class UserController {
 
     @PreAuthorize("hasRole('MEMBER')")
     @PutMapping(MEMBER_MY_INFO)
-    public ResponseEntity<ResponseDto<GetMemberInfoResponseDto>> updateMemberInfo(
+    public ResponseEntity<ResponseDto<Void>> updateMemberInfo(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @Valid @RequestBody UpdateMemberInfoRequestDto dto
-    ) throws IOException {
+    ) {
         Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, userService.updateMemberInfo(id, dto));
     }
@@ -64,10 +64,10 @@ public class UserController {
 
     @PreAuthorize("hasRole('TRAINER')")
     @PutMapping(TRAINER_MY_INFO)
-    public ResponseEntity<ResponseDto<GetTrainerInfoResponseDto>> updateTrainerInfo(
+    public ResponseEntity<ResponseDto<Void>> updateTrainerInfo(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @Valid @RequestBody UpdateTrainerInfoRequestDto dto
-    ) throws IOException {
+    ) {
         Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, userService.updateTrainerInfo(id, dto));
     }
@@ -94,7 +94,7 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
     @DeleteMapping(PROFILE_IMAGE)
-    public ResponseEntity<ResponseDto<Void>> deleteProfileImage(@AuthenticationPrincipal UserPrincipal userPrincipal) throws IOException {
+    public ResponseEntity<ResponseDto<Void>> deleteProfileImage(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, userService.deleteProfileImage(id));
     }

@@ -1,11 +1,10 @@
 package com.bcl.fitmate.backend.dto.board.response;
 
 import com.bcl.fitmate.backend.common.enums.board.Category;
-import com.bcl.fitmate.backend.dto.FileResponseDto;
+import com.bcl.fitmate.backend.dto.uploadFile.response.FileResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;

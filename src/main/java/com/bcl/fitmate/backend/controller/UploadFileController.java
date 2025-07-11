@@ -4,16 +4,20 @@ import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.common.constants.ResponseCode;
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
 import com.bcl.fitmate.backend.common.enums.uploadFile.TargetType;
-import com.bcl.fitmate.backend.dto.FileResponseDto;
+import com.bcl.fitmate.backend.dto.uploadFile.response.FileResponseDto;
 import com.bcl.fitmate.backend.dto.ResponseDto;
+import com.bcl.fitmate.backend.dto.uploadFile.response.SingleFileResponseDto;
 import com.bcl.fitmate.backend.service.UploadFileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @RestController
@@ -22,20 +26,31 @@ import java.util.List;
 public class UploadFileController {
     private final UploadFileService uploadFileService;
 
-    private static final String PROFILE_URL = "/profile";
-    private static final String TRAINER_ATTACHMENT_URL = "/trainer-attachment";
     private static final String SINGLE_FILE = "/single/{fileId}";
     private static final String UPLOAD_MULTI_FILES = "/multi";
     private static final String GET_MULTI_FILES = "/multi";
     private static final String GET_SINGLE_MULTI_FILES = "/multi/{fileId}";
     private static final String DELETE_MULTI_FILES = "/{fileId}";
 
-    @PutMapping(SINGLE_FILE)
-    public ResponseEntity<ResponseDto<FileResponseDto>> updateSingleFile(
-            @PathVariable Long fileId,
-            @RequestPart("file") MultipartFile newFile
-    ) throws IOException {
-        return ResponseDto.toResponseEntity(HttpStatus.OK, uploadFileService.updateSingleFile(fileId, newFile));
+    @GetMapping(SINGLE_FILE)
+    public ResponseEntity<Resource> getSingleFile(@PathVariable Long fileId) throws FileNotFoundException {
+        SingleFileResponseDto dto = uploadFileService.getSingleFile(fileId);
+
+        if (dto == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (dto.getTargetType().equals(TargetType.PROFILE)) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(dto.getFileType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                    .body(dto.getResource());
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + dto.getEncodedFileName())
+                .body(dto.getResource());
     }
 
     @PostMapping(UPLOAD_MULTI_FILES)
