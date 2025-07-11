@@ -3,6 +3,8 @@ package com.bcl.fitmate.backend.dto.matchWatingList.response;
 import com.bcl.fitmate.backend.common.enums.matchWaitingList.ApprovedStatus;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -14,7 +16,7 @@ public class GetMemberMatchWaitingListResponseDto {
     private String profileImageUrl;
     private String trainerName;
     private String trainerJobAddress;
-    private String appliedAt;
+    private LocalDateTime appliedAt;
     private ApprovedStatus approvedStatus;
     private String rejectResponse;
 }

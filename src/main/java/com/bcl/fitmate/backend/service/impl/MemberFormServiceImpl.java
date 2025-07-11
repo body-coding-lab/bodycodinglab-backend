@@ -13,15 +13,15 @@ import com.bcl.fitmate.backend.repository.MemberRepository;
 import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.MemberFormService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 
-
+@Service
 @RequiredArgsConstructor
 public class MemberFormServiceImpl implements MemberFormService {
 
     private final MemberRepository memberRepository;
     private final MemberFormRepository memberFormRepository;
-    private final UserRepository userRepository;
 
     @Override
     public ResponseDto<CreateMemberFormResponseDto> createMemberForm(Long userId, CreateMemberFormRequestDto dto) {
@@ -31,14 +31,14 @@ public class MemberFormServiceImpl implements MemberFormService {
                 .orElse(null);
 
         if(member == null){
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
+            return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.MEMBER_NOT_FOUND);
         }
 
         MemberForm memberForm = new MemberForm(
                 null,
                 member,
                 true,
-                dto.getBodyFrom(),
+                dto.getBodyForm(),
                 dto.getGoal(),
                 dto.getBmi(),
                 dto.getImprovedPart(),
@@ -71,7 +71,7 @@ public class MemberFormServiceImpl implements MemberFormService {
                 .orElse(null);
 
         if(member == null){
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
+            return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.MEMBER_NOT_FOUND);
         }
 
         MemberForm memberForm = memberFormRepository.findById(member.getMemberForm().getFormId())
