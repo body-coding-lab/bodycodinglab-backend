@@ -1,5 +1,6 @@
 package com.bcl.fitmate.backend.service.impl;
 
+import com.bcl.fitmate.backend.common.constants.ResponseMessage;
 import com.bcl.fitmate.backend.common.enums.uploadFile.TargetType;
 import com.bcl.fitmate.backend.dto.FileResponseDto;
 import com.bcl.fitmate.backend.dto.ResponseDto;
@@ -16,8 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -30,23 +33,77 @@ public class UploadFileServiceImpl implements UploadFileService {
 
 
     @Override
+    @Transactional
     public List<FileResponseDto> uploadMultiFiles(List<MultipartFile> files, Long targetId, TargetType targetType) {
-        return List.of();
+        List<UploadFile> savedEntities = new ArrayList<>();
+
+        File dir = new File(uploadDir);
+        if(!dir.exists()) {
+            boolean created = dir.mkdirs();
+            if(!created) {
+                throw new IllegalStateException("파일 디렉토리 생성 실패");
+            }
+        }
+
+        for(MultipartFile file: files) {
+
+            try {
+                String original = file.getOriginalFilename();
+                String uuidName = UUID.randomUUID() + "_" + original;
+                String fullPath = uploadDir + "/" + uuidName;
+
+                file.transferTo(new File(fullPath));
+                String webPath = "/files/" + uuidName;
+
+                UploadFile uploadFile = UploadFile.builder()
+                        .originalName(original)
+                        .fileName(uuidName)
+                        .filePath(webPath)
+                        .fileSize(file.getSize())
+                        .fileType(file.getContentType())
+                        .targetId(targetId)
+                        .targetType(targetType)
+                        .build();
+
+                savedEntities.add(uploadFile);
+            } catch (IOException e) {
+                throw new IllegalStateException("파일 저장 중 오류 발생", e);
+            }
+        }
+
+        List<UploadFile> saved = uploadFileRepository.saveAll(savedEntities);
+
+        return saved.stream()
+                .map(FileResponseDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FileResponseDto> getMultiFiles(Long targetId, TargetType targetType) {
-        return List.of();
+        List<UploadFile> files = uploadFileRepository.findAllByTargetIdAndTargetType(targetId, targetType);
+        return files.stream()
+                .map(FileResponseDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
     public FileResponseDto getSingleMultiFile(Long fileId) {
-        return null;
+        UploadFile file = uploadFileRepository.findById(fileId)
+                .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.FILE_NOT_ATTACHED));
+        return FileResponseDto.fromEntity(file);
     }
 
     @Override
-    public Void deleteMultiFile(Long fileId) {
-        return null;
+    public void deleteFile(Long fileId)  {
+        UploadFile file = uploadFileRepository.findById(fileId)
+                .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.FILE_NOT_ATTACHED));
+
+        File physicalFile = new File(file.getFilePath() + file.getFileName());
+        if(physicalFile.exists()) {
+            physicalFile.delete();
+        }
+        uploadFileRepository.deleteById(fileId);
     }
 
     @Override

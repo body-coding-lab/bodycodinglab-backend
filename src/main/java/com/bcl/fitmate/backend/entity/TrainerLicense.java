@@ -26,4 +26,13 @@ public class TrainerLicense extends BaseTime {
 
     @Column(nullable = false, name = "license_name")
     private String licenseName;
+
+    public static TrainerLicense create(Trainer trainer, LicenseType licenseType,
+                                       String licenseName) {
+        TrainerLicense license = new TrainerLicense();
+        license.trainer = trainer;
+        license.licenseType = licenseType;
+        license.licenseName = licenseName;
+        return license;
+    }
 }

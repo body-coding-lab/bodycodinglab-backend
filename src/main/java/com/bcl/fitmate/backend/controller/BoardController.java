@@ -30,9 +30,9 @@ public class BoardController {
     private static final String DELETE_POST = "/{matchId}/posts/{postId}";
     private static final String GET_POST_DETAIL = "/{matchId}/posts/{postId}";
     private static final String GET_POST_LIST = "/{matchId}/posts";
-    private static final String SEARCH_POST_NAME = "/{matchId}/search-name";
-    private static final String SEARCH_POST_TITLE = "/{matchId}/search-title";
-    private static final String SEARCH_POST_CONTENT = "/{matchId}/search-content";
+    private static final String SEARCH_POST_BY_NAME = "/{matchId}/search-name";
+    private static final String SEARCH_POST_BY_TITLE = "/{matchId}/search-title";
+    private static final String SEARCH_POST_BY_CONTENT = "/{matchId}/search-content";
 
 
     @PostMapping(CREATE_POST)
@@ -90,7 +90,7 @@ public class BoardController {
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.getPostList(id, matchId, category, page, size));
     }
 
-    @GetMapping(SEARCH_POST_NAME)
+    @GetMapping(SEARCH_POST_BY_NAME)
     public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> searchPostByName(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
@@ -103,7 +103,7 @@ public class BoardController {
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.searchPostByName(id, matchId, category, writerName, page, size));
     }
 
-    @GetMapping(SEARCH_POST_NAME)
+    @GetMapping(SEARCH_POST_BY_TITLE)
     public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> searchPostByTitle(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
@@ -116,7 +116,7 @@ public class BoardController {
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.searchPostByTitle(id, matchId, category, title, page, size));
     }
 
-    @GetMapping(SEARCH_POST_NAME)
+    @GetMapping(SEARCH_POST_BY_CONTENT)
     public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> searchPostByContent(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,

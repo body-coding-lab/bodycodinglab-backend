@@ -2,18 +2,16 @@ package com.bcl.fitmate.backend.entity;
 
 import com.bcl.fitmate.backend.common.enums.oneDayTicket.OneDayTicketStatus;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "one_day_tickets")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
-@Setter
+@Getter @Setter
+@AllArgsConstructor
+@Builder
 public class OneDayTicket extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -28,7 +28,7 @@ public class UploadFileController {
     private static final String UPLOAD_MULTI_FILES = "/multi";
     private static final String GET_MULTI_FILES = "/multi";
     private static final String GET_SINGLE_MULTI_FILES = "/multi/{fileId}";
-    private static final String DELETE_MULTI_FILES = "/multi/{fileId}";
+    private static final String DELETE_MULTI_FILES = "/{fileId}";
 
     @PutMapping(SINGLE_FILE)
     public ResponseEntity<ResponseDto<FileResponseDto>> updateSingleFile(
@@ -66,10 +66,10 @@ public class UploadFileController {
     }
 
     @DeleteMapping(DELETE_MULTI_FILES)
-    public ResponseEntity<ResponseDto<Void>> deleteMultiFile(
+    public ResponseEntity<ResponseDto<Void>> deleteFile(
             @PathVariable Long fileId
     ) {
-        uploadFileService.deleteMultiFile(fileId);
+        uploadFileService.deleteFile(fileId);
         return ResponseDto.toResponseEntity(HttpStatus.OK, ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS));
     }
 }
