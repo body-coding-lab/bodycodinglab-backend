@@ -81,7 +81,9 @@ public interface ResponseMessage {
 
     String NOT_EXISTS_SUBSCRIPTION = "구독 기록이 존재하지 않습니다.";
 
+
     String NOT_EXISTS_NOTE = "쪽지가 존재하지 않습니다.";
     String NOT_EXISTS_NOTE_PERMISSION = "쪽지에 대한 권한이 없습니다.";
+
 
 }
