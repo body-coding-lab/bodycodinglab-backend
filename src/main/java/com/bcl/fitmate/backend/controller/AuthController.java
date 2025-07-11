@@ -48,7 +48,7 @@ public class AuthController {
     }
 
     @PostMapping(LOGIN)
-    public ResponseEntity<ResponseDto<? extends LoginUserResponseDto>> login(@Valid @RequestBody LoginUserRequestDto dto) throws IOException {
+    public ResponseEntity<ResponseDto<? extends LoginUserResponseDto>> login(@Valid @RequestBody LoginUserRequestDto dto) {
         return ResponseEntity.ok(authService.login(dto));
     }
 

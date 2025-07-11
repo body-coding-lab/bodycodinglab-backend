@@ -3,6 +3,7 @@ package com.bcl.fitmate.backend.service.impl;
 import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.common.constants.ResponseCode;
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
+import com.bcl.fitmate.backend.common.enums.uploadFile.TargetType;
 import com.bcl.fitmate.backend.common.enums.user.UserRole;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.user.request.DeleteUserRequestDto;
@@ -21,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @Service
@@ -41,7 +44,7 @@ public class UserServiceImpl implements UserService {
         String profileImageUrl = null;
         UploadFile profileImage = user.getProfileImage();
         if (profileImage != null) {
-            profileImageUrl = ApiMappingPattern.FILE_API + "/profile/" + profileImage.getId() + "/" + profileImage.getFileType();
+            profileImageUrl = ApiMappingPattern.FILE_API + "/single/" + profileImage.getId();
         }
 
         GetUserInfoResponseDto data = GetUserInfoResponseDto.builder()
@@ -83,7 +86,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ResponseDto<GetMemberInfoResponseDto> updateMemberInfo(Long id, UpdateMemberInfoRequestDto dto) {
+    public ResponseDto<Void> updateMemberInfo(Long id, UpdateMemberInfoRequestDto dto) {
         User user = getUser(id);
         if (user == null) {
             return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseCode.USER_NOT_FOUND);
@@ -98,17 +101,7 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.save(user);
 
-        GetMemberInfoResponseDto data = GetMemberInfoResponseDto.builder()
-                .username(user.getUsername())
-                .name(user.getName())
-                .birthdate(user.getBirthdate())
-                .gender(user.getGender())
-                .phone(user.getPhone())
-                .email(user.getEmail())
-                .memberAddress(user.getMember().getMemberAddress())
-                .build();
-
-        return ResponseDto.success(ResponseCode.SUCCESS, ResponseCode.SUCCESS, data);
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseCode.SUCCESS);
     }
 
     @Override
@@ -122,7 +115,7 @@ public class UserServiceImpl implements UserService {
         String attachmentFileUrl = null;
         UploadFile attachmentFile = user.getTrainer().getAttachmentFile();
         if (attachmentFile != null) {
-            attachmentFileUrl = ApiMappingPattern.FILE_API + "/trainer-attachment/" + attachmentFile.getId() + "/" + attachmentFile.getFileType();
+            attachmentFileUrl = ApiMappingPattern.FILE_API + "/single/" + attachmentFile.getId();
         }
 
         GetTrainerInfoResponseDto data = GetTrainerInfoResponseDto.builder()
@@ -143,7 +136,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ResponseDto<GetTrainerInfoResponseDto> updateTrainerInfo(Long id, UpdateTrainerInfoRequestDto dto) {
+    public ResponseDto<Void> updateTrainerInfo(Long id, UpdateTrainerInfoRequestDto dto) {
         User user = getUser(id);
         if (user == null) {
             return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseCode.USER_NOT_FOUND);
@@ -152,26 +145,7 @@ public class UserServiceImpl implements UserService {
         user.setName(dto.getName());
         userRepository.save(user);
 
-        String attachmentFileUrl = null;
-        UploadFile attachmentFile = user.getTrainer().getAttachmentFile();
-        if (attachmentFile != null) {
-            attachmentFileUrl = ApiMappingPattern.FILE_API + "/trainer-attachment/" + attachmentFile.getId() + "/" + attachmentFile.getFileType();
-        }
-
-        GetTrainerInfoResponseDto data = GetTrainerInfoResponseDto.builder()
-                .trainerId(user.getTrainer().getId())
-                .username(user.getUsername())
-                .name(user.getName())
-                .birthdate(user.getBirthdate())
-                .gender(user.getGender())
-                .phone(user.getPhone())
-                .email(user.getEmail())
-                .jobAddress(user.getTrainer().getJobAddress())
-                .attachmentFileUrl(attachmentFileUrl)
-                .trainerStatus(user.getTrainer().getTrainerStatus())
-                .build();
-
-        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
     @Override
@@ -197,7 +171,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ResponseDto<Void> updateProfileImage(Long id, MultipartFile profileImage) {
+    public ResponseDto<Void> updateProfileImage(Long id, MultipartFile profileImage) throws IOException {
         User user = getUser(id);
         if (user == null) {
             return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseCode.USER_NOT_FOUND);
@@ -207,19 +181,20 @@ public class UserServiceImpl implements UserService {
             return ResponseDto.fail(ResponseCode.FILE_NOT_ATTACHED, ResponseCode.FILE_NOT_ATTACHED);
         }
 
-//        user.setProfileImage(up);
+        user.setProfileImage(uploadFileService.updateSingleFile(user.getProfileImage().getId(), user.getId(), TargetType.PROFILE, profileImage));
 
-        return null;
+        return ResponseDto.success(ResponseMessage.SUCCESS, ResponseMessage.SUCCESS);
     }
 
     @Override
+    @Transactional
     public ResponseDto<Void> deleteProfileImage(Long id) {
         User user = getUser(id);
         if (user == null) {
             return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseCode.USER_NOT_FOUND);
         }
 
-        uploadFileService.deleteFile(user.getProfileImage().getId());
+//        uploadFileService.deleteFile(user.getProfileImage().getId());
         user.setProfileImage(null);
         userRepository.save(user);
 

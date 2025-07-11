@@ -39,6 +39,7 @@ public class AdminServiceImpl implements AdminService {
     private final UploadFileService uploadFileService;
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<Page<GetAllTrainersResponseDto>> getAllTrainers(int page, int size, TrainerStatus trainerStatus) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("trainerId").descending());
         Page<TrainerListView> trainerPage = null;
@@ -55,6 +56,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<GetTrainerDetailResponseDto> getTrainerDetail(Long trainerId) {
         Trainer trainer = trainerRepository.findById(trainerId)
                 .orElse(null);
@@ -66,13 +68,13 @@ public class AdminServiceImpl implements AdminService {
         String attachmentFileUrl = null;
         UploadFile attachmentFile = trainer.getAttachmentFile();
         if (attachmentFile != null) {
-            attachmentFileUrl = ApiMappingPattern.FILE_API + "/trainer-attachment/" + attachmentFile.getId() + "/" + attachmentFile.getFileType();
+            attachmentFileUrl = ApiMappingPattern.FILE_API + "/single/" + attachmentFile.getId();
         }
 
         String profileImageUrl = null;
         UploadFile profileImage = trainer.getUser().getProfileImage();
         if (attachmentFile != null) {
-            profileImageUrl = ApiMappingPattern.FILE_API + "/profile/" + profileImage.getId() + "/" + profileImage.getFileType();
+            profileImageUrl = ApiMappingPattern.FILE_API + "/single/" + profileImage.getId();
         }
 
         GetTrainerDetailResponseDto data = GetTrainerDetailResponseDto.builder()
@@ -95,7 +97,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
-    public ResponseDto<GetTrainerDetailResponseDto> updateTrainerStatus(Long id, Long trainerId, UpdateTrainerStatusRequestDto dto) throws MessagingException {
+    public ResponseDto<Void> updateTrainerStatus(Long id, Long trainerId, UpdateTrainerStatusRequestDto dto) throws MessagingException {
         User user = userService.getUser(id);
 
         if (user == null) {
@@ -113,18 +115,6 @@ public class AdminServiceImpl implements AdminService {
             return ResponseDto.fail(ResponseCode.ALREADY_EQUAL_STATUS, ResponseMessage.ALREADY_EQUAL_STATUS);
         }
 
-        String attachmentFileUrl = null;
-        UploadFile attachmentFile = trainer.getAttachmentFile();
-        if (attachmentFile != null) {
-            attachmentFileUrl = ApiMappingPattern.FILE_API + "/trainer-attachment/" + attachmentFile.getId() + "/" + attachmentFile.getFileType();
-        }
-
-        String profileImageUrl = null;
-        UploadFile profileImage = trainer.getUser().getProfileImage();
-        if (attachmentFile != null) {
-            profileImageUrl = ApiMappingPattern.FILE_API + "/profile/" + profileImage.getId() + "/" + profileImage.getFileType();
-        }
-
         TrainerStatus prevStatus = trainer.getTrainerStatus();
 
         trainer.setTrainerStatus(dto.getNewStatus());
@@ -140,22 +130,7 @@ public class AdminServiceImpl implements AdminService {
 
         mailService.sendTrainerApprovalResultEmail(sendEmailDto);
 
-        GetTrainerDetailResponseDto data = GetTrainerDetailResponseDto.builder()
-                .trainerId(savedTrainer.getId())
-                .username(savedTrainer.getUser().getUsername())
-                .name(savedTrainer.getUser().getName())
-                .birthdate(savedTrainer.getUser().getBirthdate())
-                .gender(savedTrainer.getUser().getGender())
-                .phone(savedTrainer.getUser().getPhone())
-                .email(savedTrainer.getUser().getEmail())
-                .jobAddress(savedTrainer.getJobAddress())
-                .attachmentFileUrl(attachmentFileUrl)
-                .createdAt(DateUtils.format(savedTrainer.getCreatedAt()))
-                .status(savedTrainer.getTrainerStatus())
-                .profileImageUrl(profileImageUrl)
-                .build();
-
-        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
     private GetAllTrainersResponseDto toGetAllTrainersResponseDto(TrainerListView view) {
@@ -172,5 +147,6 @@ public class AdminServiceImpl implements AdminService {
 
     private void createLog(User user, Trainer savedTrainer, TrainerStatus prevStatus, String changeReason) {
         TrainerStatusLog trainerStatusLog = new TrainerStatusLog(user, savedTrainer, prevStatus, changeReason);
+        trainerStatusLogRepository.save(trainerStatusLog);
     }
 }

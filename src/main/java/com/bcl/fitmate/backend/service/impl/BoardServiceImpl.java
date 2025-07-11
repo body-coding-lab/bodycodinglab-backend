@@ -4,7 +4,7 @@ import com.bcl.fitmate.backend.common.constants.ResponseCode;
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
 import com.bcl.fitmate.backend.common.enums.board.Category;
 import com.bcl.fitmate.backend.common.enums.uploadFile.TargetType;
-import com.bcl.fitmate.backend.dto.FileResponseDto;
+import com.bcl.fitmate.backend.dto.uploadFile.response.FileResponseDto;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.board.request.BoardRequestDto;
 import com.bcl.fitmate.backend.dto.board.response.BoardDetailResponseDto;

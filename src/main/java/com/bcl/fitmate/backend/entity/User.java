@@ -131,6 +131,22 @@ public class User extends BaseTime {
     )
     private List<OneDayTicket> trainerOneDayTickets = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "noteWriter",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Note> writerNotes = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "noteReceiver",
+            fetch =FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Note> receiverNotes= new ArrayList<>();
+
     public void addMatchWaitingListAsTrainers(MatchWaitingList matchWaitingList) {
         matchWaitingListAsTrainers.add(matchWaitingList);
     }
@@ -154,4 +170,16 @@ public class User extends BaseTime {
     public void addTrainerCoupons(Coupon coupon) {
         trainerCoupons.add(coupon);
     }
+
+    public void removeMemberCoupons(Coupon coupon) {memberCoupons.remove(coupon);}
+
+    public void removeTrainerCoupons(Coupon coupon) {trainerCoupons.remove(coupon);}
+
+    public void addWriterNotes(Note note){writerNotes.add;}
+
+    public void addReceiverNotes(Note note){receiverNotes.add;}
+
+    public void removeWriterNotes(Note note){writerNotes.remove;}
+
+    public void removeReceiverNotes(Note note){receiverNotes.remove;}
 }

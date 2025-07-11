@@ -1,4 +1,4 @@
-package com.bcl.fitmate.backend.dto;
+package com.bcl.fitmate.backend.dto.uploadFile.response;
 
 import com.bcl.fitmate.backend.entity.UploadFile;
 import lombok.AllArgsConstructor;

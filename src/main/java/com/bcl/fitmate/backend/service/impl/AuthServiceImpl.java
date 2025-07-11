@@ -20,10 +20,10 @@ import com.bcl.fitmate.backend.service.AuthService;
 import com.bcl.fitmate.backend.service.MailService;
 import com.bcl.fitmate.backend.service.UploadFileService;
 import jakarta.mail.MessagingException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -151,6 +151,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<? extends LoginUserResponseDto> login(LoginUserRequestDto dto) {
         User user = userRepository.findByUsername(dto.getUsername())
                 .orElse(null);
@@ -166,7 +167,7 @@ public class AuthServiceImpl implements AuthService {
         String profileImageUrl = null;
         UploadFile profileImage = user.getProfileImage();
         if (profileImage != null) {
-            profileImageUrl = ApiMappingPattern.FILE_API + "/profile/" + profileImage.getId() + "/" + profileImage.getFileType();
+            profileImageUrl = ApiMappingPattern.FILE_API + "/single/" + profileImage.getId();
         }
 
         String token = jwtProvider.generateJwtToken(user.getId(), user.getRole().getName());
@@ -200,6 +201,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<RecoverUsernameResponseDto> recoverUsername(RecoverUsernameRequestDto dto) {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElse(null);
@@ -218,6 +220,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<GetResetPasswordUserResponseDto> getResetPasswordUser(GetResetPasswordUserRequestDto dto) {
         User user = userRepository.findByUsername(dto.getUsername())
                 .orElse(null);
@@ -242,6 +245,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<Void> resetPassword(String token, ResetPasswordRequestDto dto) {
         String email = jwtProvider.getEmailFromJwtToken(token);
 
@@ -275,6 +279,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<Void> verifyEmail(String token) {
         if (token == null) {
             return ResponseDto.fail(ResponseCode.MISSING_TOKEN, ResponseMessage.MISSING_TOKEN);

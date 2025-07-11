@@ -22,6 +22,7 @@ import com.bcl.fitmate.backend.service.UploadFileService;
 import com.bcl.fitmate.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,6 +38,7 @@ public class OneDayTicketServiceImpl implements OneDayTicketService {
     private final CouponService couponService;
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<GetMemberAllTicketsResultDto> getMemberAllTickets(Long id) {
         List<GetMemberAllTicketsResponseDto> ticketsResponseDtos = null;
 
@@ -53,7 +55,7 @@ public class OneDayTicketServiceImpl implements OneDayTicketService {
                     UploadFile profileImage = user.getProfileImage();
 
                     if (profileImage != null) {
-                        trainerProfileImageUrl = ApiMappingPattern.FILE_API + "/profile/" + profileImage.getId() + "/" + profileImage.getFileType();
+                        trainerProfileImageUrl = ApiMappingPattern.FILE_API + "/single/" + profileImage.getId();
                     }
 
                     return GetMemberAllTicketsResponseDto.builder()
