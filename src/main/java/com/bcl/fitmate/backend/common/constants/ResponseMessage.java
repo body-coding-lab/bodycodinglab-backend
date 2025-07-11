@@ -78,6 +78,7 @@ public interface ResponseMessage {
 
     String NOT_EXISTS_PAYMENT = "주문 내역이 존재하지 않습니다.";
     String ALREADY_EXISTS_PAYMENT = "이미 처리된 결제입니다.";
+    String NOT_PROCESS_STATUS_PAYMENT = "결제 처리가 불가능한 결제입니다.";
 
     String NOT_EXISTS_SUBSCRIPTION = "구독 기록이 존재하지 않습니다.";
 
