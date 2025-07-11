@@ -46,7 +46,7 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(TRAINER_STATUS)
-    public ResponseEntity<ResponseDto<GetTrainerDetailResponseDto>> updateTrainerStatus(
+    public ResponseEntity<ResponseDto<Void>> updateTrainerStatus(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long trainerId,
             @Valid @RequestBody UpdateTrainerStatusRequestDto dto

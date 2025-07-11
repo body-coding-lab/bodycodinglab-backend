@@ -12,5 +12,5 @@ import org.springframework.data.domain.Page;
 public interface AdminService {
     ResponseDto<Page<GetAllTrainersResponseDto>> getAllTrainers(int page, int size, TrainerStatus trainerStatus);
     ResponseDto<GetTrainerDetailResponseDto> getTrainerDetail(Long trainerId);
-    ResponseDto<GetTrainerDetailResponseDto> updateTrainerStatus(Long id, Long trainerId, @Valid UpdateTrainerStatusRequestDto dto) throws MessagingException;
+    ResponseDto<Void> updateTrainerStatus(Long id, Long trainerId, @Valid UpdateTrainerStatusRequestDto dto) throws MessagingException;
 }

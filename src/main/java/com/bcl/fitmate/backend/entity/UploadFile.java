@@ -37,4 +37,11 @@ public class UploadFile extends BaseTime {
     @Enumerated(EnumType.STRING)
     @Column(name = "target_type", nullable = false)
     private TargetType targetType;
+
+    public void updateFile(String originalName, String fileName, String fileType, Long fileSize) {
+        this.originalName = originalName;
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.fileSize = fileSize;
+    }
 }
