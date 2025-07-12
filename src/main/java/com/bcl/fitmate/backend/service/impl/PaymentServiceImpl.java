@@ -62,6 +62,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<Void> paymentFailWebHook(String orderId) {
         Payment payment = paymentRepository.findByOrderId(orderId).orElse(null);
 

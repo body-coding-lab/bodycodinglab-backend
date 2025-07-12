@@ -197,6 +197,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<Void> putTrainerCoupon(Long userId, Long couponId, PutCouponRequestDto dto) {
         User trainer = userRepository.findById(userId).orElse(null);
 

@@ -164,6 +164,7 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<Void> matchApprove(Long userId, Long matchWaitingListId, PutApproveMatchWaitingListRequestDto dto) {
         MatchWaitingList matchWaitingList = matchWaitingListRepository.findById(matchWaitingListId).orElse(null);
 
@@ -183,6 +184,7 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<Void> matchReject(Long userId, Long matchWaitingListId, PutRejectMatchWaitingListRequestDto dto) {
         MatchWaitingList matchWaitingList = matchWaitingListRepository.findById(matchWaitingListId).orElse(null);
 

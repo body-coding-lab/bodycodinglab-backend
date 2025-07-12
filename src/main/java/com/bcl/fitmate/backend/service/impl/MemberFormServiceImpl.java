@@ -14,6 +14,7 @@ import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.MemberFormService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -24,6 +25,7 @@ public class MemberFormServiceImpl implements MemberFormService {
     private final MemberFormRepository memberFormRepository;
 
     @Override
+    @Transactional
     public ResponseDto<CreateMemberFormResponseDto> createMemberForm(Long userId, CreateMemberFormRequestDto dto) {
         CreateMemberFormResponseDto response = null;
 
