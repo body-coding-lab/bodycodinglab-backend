@@ -20,7 +20,7 @@ public class TrainerDetailResponseDto {
     private String educationEntrance;
     private String educationGraduate;
     private List<TrainerCareerResponseDto> careers;
-    private List<TrainerLicenseResponseDto> licenses;
+    private List<TrainerLicenseDetailResponseDto> licenses;
     private String profileImage;
     private List<FileResponseDto> infoImages;
     private List<FileResponseDto> licenseImages;

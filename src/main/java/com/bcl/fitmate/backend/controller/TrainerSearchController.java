@@ -2,10 +2,7 @@ package com.bcl.fitmate.backend.controller;
 
 import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.dto.ResponseDto;
-import com.bcl.fitmate.backend.dto.trainer.response.TrainerCareerResponseDto;
-import com.bcl.fitmate.backend.dto.trainer.response.TrainerDetailResponseDto;
-import com.bcl.fitmate.backend.dto.trainer.response.TrainerLicenseResponseDto;
-import com.bcl.fitmate.backend.dto.trainer.response.TrainerListResponseDto;
+import com.bcl.fitmate.backend.dto.trainer.response.*;
 import com.bcl.fitmate.backend.service.TrainerSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,7 +32,7 @@ public class TrainerSearchController {
     }
 
     @GetMapping(GET_TRAINER_LICENSE)
-    public ResponseEntity<ResponseDto<List<TrainerLicenseResponseDto>>> getTrainerLicense(
+    public ResponseEntity<ResponseDto<List<TrainerLicenseDetailResponseDto>>> getTrainerLicense(
             @RequestParam Long trainerId
     ) {
         return ResponseDto.toResponseEntity(HttpStatus.OK, trainerSearchService.getTrainerLicense(trainerId));
