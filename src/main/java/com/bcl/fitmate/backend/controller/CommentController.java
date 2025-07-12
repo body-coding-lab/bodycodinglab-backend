@@ -4,7 +4,6 @@ import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.config.security.UserPrincipal;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.comment.request.CommentRequestDto;
-import com.bcl.fitmate.backend.dto.comment.response.GetCommentResponseDto;
 import com.bcl.fitmate.backend.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(ApiMappingPattern.BOARD_API)
@@ -24,12 +21,6 @@ public class CommentController {
 
     private static final String BOARD_COMMENTS = "/{boardId}/comments";
     private static final String BOARD_COMMENT_DETAIL = BOARD_COMMENTS + "/{commentId}";
-
-    @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
-    @GetMapping(BOARD_COMMENTS)
-    public ResponseEntity<ResponseDto<List<GetCommentResponseDto>>> getComments(@PathVariable Long boardId) {
-        return ResponseDto.toResponseEntity(HttpStatus.OK, commentService.getComments(boardId));
-    }
 
     @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
     @PostMapping(BOARD_COMMENTS)

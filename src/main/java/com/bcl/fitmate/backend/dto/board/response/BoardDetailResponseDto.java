@@ -1,6 +1,7 @@
 package com.bcl.fitmate.backend.dto.board.response;
 
 import com.bcl.fitmate.backend.common.enums.board.Category;
+import com.bcl.fitmate.backend.dto.comment.response.GetCommentResponseDto;
 import com.bcl.fitmate.backend.dto.uploadFile.response.FileResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,4 +25,5 @@ public class BoardDetailResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<FileResponseDto> boardImages;
+    private List<GetCommentResponseDto> comments;
 }

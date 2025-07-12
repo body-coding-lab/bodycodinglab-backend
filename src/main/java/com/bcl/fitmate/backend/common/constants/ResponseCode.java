@@ -62,6 +62,7 @@ public interface ResponseCode {
     String NOT_EXISTS_POST = "NEP";
     String COMMENT_NOT_BELONG_POST = "CNBP";
     String NOT_EXISTS_COMMENT = "NECM";
+    String NOT_COMMENT_OWNER = "NCO";
 
     String NOT_EXISTS_ONE_DAY_TICKET = "NET";
     String NOT_TRIAL_CHANCE_LEFT = "TCL";

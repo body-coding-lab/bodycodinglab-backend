@@ -98,11 +98,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public ResponseDto<Void> updateTrainerStatus(Long id, Long trainerId, UpdateTrainerStatusRequestDto dto) throws MessagingException {
-        User user = userService.getUser(id);
-
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
+        User user = userService.getUserById(id);
 
         Trainer trainer = trainerRepository.findById(trainerId)
                 .orElse(null);
