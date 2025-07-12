@@ -5,6 +5,7 @@ import com.bcl.fitmate.backend.config.security.UserPrincipal;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.trainer.request.TrainerCareerRequestDto;
 import com.bcl.fitmate.backend.dto.trainer.request.TrainerLicenseRequestDto;
+import com.bcl.fitmate.backend.dto.trainer.response.TrainerLicenseDetailResponseDto;
 import com.bcl.fitmate.backend.dto.trainer.response.TrainerLicenseResponseDto;
 import com.bcl.fitmate.backend.service.TrainerLicenseService;
 import jakarta.validation.Valid;
@@ -75,7 +76,7 @@ public class TrainerLicenseController {
 
     @PreAuthorize("hasRole('TRAINER')")
     @GetMapping(GET_ALL_TRAINER_LICENSE)
-    public ResponseEntity<ResponseDto<List<TrainerLicenseResponseDto>>> getAllTrainerLicense(
+    public ResponseEntity<ResponseDto<List<TrainerLicenseDetailResponseDto>>> getAllTrainerLicense(
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         Long id = userPrincipal.getId();

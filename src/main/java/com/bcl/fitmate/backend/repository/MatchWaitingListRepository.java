@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface MatchWaitingListRepository extends JpaRepository<MatchWaitingList, Long> {
-    Optional<List<MatchWaitingList>> findByTrainer_Id(Long trainerId);
+    List<MatchWaitingList> findByTrainer_Id(Long trainerId);
 
     Optional<MatchWaitingList> findByMember_Id(Long memberId);
 }

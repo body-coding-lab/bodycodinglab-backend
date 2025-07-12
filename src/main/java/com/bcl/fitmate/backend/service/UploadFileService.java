@@ -17,6 +17,5 @@ public interface UploadFileService {
     List<FileResponseDto> uploadMultiFiles(List<MultipartFile> files, Long targetId, TargetType targetType);
     List<FileResponseDto> getMultiFiles(Long targetId, TargetType targetType);
     FileResponseDto getSingleMultiFile(Long fileId);
-    Void deleteMultiFile(Long fileId);
-
+    void deleteFile(Long fileId);
 }

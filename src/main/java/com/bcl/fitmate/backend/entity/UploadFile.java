@@ -44,4 +44,8 @@ public class UploadFile extends BaseTime {
         this.fileType = fileType;
         this.fileSize = fileSize;
     }
+
+    public String getFullUrl() {
+        return "/files/" + this.fileName;
+    }
 }

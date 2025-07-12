@@ -11,6 +11,6 @@ public class TrainerListResponseDto {
     private Long trainerId;
     private String name;
     private String shortIntroduce;
-    private String longIntroduce;
+    private String jobAddress;
     private String profileImage;
 }
