@@ -31,6 +31,7 @@ public interface ResponseMessage {
     String NOT_MATCH_INFORMATION = "사용자 정보가 일치하지 않습니다.";
     String RESET_PASSWORD_FAIL = "비밀번호 변경에 실패하였습니다.";
     String MEMBER_NOT_FOUND = "회원을 찾을 수 없습니다.";
+    String CANNOT_DELETE_USER = "매칭 대기 또는 매칭된 내역이 있어 탈퇴할 수 없습니다.";
 
     String NO_EXIST_TOOL = "존재하지 않는 도구입니다.";
     String NO_EXIST_CUSTOMER = "존재하지 않는 고객입니다.";
