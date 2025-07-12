@@ -11,10 +11,10 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
-public class TrainerLicenseResponseDto {
+public class TrainerLicenseDetailResponseDto {
     private Long id;
     private Long trainerId;
     private LicenseType licenseType;
     private String licenseName;
-    private List<String> fileNames;
+    private List<FileResponseDto> licenseImage;
 }

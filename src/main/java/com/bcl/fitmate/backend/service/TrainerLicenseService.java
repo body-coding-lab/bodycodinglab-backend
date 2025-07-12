@@ -2,6 +2,7 @@ package com.bcl.fitmate.backend.service;
 
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.trainer.request.TrainerLicenseRequestDto;
+import com.bcl.fitmate.backend.dto.trainer.response.TrainerLicenseDetailResponseDto;
 import com.bcl.fitmate.backend.dto.trainer.response.TrainerLicenseResponseDto;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,7 +17,7 @@ public interface TrainerLicenseService {
 
     ResponseDto<Void> deleteAllTrainerLicense(Long id);
 
-    ResponseDto<List<TrainerLicenseResponseDto>> getAllTrainerLicense(Long id);
+    ResponseDto<List<TrainerLicenseDetailResponseDto>> getAllTrainerLicense(Long id);
 
     ResponseDto<TrainerLicenseResponseDto> getRecentTrainerLicense(Long id);
 }
