@@ -1,17 +1,18 @@
 package com.bcl.fitmate.backend.service.impl;
 
+import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.common.constants.ResponseCode;
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
 import com.bcl.fitmate.backend.common.enums.board.Category;
 import com.bcl.fitmate.backend.common.enums.uploadFile.TargetType;
+import com.bcl.fitmate.backend.common.util.DateUtils;
+import com.bcl.fitmate.backend.dto.comment.response.GetCommentResponseDto;
 import com.bcl.fitmate.backend.dto.uploadFile.response.FileResponseDto;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.board.request.BoardRequestDto;
 import com.bcl.fitmate.backend.dto.board.response.BoardDetailResponseDto;
 import com.bcl.fitmate.backend.dto.board.response.BoardListResponseDto;
-import com.bcl.fitmate.backend.entity.Board;
-import com.bcl.fitmate.backend.entity.Match;
-import com.bcl.fitmate.backend.entity.User;
+import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.repository.BoardRepository;
 import com.bcl.fitmate.backend.repository.MatchRepository;
 import com.bcl.fitmate.backend.repository.UserRepository;
@@ -40,6 +41,7 @@ public class BoardServiceImpl implements BoardService {
     private final UploadFileService uploadFileService;
 
     @Override
+    @Transactional
     public ResponseDto<BoardDetailResponseDto> createPost(Long id, Long matchId, BoardRequestDto dto, List<MultipartFile> files) {
         BoardDetailResponseDto data = null;
 
@@ -101,6 +103,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<BoardDetailResponseDto> updatePost(Long id, Long matchId, Long postId, BoardRequestDto dto, List<MultipartFile> files) {
         BoardDetailResponseDto data = null;
 
@@ -168,6 +171,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<Void> deletePost(Long id, Long matchId, Long postId) {
         User user = userRepository.findById(id)
                 .orElse(null);
@@ -203,6 +207,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<BoardDetailResponseDto> getPost(Long id, Long matchId, Long postId) {
         User user = userRepository.findById(id)
                 .orElse(null);
@@ -235,6 +240,9 @@ public class BoardServiceImpl implements BoardService {
         board.increaseViewCount();
 
         List<FileResponseDto> boardImages = uploadFileService.getMultiFiles(board.getId(), TargetType.BOARD);
+        List<GetCommentResponseDto> comments = board.getComments().stream()
+                .map(this::toGetCommentResponseDto)
+                .collect(Collectors.toList());
 
         BoardDetailResponseDto data = BoardDetailResponseDto.builder()
                 .boardId(board.getId())
@@ -248,6 +256,7 @@ public class BoardServiceImpl implements BoardService {
                 .createdAt(board.getCreatedAt())
                 .updatedAt(board.getUpdatedAt())
                 .boardImages(boardImages)
+                .comments(comments)
                 .build();
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
     }
@@ -410,6 +419,24 @@ public class BoardServiceImpl implements BoardService {
                 .build());
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
+    }
+
+    private GetCommentResponseDto toGetCommentResponseDto(Comment comment) {
+        User commenter = comment.getCommenter();
+        String profileImageUrl = null;
+        UploadFile profileImage = commenter.getProfileImage();
+        if (profileImage != null) {
+            profileImageUrl = ApiMappingPattern.FILE_API + "/single/" + profileImage.getId();
+        }
+
+        return GetCommentResponseDto.builder()
+                .id(comment.getId())
+                .commenterUsername(commenter.getUsername())
+                .commenterName(commenter.getName())
+                .commenterProfileImageUrl(profileImageUrl)
+                .content(comment.getContent())
+                .createdAt(DateUtils.format(comment.getCreatedAt()))
+                .build();
     }
 
 }

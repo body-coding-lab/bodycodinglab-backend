@@ -41,12 +41,7 @@ public class OneDayTicketServiceImpl implements OneDayTicketService {
     @Transactional(readOnly = true)
     public ResponseDto<GetMemberAllTicketsResultDto> getMemberAllTickets(Long id) {
         List<GetMemberAllTicketsResponseDto> ticketsResponseDtos = null;
-
-        User user = userService.getUser(id);
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseCode.USER_NOT_FOUND);
-        }
-
+        User user = userService.getUserById(id);
         List<OneDayTicket> tickets = oneDayTicketRepository.findByMemberId(id);
 
         ticketsResponseDtos = tickets.stream()
@@ -82,6 +77,7 @@ public class OneDayTicketServiceImpl implements OneDayTicketService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<List<GetTrainerAllTicketsResponseDto>> getTrainerAllTickets(Long id) {
         User user = userRepository.findById(id)
                 .orElse(null);
@@ -109,6 +105,7 @@ public class OneDayTicketServiceImpl implements OneDayTicketService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<Void> issueOneDayTicket(Long id, TicketIssueRequestDto dto) throws Exception {
         User user = userRepository.findById(id)
                 .orElse(null);
@@ -156,6 +153,7 @@ public class OneDayTicketServiceImpl implements OneDayTicketService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<Void> useOneDayTicket(Long id, Long ticketId, TicketUseRequestDto dto) throws Exception {
         OneDayTicket ticket = getTicket(ticketId);
 
@@ -177,6 +175,7 @@ public class OneDayTicketServiceImpl implements OneDayTicketService {
     }
 
     @Override
+    @Transactional
     public ResponseDto<Void> cancelOneDayTicket(Long id, Long ticketId, TicketCancelRequestDto dto) throws Exception {
         OneDayTicket ticket = getTicket(ticketId);
 

@@ -18,6 +18,7 @@ import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.AuthService;
 import com.bcl.fitmate.backend.service.UploadFileService;
 import com.bcl.fitmate.backend.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,11 +36,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<GetUserInfoResponseDto> getUserInfo(Long id) {
-        User user = getUser(id);
-
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseCode.USER_NOT_FOUND);
-        }
+        User user = getUserById(id);
 
         String profileImageUrl = null;
         UploadFile profileImage = user.getProfileImage();
@@ -66,10 +63,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<GetMemberInfoResponseDto> getMemberInfo(Long id) {
-        User user = getUser(id);
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseCode.USER_NOT_FOUND);
-        }
+        User user = getUserById(id);
 
         GetMemberInfoResponseDto data = GetMemberInfoResponseDto.builder()
                 .username(user.getUsername())
@@ -87,10 +81,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ResponseDto<Void> updateMemberInfo(Long id, UpdateMemberInfoRequestDto dto) {
-        User user = getUser(id);
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseCode.USER_NOT_FOUND);
-        }
+        User user = getUserById(id);
 
         if (dto.getName() != null && !dto.getName().isEmpty()) {
             user.setName(dto.getName());
@@ -107,11 +98,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<GetTrainerInfoResponseDto> getTrainerInfo(Long id) {
-        User user = getUser(id);
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseCode.USER_NOT_FOUND);
-        }
-
+        User user = getUserById(id);
         String attachmentFileUrl = null;
         UploadFile attachmentFile = user.getTrainer().getAttachmentFile();
         if (attachmentFile != null) {
@@ -137,10 +124,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ResponseDto<Void> updateTrainerInfo(Long id, UpdateTrainerInfoRequestDto dto) {
-        User user = getUser(id);
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseCode.USER_NOT_FOUND);
-        }
+        User user = getUserById(id);
 
         user.setName(dto.getName());
         userRepository.save(user);
@@ -151,10 +135,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ResponseDto<Void> deleteUser(Long id, DeleteUserRequestDto dto) {
-        User user = getUser(id);
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseCode.USER_NOT_FOUND);
-        }
+        User user = getUserById(id);
 
         if (!dto.getDeleteMessage().equals("탈퇴하겠습니다.")) {
             return ResponseDto.fail(ResponseCode.INVALID_INPUT, ResponseCode.INVALID_INPUT);
@@ -172,10 +153,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ResponseDto<Void> updateProfileImage(Long id, MultipartFile profileImage) throws IOException {
-        User user = getUser(id);
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseCode.USER_NOT_FOUND);
-        }
+        User user = getUserById(id);
 
         if (profileImage == null || profileImage.isEmpty()) {
             return ResponseDto.fail(ResponseCode.FILE_NOT_ATTACHED, ResponseCode.FILE_NOT_ATTACHED);
@@ -189,10 +167,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ResponseDto<Void> deleteProfileImage(Long id) {
-        User user = getUser(id);
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseCode.USER_NOT_FOUND);
-        }
+        User user = getUserById(id);
 
 //        uploadFileService.deleteFile(user.getProfileImage().getId());
         user.setProfileImage(null);
@@ -202,8 +177,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(Long id) {
+    @Transactional(readOnly = true)
+    public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElse(null);
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.USER_NOT_FOUND));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NO_EXIST_USER_ID));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NO_EXIST_EMAIL));
     }
 }

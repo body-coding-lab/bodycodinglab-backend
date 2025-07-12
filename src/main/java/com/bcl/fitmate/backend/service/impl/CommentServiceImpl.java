@@ -1,34 +1,105 @@
 package com.bcl.fitmate.backend.service.impl;
 
+import com.bcl.fitmate.backend.common.constants.ResponseCode;
+import com.bcl.fitmate.backend.common.constants.ResponseMessage;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.comment.request.CommentRequestDto;
-import com.bcl.fitmate.backend.dto.comment.response.GetCommentResponseDto;
+import com.bcl.fitmate.backend.entity.Board;
+import com.bcl.fitmate.backend.entity.Comment;
+import com.bcl.fitmate.backend.entity.User;
+import com.bcl.fitmate.backend.repository.BoardRepository;
+import com.bcl.fitmate.backend.repository.CommentRepository;
 import com.bcl.fitmate.backend.service.CommentService;
+import com.bcl.fitmate.backend.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
 public class CommentServiceImpl implements CommentService {
-    @Override
-    public ResponseDto<List<GetCommentResponseDto>> getComments(Long boardId) {
-        return null;
-    }
+    private final CommentRepository commentRepository;
+    private final BoardRepository boardRepository;
+    private final UserService userService;
 
     @Override
+    @Transactional
     public ResponseDto<Void> createComment(Long id, Long boardId, CommentRequestDto dto) {
-        return null;
+        User user = userService.getUserById(id);
+        Board board = boardRepository.findById(boardId)
+                .orElse(null);
+
+        if (board == null) {
+            return ResponseDto.fail(ResponseCode.NOT_EXISTS_POST, ResponseMessage.NOT_EXISTS_POST);
+        }
+
+        Comment comment = Comment.builder()
+                .board(board)
+                .commenter(user)
+                .content(dto.getContent())
+                .build();
+
+        commentRepository.save(comment);
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
     @Override
+    @Transactional
     public ResponseDto<Void> updateComment(Long id, Long boardId, Long commentId, CommentRequestDto dto) {
-        return null;
+        User user = userService.getUserById(id);
+        Comment comment = getComment(commentId);
+        Board board = boardRepository.findById(boardId)
+                .orElse(null);
+
+        if (board == null) {
+            return ResponseDto.fail(ResponseCode.NOT_EXISTS_POST, ResponseMessage.NOT_EXISTS_POST);
+        }
+
+        if (!user.getId().equals(comment.getCommenter().getId())) {
+            return ResponseDto.fail(ResponseCode.NOT_COMMENT_OWNER, ResponseMessage.NOT_COMMENT_OWNER);
+        }
+
+        if (!board.getId().equals(comment.getBoard().getId())) {
+            return ResponseDto.fail(ResponseCode.COMMENT_NOT_BELONG_POST, ResponseMessage.COMMENT_NOT_BELONG_POST);
+        }
+
+        comment.setContent(dto.getContent());
+        commentRepository.save(comment);
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
     @Override
+    @Transactional
     public ResponseDto<Void> deleteComment(Long id, Long boardId, Long commentId) {
-        return null;
+        User user = userService.getUserById(id);
+        Comment comment = getComment(commentId);
+        Board board = boardRepository.findById(boardId)
+                .orElse(null);
+
+        if (board == null) {
+            return ResponseDto.fail(ResponseCode.NOT_EXISTS_POST, ResponseMessage.NOT_EXISTS_POST);
+        }
+
+        if (!user.getId().equals(comment.getCommenter().getId())) {
+            return ResponseDto.fail(ResponseCode.NOT_COMMENT_OWNER, ResponseMessage.NOT_COMMENT_OWNER);
+        }
+
+        if (!board.getId().equals(comment.getBoard().getId())) {
+            return ResponseDto.fail(ResponseCode.COMMENT_NOT_BELONG_POST, ResponseMessage.COMMENT_NOT_BELONG_POST);
+        }
+
+        commentRepository.delete(comment);
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Comment getComment(Long id) {
+        return commentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_COMMENT));
     }
 }

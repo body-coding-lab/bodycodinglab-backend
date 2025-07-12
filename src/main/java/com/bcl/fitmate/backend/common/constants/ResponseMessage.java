@@ -62,6 +62,7 @@ public interface ResponseMessage {
     String NOT_EXISTS_POST = "게시글이 존재하지 않습니다.";
     String COMMENT_NOT_BELONG_POST = "댓글이 지정된 게시글에 속하지 않습니다.";
     String NOT_EXISTS_COMMENT = "댓글이 존재하지 않습니다.";
+    String NOT_COMMENT_OWNER = "해당 댓글의 작성자가 아닙니다.";
 
     String NOT_EXISTS_ONE_DAY_TICKET = "체험권이 존재하지 않습니다.";
     String NOT_TRIAL_CHANCE_LEFT = "체험권 유효 횟수가 부족합니다.";

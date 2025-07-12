@@ -19,6 +19,7 @@ import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.AuthService;
 import com.bcl.fitmate.backend.service.MailService;
 import com.bcl.fitmate.backend.service.UploadFileService;
+import com.bcl.fitmate.backend.service.UserService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -36,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final TrainerRepository trainerRepository;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserService userService;
     private final UploadFileService uploadFileService;
     private final MailService mailService;
     private final JwtProvider jwtProvider;
@@ -153,12 +155,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<? extends LoginUserResponseDto> login(LoginUserRequestDto dto) {
-        User user = userRepository.findByUsername(dto.getUsername())
-                .orElse(null);
-
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.NO_EXIST_USER_ID, ResponseMessage.NO_EXIST_USER_ID);
-        }
+        User user = userService.getUserByUsername(dto.getUsername());
 
         if (!checkPassword(user, dto.getPassword())) {
             return ResponseDto.fail(ResponseCode.NOT_CORRECT_PASSWORD, ResponseMessage.NOT_CORRECT_PASSWORD);
@@ -203,12 +200,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<RecoverUsernameResponseDto> recoverUsername(RecoverUsernameRequestDto dto) {
-        User user = userRepository.findByEmail(dto.getEmail())
-                .orElse(null);
-
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.NO_EXIST_EMAIL, ResponseMessage.NO_EXIST_EMAIL);
-        }
+        User user = userService.getUserByEmail(dto.getEmail());
 
         if (!user.getName().equals(dto.getName()) || !user.getBirthdate().equals(dto.getBirthdate())) {
             return ResponseDto.fail(ResponseCode.NOT_MATCH_INFORMATION, ResponseMessage.NOT_MATCH_INFORMATION);
@@ -222,12 +214,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<GetResetPasswordUserResponseDto> getResetPasswordUser(GetResetPasswordUserRequestDto dto) {
-        User user = userRepository.findByUsername(dto.getUsername())
-                .orElse(null);
-
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.NO_EXIST_USER_ID, ResponseMessage.NO_EXIST_USER_ID);
-        }
+        User user = userService.getUserByUsername(dto.getUsername());
 
         if (!user.getName().equals(dto.getName())
                 || !user.getBirthdate().equals(dto.getBirthdate())
@@ -253,12 +240,7 @@ public class AuthServiceImpl implements AuthService {
             return ResponseDto.fail(ResponseCode.INVALID_TOKEN, ResponseMessage.INVALID_TOKEN);
         }
 
-        User user = userRepository.findByEmail(email)
-                .orElse(null);
-
-        if (user == null) {
-            return ResponseDto.fail(ResponseCode.NO_EXIST_EMAIL, ResponseMessage.NO_EXIST_EMAIL);
-        }
+        User user = userService.getUserByEmail(email);
 
         if (!dto.getNewPassword().equals(user.getPassword())) {
             return ResponseDto.fail(ResponseCode.NOT_MATCH_PASSWORD, ResponseMessage.NOT_MATCH_PASSWORD);
@@ -302,6 +284,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean checkEmail(String email) {
-        return userRepository.findByEmail(email).isPresent();
+        User user = userService.getUserByEmail(email);
+        return user != null;
     }
 }

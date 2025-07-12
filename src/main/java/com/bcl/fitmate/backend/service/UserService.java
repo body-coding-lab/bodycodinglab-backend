@@ -22,5 +22,7 @@ public interface UserService {
     ResponseDto<Void> deleteUser(Long id, @Valid DeleteUserRequestDto dto);
     ResponseDto<Void> updateProfileImage(Long id, MultipartFile profileImage) throws IOException;
     ResponseDto<Void> deleteProfileImage(Long id);
-    User getUser(Long id);
+    User getUserById(Long id);
+    User getUserByUsername(String username);
+    User getUserByEmail(String email);
 }
