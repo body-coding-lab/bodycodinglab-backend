@@ -15,6 +15,7 @@ import com.bcl.fitmate.backend.repository.*;
 import com.bcl.fitmate.backend.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -29,6 +30,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final PaymentRepository paymentRepository;
 
     @Override
+    @Transactional
     public ResponseDto<CreateSubscriptionResponseDto> createSubscription(Long userId, ConfirmPaymentRequestDto dto) {
         CreateSubscriptionResponseDto response = null;
 
@@ -97,6 +99,29 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public ResponseDto<GetSubscriptionResponseDto> getSubscription(Long userId) {
-        return null;
+        GetSubscriptionResponseDto response = null;
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if(user == null){
+            return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
+        }
+
+        Long memberId = user.getMember().getMemberId();
+
+        Subscription subscription = subscriptionRepository.findByMember_MemberId(memberId).orElse(null);
+
+        if(subscription == null){
+            return ResponseDto.fail(ResponseCode.NOT_EXISTS_SUBSCRIPTION, ResponseMessage.NOT_EXISTS_PAYMENT);
+        }
+
+        response = new GetSubscriptionResponseDto(
+                subscription.getMember().getUser().getName(),
+                subscription.getPrice(),
+                subscription.getPaymentDate(),
+                subscription.getMember().getStatus()
+        );
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, response);
     }
 }
