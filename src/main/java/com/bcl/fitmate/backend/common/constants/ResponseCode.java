@@ -31,6 +31,7 @@ public interface ResponseCode {
     String NOT_MATCH_INFORMATION = "NMI";
     String RESET_PASSWORD_FAIL = "RPF";
     String MEMBER_NOT_FOUND = "MNF";
+    String CANNOT_DELETE_USER = "CD";
 
     String NO_EXIST_TOOL = "NT";
     String NO_EXIST_CUSTOMER = "NC";
