@@ -4,7 +4,6 @@ import com.bcl.fitmate.backend.common.enums.matchWaitingList.ApprovedStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 
 @Entity
 @Table(

@@ -24,17 +24,16 @@ public class Payment extends BaseTime {
     @Column(name = "order_id", nullable = false, unique = true)
     private String orderId;
 
+    @Column(name = "amount", nullable = false)
+    private int amount;
 
     @Column(name = "payment_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
-    @Column(nullable = false)
+    @Column(name = "payment_method", nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
-
-    @Column(nullable = false)
-    private int amount;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
