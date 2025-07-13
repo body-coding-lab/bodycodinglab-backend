@@ -11,11 +11,11 @@ import java.io.IOException;
 import java.util.List;
 
 public interface UploadFileService {
-    UploadFile saveSingleFile(MultipartFile file, Long targetId, TargetType targetType) throws IOException;
-    UploadFile updateSingleFile(Long fileId, Long targetId, TargetType targetType, MultipartFile newFile) throws IOException;
-    SingleFileResponseDto getSingleFile(Long fileId) throws FileNotFoundException;
     List<FileResponseDto> uploadMultiFiles(List<MultipartFile> files, Long targetId, TargetType targetType);
     List<FileResponseDto> getMultiFiles(Long targetId, TargetType targetType);
     FileResponseDto getSingleMultiFile(Long fileId);
     void deleteFile(Long fileId);
+    UploadFile saveSingleFile(MultipartFile file, Long targetId, TargetType targetType) throws IOException;
+    UploadFile updateSingleFile(Long fileId, Long targetId, TargetType targetType, MultipartFile newFile) throws IOException;
+    SingleFileResponseDto getSingleFile(Long fileId) throws FileNotFoundException;
 }

@@ -14,10 +14,7 @@ import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.repository.TrainerListViewRepository;
 import com.bcl.fitmate.backend.repository.TrainerRepository;
 import com.bcl.fitmate.backend.repository.TrainerStatusLogRepository;
-import com.bcl.fitmate.backend.service.AdminService;
-import com.bcl.fitmate.backend.service.MailService;
-import com.bcl.fitmate.backend.service.UploadFileService;
-import com.bcl.fitmate.backend.service.UserService;
+import com.bcl.fitmate.backend.service.*;
 
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +32,8 @@ public class AdminServiceImpl implements AdminService {
     private final TrainerStatusLogRepository trainerStatusLogRepository;
     private final TrainerListViewRepository trainerListViewRepository;
     private final UserService userService;
+    private final TrainerService trainerService;
     private final MailService mailService;
-    private final UploadFileService uploadFileService;
 
     @Override
     @Transactional(readOnly = true)
@@ -58,12 +55,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<GetTrainerDetailResponseDto> getTrainerDetail(Long trainerId) {
-        Trainer trainer = trainerRepository.findById(trainerId)
-                .orElse(null);
-
-        if (trainer == null) {
-            return ResponseDto.fail(ResponseCode.TRAINER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
+        Trainer trainer = trainerService.getTrainerById(trainerId);
 
         String attachmentFileUrl = null;
         UploadFile attachmentFile = trainer.getAttachmentFile();
@@ -99,13 +91,7 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     public ResponseDto<Void> updateTrainerStatus(Long id, Long trainerId, UpdateTrainerStatusRequestDto dto) throws MessagingException {
         User user = userService.getUserById(id);
-
-        Trainer trainer = trainerRepository.findById(trainerId)
-                .orElse(null);
-
-        if (trainer == null) {
-            return ResponseDto.fail(ResponseCode.TRAINER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
+        Trainer trainer = trainerService.getTrainerById(trainerId);
 
         if (trainer.getTrainerStatus().equals(dto.getNewStatus())) {
             return ResponseDto.fail(ResponseCode.ALREADY_EQUAL_STATUS, ResponseMessage.ALREADY_EQUAL_STATUS);

@@ -8,10 +8,11 @@ import com.bcl.fitmate.backend.entity.Trainer;
 import com.bcl.fitmate.backend.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface TrainerService {
     ResponseDto<TrainerInfoResponseDto> updateTrainerInfo(Long id, TrainerInfoRequestDto dto, List<MultipartFile> files);
-    ResponseDto<Void> reapplyTrainer(Long id, ReapplyTrainerRequestDto dto, MultipartFile attachmentFile);
+    ResponseDto<Void> reapplyTrainer(Long id, ReapplyTrainerRequestDto dto, MultipartFile attachmentFile) throws IOException;
     Trainer getTrainerById(Long id);
 }

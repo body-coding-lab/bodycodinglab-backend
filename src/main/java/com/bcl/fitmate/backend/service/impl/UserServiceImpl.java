@@ -178,7 +178,7 @@ public class UserServiceImpl implements UserService {
     public ResponseDto<Void> deleteProfileImage(Long id) {
         User user = getUserById(id);
 
-//        uploadFileService.deleteFile(user.getProfileImage().getId());
+        uploadFileService.deleteFile(user.getProfileImage().getId());
         user.setProfileImage(null);
         userRepository.save(user);
 
@@ -190,19 +190,5 @@ public class UserServiceImpl implements UserService {
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.USER_NOT_FOUND));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NO_EXIST_USER_ID));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NO_EXIST_EMAIL));
     }
 }
