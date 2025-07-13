@@ -6,7 +6,6 @@ import com.bcl.fitmate.backend.common.enums.coupon.CouponStatus;
 import com.bcl.fitmate.backend.common.util.DateUtils;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.coupon.request.PutCouponRequestDto;
-import com.bcl.fitmate.backend.dto.coupon.response.CreateCouponResponseDto;
 import com.bcl.fitmate.backend.dto.coupon.response.GetMemberCouponResponseDto;
 import com.bcl.fitmate.backend.dto.coupon.response.GetTrainerCouponResponseDto;
 import com.bcl.fitmate.backend.entity.Coupon;
@@ -14,9 +13,11 @@ import com.bcl.fitmate.backend.entity.User;
 import com.bcl.fitmate.backend.repository.CouponRepository;
 import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.CouponService;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,10 +49,11 @@ public class CouponServiceImpl implements CouponService {
                member.addMemberCoupons(coupon);
            }
        }
+        couponRepository.flush();
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 1 * * *")
     public void deleteExpireCoupon() {
         LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
 
@@ -63,11 +65,11 @@ public class CouponServiceImpl implements CouponService {
                 member.removeMemberCoupons(coupon);
             }
         }
-        couponRepository.deleteAll(expiredCouponsToDelete);
+        couponRepository.flush();
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 2 * * *")
     public void deleteCompleteCoupon(){
         LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
         LocalDateTime cutoffDateTime = sixMonthsAgo.atStartOfDay();
@@ -84,19 +86,23 @@ public class CouponServiceImpl implements CouponService {
         couponRepository.deleteAll(oldCompleteCoupons);
     }
 
+    @Override
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.USER_NOT_FOUND));
+    }
+
+    @Override
+    public Coupon getCouponById(Long couponId) {
+        return couponRepository.findById(couponId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_COUPON));
+    }
+
     @Transactional
     public void createCoupon(Long userId, Long trainerId){
-        User member = userRepository.findById(userId).orElse(null);
+        User member = getUserById(userId);
 
-        if(member == null){
-            throw new EntityNotFoundException(ResponseMessage.MEMBER_NOT_FOUND);
-        }
-
-        User trainer = userRepository.findById(trainerId).orElse(null);
-
-        if(trainer == null){
-            throw new EntityNotFoundException(ResponseMessage.MEMBER_NOT_FOUND);
-        }
+        User trainer = getUserById(trainerId);
 
         Coupon coupon = Coupon.builder()
                 .member(member)
@@ -110,15 +116,14 @@ public class CouponServiceImpl implements CouponService {
         couponRepository.save(coupon);
     }
 
+
+
     @Override
     public ResponseDto<List<GetMemberCouponResponseDto>> getMemberCoupons(Long userId, CouponStatus status) {
         List<GetMemberCouponResponseDto> responseCoupons = null;
 
-        User member = userRepository.findById(userId).orElse(null);
+        User member = getUserById(userId);
 
-        if(member == null){
-            return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.MEMBER_NOT_FOUND);
-        }
 
         List<Coupon> coupons = member.getMemberCoupons();
 
@@ -140,16 +145,11 @@ public class CouponServiceImpl implements CouponService {
     @Override
     @Transactional
     public ResponseDto<Void> putMemberCoupon(Long userId, Long couponId) {
-        User member = userRepository.findById(userId).orElse(null);
+        Coupon coupon = getCouponById(couponId);
 
-        if(member == null){
-            return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.MEMBER_NOT_FOUND);
-        }
 
-        Coupon coupon = couponRepository.findById(couponId).orElse(null);
-
-        if(coupon == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_COUPON, ResponseMessage.NOT_EXISTS_COUPON);
+        if(!coupon.getMember().getId().equals(userId)){
+            throw new EntityNotFoundException(ResponseMessage.NOT_EXISTS_COUPON_PERMISSION);
         }
 
         coupon.setCouponStatus(CouponStatus.APPLICATION);
@@ -162,11 +162,7 @@ public class CouponServiceImpl implements CouponService {
     public ResponseDto<List<GetTrainerCouponResponseDto>> getTrainerCoupons(Long userId, CouponStatus status) {
         List<GetTrainerCouponResponseDto> responseCoupons = null;
 
-        User trainer = userRepository.findById(userId).orElse(null);
-
-        if(trainer == null){
-            return ResponseDto.fail(ResponseCode.TRAINER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
+        User trainer = getUserById(userId);
 
         List<Coupon> coupons = trainer.getTrainerCoupons();
 
@@ -199,16 +195,11 @@ public class CouponServiceImpl implements CouponService {
     @Override
     @Transactional
     public ResponseDto<Void> putTrainerCoupon(Long userId, Long couponId, PutCouponRequestDto dto) {
-        User trainer = userRepository.findById(userId).orElse(null);
+        Coupon coupon = getCouponById(couponId);
 
-        if (trainer == null) {
-            return ResponseDto.fail(ResponseCode.TRAINER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
 
-        Coupon coupon = couponRepository.findById(couponId).orElse(null);
-
-        if(coupon == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_COUPON, ResponseMessage.NOT_EXISTS_COUPON);
+        if(!coupon.getTrainer().getId().equals(userId)){
+            throw new AccessDeniedException(ResponseMessage.NOT_EXISTS_COUPON_PERMISSION);
         }
 
         LocalDateTime usedDate = LocalDate.parse(dto.getUsedDate(), DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay();

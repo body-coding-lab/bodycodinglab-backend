@@ -4,11 +4,14 @@ import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.memberForm.request.CreateMemberFormRequestDto;
 import com.bcl.fitmate.backend.dto.memberForm.response.CreateMemberFormResponseDto;
 import com.bcl.fitmate.backend.dto.memberForm.response.GetMemberFormResponseDto;
+import com.bcl.fitmate.backend.entity.Member;
 import jakarta.validation.Valid;
 
 
 
 public interface MemberFormService {
+    Member getMemberByUserId(Long userId);
+
     ResponseDto<CreateMemberFormResponseDto> createMemberForm(Long userId, @Valid CreateMemberFormRequestDto dto);
 
     ResponseDto<GetMemberFormResponseDto> getMemberForm(Long userId);

@@ -5,10 +5,18 @@ import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetMemberMatchResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetTrainerMatchListResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetTrainerMatchResponseDto;
+import com.bcl.fitmate.backend.entity.Match;
+import com.bcl.fitmate.backend.entity.User;
 
 import java.util.List;
 
 public interface MatchService {
+    User getMemberById(Long userId);
+
+    User getTrainerById(Long userId);
+
+    Match getMatchById(Long matchId);
+
     ResponseDto<GetMemberMatchResponseDto> getMemberMatch(Long userId);
 
     ResponseDto<Void> cancelMatch(Long userId, Long matchId);

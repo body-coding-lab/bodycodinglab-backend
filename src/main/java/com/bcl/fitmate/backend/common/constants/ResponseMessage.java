@@ -70,7 +70,7 @@ public interface ResponseMessage {
     String INVALID_TICKET_STATUS = "체험권의 상태가 유효하지 않습니다.";
 
     String NOT_EXISTS_COUPON = "쿠폰이 존재하지 않습니다.";
-
+    String NOT_EXISTS_COUPON_PERMISSION = "쿠폰에 접근할 권한이 없습니다.";
     String NOT_EXISTS_FORM = "작성된 폼이 존재하지 않습니다.";
 
     String ALREADY_EXISTS_MATCH = "이미 매칭 되어있습니다.";

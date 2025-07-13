@@ -12,6 +12,7 @@ import com.bcl.fitmate.backend.entity.User;
 import com.bcl.fitmate.backend.repository.PaymentRepository;
 import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.PaymentService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,13 +28,22 @@ public class PaymentServiceImpl implements PaymentService {
     public final PaymentRepository paymentRepository;
 
     @Override
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.MEMBER_NOT_FOUND));
+    }
+
+    @Override
+    public Payment getPaymentByOrderId(String orderId) {
+        return paymentRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_PAYMENT));
+    }
+
+    @Override
     @Transactional
     public ResponseDto<CreatePaymentResponseDto> createPayment(Long userId, CreatePaymentRequestDto dto) {
-        User user = userRepository.findById(userId).orElse(null);
+        User user = getUserById(userId);
 
-        if(user == null){
-            return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.MEMBER_NOT_FOUND);
-        }
 
         List<Payment> pendingPayments = paymentRepository.findByMemberAndStatus(user.getMember().getMemberId(), PaymentStatus.READY);
         List<Payment> failedPayments = paymentRepository.findByMemberAndStatus(user.getMember().getMemberId(), PaymentStatus.FAIL);
@@ -64,11 +74,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public ResponseDto<Void> paymentFailWebHook(String orderId) {
-        Payment payment = paymentRepository.findByOrderId(orderId).orElse(null);
-
-        if(payment == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_PAYMENT, ResponseMessage.NOT_EXISTS_PAYMENT);
-        }
+        Payment payment = getPaymentByOrderId(orderId);
 
         if(payment.getPaymentStatus() == PaymentStatus.READY){
             payment.setPaymentStatus(PaymentStatus.FAIL);

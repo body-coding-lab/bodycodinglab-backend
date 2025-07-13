@@ -70,7 +70,7 @@ public interface ResponseCode {
     String INVALID_TICKET_STATUS = "ITS";
 
     String NOT_EXISTS_COUPON = "NEC";
-
+    String NOT_EXISTS_COUPON_PERMISSION = "NECP";
     String NOT_EXISTS_FORM = "NEF";
 
     String ALREADY_EXISTS_MATCH = "AEM";

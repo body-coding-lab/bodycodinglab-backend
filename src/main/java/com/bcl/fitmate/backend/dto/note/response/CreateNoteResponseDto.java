@@ -9,10 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NoteResponseDto {
+public class CreateNoteResponseDto {
     private Long id;
-    private String noteText;
-    private Long noteWriter;
-    private Long noteReceiver;
-    private String noteCreateTime;
 }

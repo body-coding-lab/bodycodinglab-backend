@@ -7,10 +7,18 @@ import com.bcl.fitmate.backend.dto.matchWatingList.request.PutRejectMatchWaiting
 import com.bcl.fitmate.backend.dto.matchWatingList.response.CreateMatchWaitingListResponseDto;
 import com.bcl.fitmate.backend.dto.matchWatingList.response.GetMemberMatchWaitingListResponseDto;
 import com.bcl.fitmate.backend.dto.matchWatingList.response.GetTrainerMatchWaitingListResponse;
+import com.bcl.fitmate.backend.entity.MatchWaitingList;
+import com.bcl.fitmate.backend.entity.User;
 
 import java.util.List;
 
 public interface MatchWaitingListService {
+    User getUserById(Long userId);
+
+    MatchWaitingList getMatchWaitingListById(Long matchWaitingListId);
+
+    MatchWaitingList getMatchWaitingListByMemberId(Long userId);
+
 
     ResponseDto<CreateMatchWaitingListResponseDto> createMatchWaitingList(Long trainerId, Long userId);
 

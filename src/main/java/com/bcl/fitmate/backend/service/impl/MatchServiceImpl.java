@@ -11,6 +11,7 @@ import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.repository.*;
 import com.bcl.fitmate.backend.service.MatchService;
 import com.bcl.fitmate.backend.service.UploadFileService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,17 +32,31 @@ public class MatchServiceImpl implements MatchService {
     private final MemberFormRepository memberFormRepository;
 
     @Override
+    public User getMemberById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.MEMBER_NOT_FOUND));
+    }
+
+    @Override
+    public User getTrainerById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.TRAINER_NOT_FOUND));
+    }
+
+    @Override
+    public Match getMatchById(Long matchId) {
+        return matchRepository.findById(matchId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_MATCH));
+    }
+
+    @Override
     public ResponseDto<GetMemberMatchResponseDto> getMemberMatch(Long userId) {
         GetMemberMatchResponseDto response = null;
 
-        User member = userRepository.findById(userId).orElse(null);
-
-        if(member == null){
-            return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.MEMBER_NOT_FOUND);
-        }
+        User member = getMemberById(userId);
 
         if(member.getMemberMatch() == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
+            throw new EntityNotFoundException(ResponseMessage.NOT_EXISTS_MATCH);
         }
 
         String profileImageUrl = null;
@@ -62,23 +77,14 @@ public class MatchServiceImpl implements MatchService {
     @Override
     @Transactional
     public ResponseDto<Void> cancelMatch(Long userId, Long matchId) {
-       Match match = matchRepository.findById(matchId).orElse(null);
+       Match match = getMatchById(matchId);
 
-       if(match == null){
-           return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
-       }
 
-       User member = userRepository.findById(userId).orElse(null);
+       User member = getMemberById(userId);
 
-       if(member == null){
-           return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.MEMBER_NOT_FOUND);
-       }
 
-       User trainer = userRepository.findById(match.getTrainer().getId()).orElse(null);
+       User trainer = getTrainerById(match.getTrainer().getId());
 
-       if(trainer == null){
-           return ResponseDto.fail(ResponseCode.TRAINER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-       }
 
        member.setMemberMatch(null);
        trainer.removeTrainerMatches(match);
@@ -106,14 +112,11 @@ public class MatchServiceImpl implements MatchService {
     public ResponseDto<List<GetTrainerMatchListResponseDto>> getTrainerMatchList(Long userId) {
         List<GetTrainerMatchListResponseDto> matchList = null;
 
-        User trainer = userRepository.findById(userId).orElse(null);
+        User trainer = getTrainerById(userId);
 
-        if(trainer == null){
-            return ResponseDto.fail(ResponseCode.TRAINER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
 
         if(trainer.getMemberMatch() == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
+            throw new EntityNotFoundException(ResponseMessage.NOT_EXISTS_MATCH);
         }
 
         matchList = trainer.getTrainerMatches().stream()
@@ -130,14 +133,11 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public ResponseDto<GetTrainerMatchResponseDto> getTrainerMatch(Long userId, Long matchId) {
         GetTrainerMatchResponseDto response = null;
-        Match match = matchRepository.findById(matchId).orElse(null);
+        Match match = getMatchById(matchId);
 
-        if(match == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
-        }
 
         if(!match.getTrainer().getId().equals(userId)){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH_PERMISSION, ResponseMessage.NOT_EXISTS_MATCH_PERMISSION);
+            throw new EntityNotFoundException(ResponseMessage.TRAINER_NOT_FOUND);
         }
 
         LocalDate birthdate = match.getMember().getBirthdate();
