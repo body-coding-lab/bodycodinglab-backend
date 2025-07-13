@@ -369,6 +369,13 @@ public class BoardServiceImpl implements BoardService {
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Board getBoardById(Long id) {
+        return boardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_POST));
+    }
+
     private GetCommentResponseDto toGetCommentResponseDto(Comment comment) {
         User commenter = comment.getCommenter();
         String profileImageUrl = null;

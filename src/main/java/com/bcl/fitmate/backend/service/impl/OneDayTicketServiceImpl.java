@@ -15,7 +15,6 @@ import com.bcl.fitmate.backend.dto.oneDayTicket.response.GetTrainerAllTicketsRes
 import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.repository.MemberRepository;
 import com.bcl.fitmate.backend.repository.OneDayTicketRepository;
-import com.bcl.fitmate.backend.repository.TrainerRepository;
 import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.*;
 import lombok.RequiredArgsConstructor;

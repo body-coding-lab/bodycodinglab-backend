@@ -179,13 +179,13 @@ public class UploadFileServiceImpl implements UploadFileService {
     @Transactional(readOnly = true)
     public SingleFileResponseDto getSingleFile(Long fileId) throws FileNotFoundException {
         UploadFile uf = uploadFileRepository.findById(fileId)
-                .orElseThrow(() -> new FileNotFoundException("파일ID를 찾을 수 없습니다. ID: " + fileId));
+                .orElseThrow(() -> new FileNotFoundException(ResponseMessage.FILE_NOT_FOUND + "id: " + fileId));
 
         Path path = Paths.get(uf.getFilePath(), uf.getFileName());
         Resource resource = new FileSystemResource(path);
 
         if (!resource.exists()) {
-            throw new FileNotFoundException("파일이 존재하지 않습니다. path: " + path.toString());
+            throw new FileNotFoundException(ResponseMessage.FILE_NOT_FOUND + "path: " + path);
         }
 
         String encodedFileName = URLEncoder.encode(uf.getOriginalName(), StandardCharsets.UTF_8)

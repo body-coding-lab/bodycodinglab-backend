@@ -13,7 +13,6 @@ import com.bcl.fitmate.backend.dto.trainer.response.TrainerInfoResponseDto;
 import com.bcl.fitmate.backend.entity.Trainer;
 import com.bcl.fitmate.backend.entity.User;
 import com.bcl.fitmate.backend.repository.TrainerRepository;
-import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.TrainerService;
 import com.bcl.fitmate.backend.service.UploadFileService;
 import com.bcl.fitmate.backend.service.UserService;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,18 +30,17 @@ import java.util.stream.Collectors;
 @Service
 public class TrainerServiceImpl implements TrainerService {
     private final TrainerRepository trainerRepository;
-    private final UserRepository userRepository;
     private final UserService userService;
     private final UploadFileService uploadFileService;
-    private final TrainerService trainerService;
 
     @Override
+    @Transactional
     public ResponseDto<TrainerInfoResponseDto> updateTrainerInfo(Long id, TrainerInfoRequestDto dto, List<MultipartFile> files) {
         TrainerInfoResponseDto data = null;
 
         User user = userService.getUserById(id);
 
-        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
+        Trainer trainer = getTrainerById(user.getTrainer().getId());
 
         Trainer trainerInfo = trainerRepository.findById(trainer.getId())
                 .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.TRAINER_NOT_FOUND));
@@ -81,17 +80,19 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public ResponseDto<Void> reapplyTrainer(Long id, ReapplyTrainerRequestDto dto, MultipartFile attachmentFile) {
+    @Transactional
+    public ResponseDto<Void> reapplyTrainer(Long id, ReapplyTrainerRequestDto dto, MultipartFile attachmentFile) throws IOException {
         User user = userService.getUserById(id);
+        Trainer trainer = getTrainerById(user.getTrainer().getId());
 
         if(!user.getRole().getName().equals(UserRole.TRAINER)) {
             return ResponseDto.fail(ResponseCode.TRAINER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
         }
 
-        user.getTrainer().setJobAddress(dto.getJobAddress());
-        user.getTrainer().setTrainerStatus(TrainerStatus.PENDING);
-//        user.getTrainer().setAttachmentFile(uploadFileService.updateSingleFile(fileId, user.getTrainer().getId()), TargetType.ATTACHMENT, attachmentFile);
-        userRepository.save(user);
+        trainer.setJobAddress(dto.getJobAddress());
+        trainer.setTrainerStatus(TrainerStatus.PENDING);
+        trainer.setAttachmentFile(uploadFileService.updateSingleFile(user.getTrainer().getAttachmentFile().getId(), user.getTrainer().getId(), TargetType.ATTACHMENT, attachmentFile));
+        trainerRepository.save(trainer);
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }

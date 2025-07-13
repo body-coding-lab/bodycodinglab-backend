@@ -34,7 +34,7 @@ public class TrainerController {
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @ModelAttribute TrainerInfoRequestDto dto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
-    ) throws IOException {
+    ) {
         Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, trainerService.updateTrainerInfo(id, dto, files));
     }
