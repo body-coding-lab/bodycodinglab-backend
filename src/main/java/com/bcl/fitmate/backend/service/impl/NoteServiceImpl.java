@@ -11,8 +11,8 @@ import com.bcl.fitmate.backend.dto.note.response.GetNoteResponseDto;
 import com.bcl.fitmate.backend.entity.Note;
 import com.bcl.fitmate.backend.entity.User;
 import com.bcl.fitmate.backend.repository.NoteRepository;
-import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.NoteService;
+import com.bcl.fitmate.backend.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,19 +20,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class NoteServiceImpl implements NoteService {
     private final NoteRepository noteRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    @Override
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.USER_NOT_FOUND));
-    }
 
     @Override
     public Note getNoteById(Long noteId) {
@@ -46,9 +40,9 @@ public class NoteServiceImpl implements NoteService {
     public ResponseDto<CreateNoteResponseDto> createNote(Long userId, NoteRequestDto dto) {
         CreateNoteResponseDto response = null;
 
-        User writer = getUserById(userId);
+        User writer = userService.getUserById(userId);
 
-        User receiver = getUserById(userId);
+        User receiver = userService.getUserById(userId);
 
         Note note = Note.builder()
                 .noteText(dto.getNoteText())
@@ -68,6 +62,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<Page<GetNoteListResponseDto>> getAllNote(Long userId, Pageable pageable) {
         Page<GetNoteListResponseDto> response = null;
 
@@ -85,6 +80,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<GetNoteResponseDto> getNoteById(Long userId, Long noteId) {
         GetNoteResponseDto response = null;
 

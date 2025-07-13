@@ -13,7 +13,6 @@ import com.bcl.fitmate.backend.entity.User;
 import java.util.List;
 
 public interface MatchWaitingListService {
-    User getUserById(Long userId);
 
     MatchWaitingList getMatchWaitingListById(Long matchWaitingListId);
 

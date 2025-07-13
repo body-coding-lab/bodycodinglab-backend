@@ -8,7 +8,6 @@ import com.bcl.fitmate.backend.entity.Payment;
 import com.bcl.fitmate.backend.entity.User;
 
 public interface PaymentService {
-    User getUserById(Long userId);
 
     Payment getPaymentByOrderId(String orderId);
 

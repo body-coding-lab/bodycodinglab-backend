@@ -11,13 +11,10 @@ import com.bcl.fitmate.backend.entity.Subscription;
 import com.bcl.fitmate.backend.entity.User;
 
 public interface SubscriptionService {
-    User getUserById(Long userId);
-
-    Payment getPaymentByOrderId(String orderId);
 
     Subscription getSubscriptionByMember_MemberId(Long memberId);
 
-    MatchWaitingList getMatchWaitingListByMemberId(Long userId);
+    //MatchWaitingList getMatchWaitingListByMemberId(Long userId);
 
     ResponseDto<CreateSubscriptionResponseDto> createSubscription(Long userId, ConfirmPaymentRequestDto dto);
 

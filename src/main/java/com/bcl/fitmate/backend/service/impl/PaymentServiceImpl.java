@@ -12,6 +12,7 @@ import com.bcl.fitmate.backend.entity.User;
 import com.bcl.fitmate.backend.repository.PaymentRepository;
 import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.PaymentService;
+import com.bcl.fitmate.backend.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,14 +25,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
-    public final UserRepository userRepository;
-    public final PaymentRepository paymentRepository;
 
-    @Override
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.MEMBER_NOT_FOUND));
-    }
+    public final PaymentRepository paymentRepository;
+    public final UserService userService;
+
 
     @Override
     public Payment getPaymentByOrderId(String orderId) {
@@ -42,7 +39,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public ResponseDto<CreatePaymentResponseDto> createPayment(Long userId, CreatePaymentRequestDto dto) {
-        User user = getUserById(userId);
+        User user = userService.getUserById(userId);
 
 
         List<Payment> pendingPayments = paymentRepository.findByMemberAndStatus(user.getMember().getMemberId(), PaymentStatus.READY);

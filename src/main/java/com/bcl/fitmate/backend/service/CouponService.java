@@ -13,11 +13,11 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 public interface CouponService {
-    User getUserById(Long userId);
+
 
     Coupon getCouponById(Long couponId);
 
-    public void createCoupon(Long memberId, Long trainerId);
+    void createCoupon(Long memberId, Long trainerId);
 
     ResponseDto<List<GetMemberCouponResponseDto>> getMemberCoupons(Long userId, CouponStatus status);
 
