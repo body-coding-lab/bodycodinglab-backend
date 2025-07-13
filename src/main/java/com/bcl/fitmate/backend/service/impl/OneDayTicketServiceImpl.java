@@ -5,6 +5,7 @@ import com.bcl.fitmate.backend.common.constants.ResponseCode;
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
 import com.bcl.fitmate.backend.common.enums.oneDayTicket.OneDayTicketStatus;
 import com.bcl.fitmate.backend.dto.ResponseDto;
+import com.bcl.fitmate.backend.dto.note.reqeust.NoteRequestDto;
 import com.bcl.fitmate.backend.dto.oneDayTicket.request.TicketCancelRequestDto;
 import com.bcl.fitmate.backend.dto.oneDayTicket.request.TicketIssueRequestDto;
 import com.bcl.fitmate.backend.dto.oneDayTicket.request.TicketUseRequestDto;
@@ -29,11 +30,10 @@ import java.util.stream.Collectors;
 @Service
 public class OneDayTicketServiceImpl implements OneDayTicketService {
     private final MemberRepository memberRepository;
-    private final TrainerRepository trainerRepository;
+    private final TrainerService trainerService;
     private final OneDayTicketRepository oneDayTicketRepository;
     private final UserRepository userRepository;
     private final UserService userService;
-    private final UploadFileService uploadFileService;
     private final CouponService couponService;
     private final NoteService noteService;
 
@@ -79,12 +79,7 @@ public class OneDayTicketServiceImpl implements OneDayTicketService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<List<GetTrainerAllTicketsResponseDto>> getTrainerAllTickets(Long id) {
-        User user = userRepository.findById(id)
-                .orElse(null);
-
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
+        User user = userService.getUserById(id);
 
         List<OneDayTicket> tickets = oneDayTicketRepository.findByTrainerId(id);
 
@@ -107,19 +102,9 @@ public class OneDayTicketServiceImpl implements OneDayTicketService {
     @Override
     @Transactional
     public ResponseDto<Void> issueOneDayTicket(Long id, TicketIssueRequestDto dto) throws Exception {
-        User user = userRepository.findById(id)
-                .orElse(null);
+        User user = userService.getUserById(id);
 
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
-
-        Trainer trainer = trainerRepository.findById(user.getTrainer().getId())
-                .orElse(null);
-
-        if(trainer == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
+        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
 
         User memberUser = userRepository.findByUsernameAndName(dto.getUsername(), dto.getName())
                 .orElse(null);
@@ -202,11 +187,11 @@ public class OneDayTicketServiceImpl implements OneDayTicketService {
                 + "사유: " + dto.getCancelReason();
 
         NoteRequestDto cancelReasonNote = NoteRequestDto.builder()
-                .noteRecevier(memberUser.getId())
                 .noteText("[" + title + "]\n" + content)
+                .noteReceiver(memberUser.getId())
                 .build();
 
-        noteService.createNote(cancelReasonNote, trainer.getId());
+        noteService.createNote(trainer.getId(), cancelReasonNote);
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
