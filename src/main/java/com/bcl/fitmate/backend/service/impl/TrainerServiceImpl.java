@@ -41,7 +41,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         User user = userService.getUserById(id);
 
-        Trainer trainer = trainerService.getTrainerById(id);
+        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
 
         Trainer trainerInfo = trainerRepository.findById(trainer.getId())
                 .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.TRAINER_NOT_FOUND));
@@ -99,9 +99,7 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     @Transactional(readOnly = true)
     public Trainer getTrainerById(Long id) {
-        User user = userService.getUserById(id);
-
-        return trainerRepository.findById(user.getTrainer().getId())
+        return trainerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.TRAINER_NOT_FOUND));
     }
 }

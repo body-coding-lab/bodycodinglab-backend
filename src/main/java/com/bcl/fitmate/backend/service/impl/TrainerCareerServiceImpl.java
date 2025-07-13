@@ -9,11 +9,8 @@ import com.bcl.fitmate.backend.entity.Trainer;
 import com.bcl.fitmate.backend.entity.TrainerCareer;
 import com.bcl.fitmate.backend.entity.User;
 import com.bcl.fitmate.backend.repository.TrainerCareerRepository;
-import com.bcl.fitmate.backend.repository.TrainerRepository;
-import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.TrainerCareerService;
 import com.bcl.fitmate.backend.service.TrainerService;
-import com.bcl.fitmate.backend.service.UploadFileService;
 import com.bcl.fitmate.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,8 +22,6 @@ import java.util.stream.Collectors;
 @Service
 public class TrainerCareerServiceImpl implements TrainerCareerService {
     private final TrainerCareerRepository trainerCareerRepository;
-    private final TrainerRepository trainerRepository;
-    private final UserRepository userRepository;
     private final UserService userService;
     private final TrainerService trainerService;
 
@@ -34,7 +29,9 @@ public class TrainerCareerServiceImpl implements TrainerCareerService {
     public ResponseDto<TrainerCareerResponseDto> postTrainerCareer(Long id, TrainerCareerRequestDto dto) {
         TrainerCareerResponseDto data = null;
 
-        Trainer trainer = trainerService.getTrainerById(id);
+        User user = userService.getUserById(id);
+
+        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
 
         TrainerCareer career = TrainerCareer.create(trainer,
                 dto.getCompanyName(),
@@ -58,7 +55,9 @@ public class TrainerCareerServiceImpl implements TrainerCareerService {
     public ResponseDto<TrainerCareerResponseDto> updateTrainerCareer(Long id, Long careerId, TrainerCareerRequestDto dto) {
         TrainerCareerResponseDto data = null;
 
-        Trainer trainer = trainerService.getTrainerById(id);
+        User user = userService.getUserById(id);
+
+        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
 
         if(trainer == null) {
             return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
@@ -98,7 +97,9 @@ public class TrainerCareerServiceImpl implements TrainerCareerService {
 
     @Override
     public ResponseDto<Void> deleteAllTrainerCareer(Long id) {
-        Trainer trainer = trainerService.getTrainerById(id);
+        User user = userService.getUserById(id);
+
+        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
 
         List<TrainerCareer> careers = trainerCareerRepository.findByTrainerId(trainer.getId())
                 .orElseThrow(() -> new IllegalStateException(ResponseMessage.NOT_EXISTS_CAREER));
@@ -110,7 +111,9 @@ public class TrainerCareerServiceImpl implements TrainerCareerService {
 
     @Override
     public ResponseDto<List<TrainerCareerResponseDto>> getAllTrainerCareer(Long id) {
-        Trainer trainer = trainerService.getTrainerById(id);
+        User user = userService.getUserById(id);
+
+        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
 
         List<TrainerCareer> careers = trainerCareerRepository.findByTrainerId(trainer.getId())
                 .orElseThrow(() -> new IllegalStateException(ResponseMessage.NOT_EXISTS_CAREER));
@@ -131,7 +134,9 @@ public class TrainerCareerServiceImpl implements TrainerCareerService {
     public ResponseDto<TrainerCareerResponseDto> getRecentTrainerCareer(Long id) {
         TrainerCareerResponseDto data = null;
 
-        Trainer trainer = trainerService.getTrainerById(id);
+        User user = userService.getUserById(id);
+
+        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
 
         TrainerCareer career = trainerCareerRepository.findTopByTrainerIdOrderByCompanyQuitDesc(trainer.getId());
 

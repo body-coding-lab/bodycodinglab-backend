@@ -27,8 +27,6 @@ import java.util.stream.Collectors;
 @Service
 public class TrainerLicenseServiceImpl implements TrainerLicenseService {
     private final TrainerLicenseRepository trainerLicenseRepository;
-    private final TrainerRepository trainerRepository;
-    private final UserRepository userRepository;
     private final UserService userService;
     private final TrainerService trainerService;
     private final UploadFileService uploadFileService;
@@ -38,19 +36,9 @@ public class TrainerLicenseServiceImpl implements TrainerLicenseService {
     public ResponseDto<TrainerLicenseResponseDto> postTrainerLicense(Long id, TrainerLicenseRequestDto dto, List<MultipartFile> files) {
         TrainerLicenseResponseDto data = null;
 
-        User user = userRepository.findById(id)
-                .orElse(null);
+        User user = userService.getUserById(id);
 
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
-
-        Trainer trainer = trainerRepository.findById(user.getTrainer().getId())
-                .orElse(null);
-
-        if(trainer == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
+        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
 
         TrainerLicense license = TrainerLicense.create(trainer,
                 dto.getLicenseType(),
@@ -90,19 +78,9 @@ public class TrainerLicenseServiceImpl implements TrainerLicenseService {
     public ResponseDto<TrainerLicenseResponseDto> updateTrainerLicense(Long id, Long licenseId, TrainerLicenseRequestDto dto, List<MultipartFile> files) {
         TrainerLicenseResponseDto data = null;
 
-        User user = userRepository.findById(id)
-                .orElse(null);
+        User user = userService.getUserById(id);
 
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
-
-        Trainer trainer = trainerRepository.findById(user.getTrainer().getId())
-                .orElse(null);
-
-        if(trainer == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
+        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
 
         TrainerLicense license = trainerLicenseRepository.findById(licenseId)
                 .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.NOT_EXISTS_LICENSE));
@@ -143,19 +121,9 @@ public class TrainerLicenseServiceImpl implements TrainerLicenseService {
     public ResponseDto<TrainerLicenseResponseDto> deleteTrainerLicense(Long id, Long licenseId) {
         TrainerLicenseResponseDto data = null;
 
-        User user = userRepository.findById(id)
-                .orElse(null);
+        User user = userService.getUserById(id);
 
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
-
-        Trainer trainer = trainerRepository.findById(user.getTrainer().getId())
-                .orElse(null);
-
-        if(trainer == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
+        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
 
         TrainerLicense license = trainerLicenseRepository.findById(licenseId)
                 .orElseThrow(() -> new IllegalStateException(ResponseMessage.NOT_EXISTS_CAREER));
@@ -167,20 +135,9 @@ public class TrainerLicenseServiceImpl implements TrainerLicenseService {
 
     @Override
     public ResponseDto<Void> deleteAllTrainerLicense(Long id) {
-        User user = userRepository.findById(id)
-                .orElse(null);
+        User user = userService.getUserById(id);
 
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
-
-        Trainer trainer = trainerRepository.findById(user.getTrainer().getId())
-                .orElse(null);
-
-        if(trainer == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
-
+        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
         List<TrainerLicense> licenses = trainerLicenseRepository.findByTrainerId(trainer.getId())
                 .orElseThrow(() -> new IllegalStateException(ResponseMessage.NOT_EXISTS_CAREER));
 
@@ -192,19 +149,9 @@ public class TrainerLicenseServiceImpl implements TrainerLicenseService {
 
     @Override
     public ResponseDto<List<TrainerLicenseDetailResponseDto>> getAllTrainerLicense(Long id) {
-        User user = userRepository.findById(id)
-                .orElse(null);
+        User user = userService.getUserById(id);
 
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
-
-        Trainer trainer = trainerRepository.findById(user.getTrainer().getId())
-                .orElse(null);
-
-        if(trainer == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
+        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
 
         List<TrainerLicense> licenses = trainerLicenseRepository.findByTrainerId(trainer.getId())
                 .orElseThrow(() -> new IllegalStateException(ResponseMessage.NOT_EXISTS_CAREER));
@@ -235,19 +182,9 @@ public class TrainerLicenseServiceImpl implements TrainerLicenseService {
     public ResponseDto<TrainerLicenseResponseDto> getRecentTrainerLicense(Long id) {
         TrainerLicenseResponseDto data = null;
 
-        User user = userRepository.findById(id)
-                .orElse(null);
+        User user = userService.getUserById(id);
 
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
-
-        Trainer trainer = trainerRepository.findById(user.getTrainer().getId())
-                .orElse(null);
-
-        if(trainer == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
+        Trainer trainer = trainerService.getTrainerById(user.getTrainer().getId());
 
         TrainerLicense license = trainerLicenseRepository.findTopByTrainerIdOrderByIdDesc(trainer.getId());
 
