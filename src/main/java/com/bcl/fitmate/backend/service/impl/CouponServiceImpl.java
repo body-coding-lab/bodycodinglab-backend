@@ -98,6 +98,7 @@ public class CouponServiceImpl implements CouponService {
                 .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_COUPON));
     }
 
+    @Override
     @Transactional
     public void createCoupon(Long userId, Long trainerId){
         User member = getUserById(userId);

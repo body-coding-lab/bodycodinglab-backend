@@ -17,6 +17,8 @@ public interface CouponService {
 
     Coupon getCouponById(Long couponId);
 
+    public void createCoupon(Long memberId, Long trainerId);
+
     ResponseDto<List<GetMemberCouponResponseDto>> getMemberCoupons(Long userId, CouponStatus status);
 
     ResponseDto<Void> putMemberCoupon(Long userId, Long couponId);
