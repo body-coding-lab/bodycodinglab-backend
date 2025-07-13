@@ -12,7 +12,9 @@ import com.bcl.fitmate.backend.dto.uploadFile.response.FileResponseDto;
 import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.repository.*;
 import com.bcl.fitmate.backend.service.TrainerLicenseService;
+import com.bcl.fitmate.backend.service.TrainerService;
 import com.bcl.fitmate.backend.service.UploadFileService;
+import com.bcl.fitmate.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +29,8 @@ public class TrainerLicenseServiceImpl implements TrainerLicenseService {
     private final TrainerLicenseRepository trainerLicenseRepository;
     private final TrainerRepository trainerRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
+    private final TrainerService trainerService;
     private final UploadFileService uploadFileService;
     private final UploadFileRepository uploadFileRepository;
 
