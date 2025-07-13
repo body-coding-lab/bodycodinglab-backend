@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @Setter
-public class Match {
+public class Match extends BaseTime{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
@@ -31,8 +31,6 @@ public class Match {
     @JoinColumn(name = "trainer_id", referencedColumnName = "id", nullable = false)
     private User trainer;
 
-    @Column(name = "match_at", nullable = false)
-    private LocalDateTime matchedAt;
 
     @Column(name = "is_maintained")
     private Boolean isMaintained = true;

@@ -14,6 +14,6 @@ public class GetMemberMatchResponseDto {
     private Long trainerId;
     private String profileImageUrl;
     private String trainerName;
-    private LocalDateTime matchedAt;
+    private String matchedAt;
     private String trainerJobAddress;
 }

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Getter @Setter
-public class MatchWaitingList {
+public class MatchWaitingList extends BaseTime {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
@@ -29,9 +29,6 @@ public class MatchWaitingList {
     @ManyToOne
     @JoinColumn(name = "trainer_id", referencedColumnName = "id", nullable = false)
     private User trainer;
-
-    @Column(name = "applied_at", nullable = false)
-    private LocalDateTime appliedAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "approved_status", nullable = false)

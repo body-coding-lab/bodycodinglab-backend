@@ -16,7 +16,7 @@ public class GetMemberMatchWaitingListResponseDto {
     private String profileImageUrl;
     private String trainerName;
     private String trainerJobAddress;
-    private LocalDateTime appliedAt;
+    private String appliedAt;
     private ApprovedStatus approvedStatus;
     private String rejectResponse;
 }

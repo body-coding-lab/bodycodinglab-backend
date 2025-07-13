@@ -78,7 +78,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Subscription subscription = Subscription.builder()
                 .member(member)
                 .price(payment.getAmount())
-                .paymentDate(DateUtils.parse(DateUtils.format(LocalDateTime.now())))
                 .build();
 
         subscriptionRepository.save(subscription);
@@ -95,7 +94,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Match match = Match.builder()
                 .member(matchWaitingList.getMember())
                 .trainer(trainer)
-                .matchedAt(DateUtils.parse(DateUtils.format(LocalDateTime.now())))
                 .isMaintained(true)
                 .build();
 
@@ -126,7 +124,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         response = new GetSubscriptionResponseDto(
                 subscription.getMember().getUser().getName(),
                 subscription.getPrice(),
-                subscription.getPaymentDate(),
+                DateUtils.format(subscription.getCreatedAt()),
                 subscription.getMember().getStatus()
         );
 
