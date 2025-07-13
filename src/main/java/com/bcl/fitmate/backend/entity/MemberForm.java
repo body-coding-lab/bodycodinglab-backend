@@ -65,7 +65,7 @@ public class MemberForm extends BaseTime {
    private short physicalLevel;
 
    @Enumerated(EnumType.STRING)
-   @Column(name = "exericising_problem", nullable = false, length = 30)
+   @Column(name = "exercising_problem", nullable = false, length = 30)
    private ExercisingProblem exercisingProblem;
 
    @Enumerated(EnumType.STRING)
