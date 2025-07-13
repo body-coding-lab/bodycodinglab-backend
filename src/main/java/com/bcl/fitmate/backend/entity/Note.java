@@ -30,5 +30,8 @@ public class Note {
 
     @Column(name = "created_at")
     private LocalDateTime noteCreateTime;
+
+    @Column(name = "is_read", nullable = false)
+    private boolean isRead = false;
 }
 

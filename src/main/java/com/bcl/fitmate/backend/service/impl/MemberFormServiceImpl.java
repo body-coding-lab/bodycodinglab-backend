@@ -10,8 +10,8 @@ import com.bcl.fitmate.backend.entity.Member;
 import com.bcl.fitmate.backend.entity.MemberForm;
 import com.bcl.fitmate.backend.repository.MemberFormRepository;
 import com.bcl.fitmate.backend.repository.MemberRepository;
-import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.MemberFormService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,17 +24,20 @@ public class MemberFormServiceImpl implements MemberFormService {
     private final MemberRepository memberRepository;
     private final MemberFormRepository memberFormRepository;
 
+
+    @Override
+    public Member getMemberByUserId(Long userId) {
+        return memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.MEMBER_NOT_FOUND));
+    }
+
+
     @Override
     @Transactional
     public ResponseDto<CreateMemberFormResponseDto> createMemberForm(Long userId, CreateMemberFormRequestDto dto) {
         CreateMemberFormResponseDto response = null;
 
-        Member member = memberRepository.findByUserId(userId)
-                .orElse(null);
-
-        if(member == null){
-            return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.MEMBER_NOT_FOUND);
-        }
+        Member member = getMemberByUserId(userId);
 
         MemberForm memberForm = new MemberForm(
                 null,
@@ -69,19 +72,9 @@ public class MemberFormServiceImpl implements MemberFormService {
     public ResponseDto<GetMemberFormResponseDto> getMemberForm(Long userId) {
         GetMemberFormResponseDto response = null;
 
-        Member member = memberRepository.findByUserId(userId)
-                .orElse(null);
+        Member member = getMemberByUserId(userId);
 
-        if(member == null){
-            return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.MEMBER_NOT_FOUND);
-        }
-
-        MemberForm memberForm = memberFormRepository.findById(member.getMemberForm().getFormId())
-                .orElse(null);
-
-        if(memberForm == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_FORM, ResponseMessage.NOT_EXISTS_FORM);
-        }
+        MemberForm memberForm = member.getMemberForm();
 
 
         response = new GetMemberFormResponseDto(

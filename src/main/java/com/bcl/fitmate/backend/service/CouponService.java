@@ -6,11 +6,16 @@ import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.coupon.request.PutCouponRequestDto;
 import com.bcl.fitmate.backend.dto.coupon.response.GetMemberCouponResponseDto;
 import com.bcl.fitmate.backend.dto.coupon.response.GetTrainerCouponResponseDto;
+import com.bcl.fitmate.backend.entity.Coupon;
+import com.bcl.fitmate.backend.entity.User;
 import jakarta.validation.Valid;
 
 import java.util.List;
 
 public interface CouponService {
+    User getUserById(Long userId);
+
+    Coupon getCouponById(Long couponId);
 
     ResponseDto<List<GetMemberCouponResponseDto>> getMemberCoupons(Long userId, CouponStatus status);
 

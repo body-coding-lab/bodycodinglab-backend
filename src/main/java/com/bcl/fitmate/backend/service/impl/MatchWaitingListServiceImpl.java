@@ -17,6 +17,7 @@ import com.bcl.fitmate.backend.repository.MatchWaitingListRepository;
 import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.MatchWaitingListService;
 import com.bcl.fitmate.backend.service.UploadFileService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,27 +37,37 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     private final UploadFileService uploadFileService;
 
     @Override
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.USER_NOT_FOUND));
+    }
+
+    @Override
+    public MatchWaitingList getMatchWaitingListById(Long matchWaitingListId) {
+        return matchWaitingListRepository.findById(matchWaitingListId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.USER_NOT_FOUND));
+    }
+
+    @Override
+    public MatchWaitingList getMatchWaitingListByMemberId(Long userId) {
+        return matchWaitingListRepository.findByMember_Id(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.MEMBER_NOT_FOUND));
+    }
+
+    @Override
     @Transactional
     public ResponseDto<CreateMatchWaitingListResponseDto> createMatchWaitingList(Long trainerId, Long userId) {
         CreateMatchWaitingListResponseDto response = null;
 
-        User trainer = userRepository.findById(trainerId).orElse(null);
+        User trainer = getUserById(trainerId);
 
-        if(trainer == null){
-            return ResponseDto.fail(ResponseCode.TRAINER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
-
-        User member = userRepository.findById(userId).orElse(null);
-
-        if(member == null){
-            return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.MEMBER_NOT_FOUND);
-        }
+        User member = getUserById(userId);
 
         if(member.getMemberMatch() != null){
-            return ResponseDto.fail(ResponseCode.ALREADY_EXISTS_MATCH, ResponseMessage.ALREADY_EXISTS_MATCH);
+            throw new IllegalStateException(ResponseMessage.ALREADY_EXISTS_MATCH);
         }
 
-        MatchWaitingList existing = matchWaitingListRepository.findByMember_Id(member.getId()).orElse(null);
+        MatchWaitingList existing = getMatchWaitingListByMemberId(userId);
         if(existing != null && existing.getApprovedStatus() == ApprovedStatus.REJECT){
             member.setMatchWaitingListAsMember(null);
             trainer.removeMatchWaitingListAsTrainers(existing);
@@ -86,11 +97,7 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     public ResponseDto<GetMemberMatchWaitingListResponseDto> getMemberMatchWaitingList(Long userId) {
         GetMemberMatchWaitingListResponseDto response = null;
 
-        MatchWaitingList matchWaitingList = matchWaitingListRepository.findByMember_Id(userId).orElse(null);
-
-        if(matchWaitingList == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH_WAITING_LIST, ResponseMessage.NOT_EXISTS_MATCH_WAITING_LIST);
-        }
+        MatchWaitingList matchWaitingList = getMatchWaitingListByMemberId(userId);
 
         String profileImageUrl = null;
 
@@ -111,23 +118,11 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     @Override
     @Transactional
     public ResponseDto<Void> matchCancel(Long userId, Long matchWaitingListId) {
-        User member = userRepository.findById(userId).orElse(null);
+        User member = getUserById(userId);
 
-        if(member == null){
-            return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.MEMBER_NOT_FOUND);
-        }
+        MatchWaitingList matchWaitingList = getMatchWaitingListById(matchWaitingListId);
 
-        MatchWaitingList matchWaitingList = matchWaitingListRepository.findById(matchWaitingListId).orElse(null);
-
-        if(matchWaitingList == null){
-            return  ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH_WAITING_LIST, ResponseMessage.NOT_EXISTS_MATCH_WAITING_LIST);
-        }
-
-        User trainer = userRepository.findById(matchWaitingList.getTrainer().getId()).orElse(null);
-
-        if(trainer == null){
-            return ResponseDto.fail(ResponseCode.TRAINER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
+        User trainer = getUserById(matchWaitingList.getTrainer().getId());
 
         member.setMatchWaitingListAsMember(null);
 
@@ -166,11 +161,7 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     @Override
     @Transactional
     public ResponseDto<Void> matchApprove(Long userId, Long matchWaitingListId, PutApproveMatchWaitingListRequestDto dto) {
-        MatchWaitingList matchWaitingList = matchWaitingListRepository.findById(matchWaitingListId).orElse(null);
-
-        if(matchWaitingList == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH_WAITING_LIST, ResponseCode.NOT_EXISTS_MATCH_WAITING_LIST);
-        }
+        MatchWaitingList matchWaitingList = getMatchWaitingListById(matchWaitingListId);
 
         if(!matchWaitingList.getTrainer().getId().equals(userId)){
             return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH_WAITING_LIST_PERMISSION, ResponseMessage.NOT_EXISTS_MATCH_WAITING_LIST_PERMISSION);
@@ -186,11 +177,7 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     @Override
     @Transactional
     public ResponseDto<Void> matchReject(Long userId, Long matchWaitingListId, PutRejectMatchWaitingListRequestDto dto) {
-        MatchWaitingList matchWaitingList = matchWaitingListRepository.findById(matchWaitingListId).orElse(null);
-
-        if(matchWaitingList == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH_WAITING_LIST, ResponseMessage.NOT_EXISTS_MATCH_WAITING_LIST);
-        }
+        MatchWaitingList matchWaitingList = getMatchWaitingListById(matchWaitingListId);
 
         if(!matchWaitingList.getTrainer().getId().equals(userId)){
             return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH_WAITING_LIST_PERMISSION, ResponseMessage.NOT_EXISTS_MATCH_WAITING_LIST_PERMISSION);

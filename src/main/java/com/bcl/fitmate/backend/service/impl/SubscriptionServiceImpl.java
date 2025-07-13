@@ -13,6 +13,7 @@ import com.bcl.fitmate.backend.dto.subscription.response.GetSubscriptionResponse
 import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.repository.*;
 import com.bcl.fitmate.backend.service.SubscriptionService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,18 +31,40 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final PaymentRepository paymentRepository;
 
     @Override
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.TRAINER_NOT_FOUND));
+    }
+
+    @Override
+    public Payment getPaymentByOrderId(String orderId) {
+        return paymentRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_PAYMENT));
+    }
+
+    @Override
+    public Subscription getSubscriptionByMember_MemberId(Long memberId) {
+        return subscriptionRepository.findByMember_MemberId(memberId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_SUBSCRIPTION));
+    }
+
+    @Override
+    public MatchWaitingList getMatchWaitingListByMemberId(Long userId) {
+        return matchWaitingListRepository.findByMember_Id(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_MATCH_WAITING_LIST_PERMISSION));
+    }
+
+    @Override
     @Transactional
     public ResponseDto<CreateSubscriptionResponseDto> createSubscription(Long userId, ConfirmPaymentRequestDto dto) {
         CreateSubscriptionResponseDto response = null;
 
-        Payment payment = paymentRepository.findByOrderId(dto.getOrderId()).orElse(null);
+        Payment payment = getPaymentByOrderId(dto.getOrderId());
 
-        if(payment == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_PAYMENT, ResponseMessage.NOT_EXISTS_PAYMENT);
-        }
+
 
         if(payment.getPaymentStatus() != PaymentStatus.READY){
-            return ResponseDto.fail(ResponseCode.NOT_PROCESS_STATUS_PAYMENT, ResponseMessage.NOT_PROCESS_STATUS_PAYMENT);
+            throw new IllegalStateException(ResponseMessage.NOT_PROCESS_STATUS_PAYMENT);
         }
 
         PaymentMethod method = PaymentMethod.valueOf(dto.getProvider().toUpperCase());
@@ -65,17 +88,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         member.setSubscription(subscription);
         member.setStatus(MemberStatus.SUBSCRIPTION);
 
-        MatchWaitingList matchWaitingList = matchWaitingListRepository.findByMember_Id(userId).orElse(null);
+        MatchWaitingList matchWaitingList = getMatchWaitingListByMemberId(userId);
 
-        if(matchWaitingList == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH_WAITING_LIST, ResponseMessage.NOT_EXISTS_MATCH_WAITING_LIST);
-        }
-
-        User trainer = userRepository.findById(matchWaitingList.getTrainer().getId()).orElse(null);
-
-        if(trainer == null){
-            return ResponseDto.fail(ResponseCode.TRAINER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
+        User trainer = getUserById(matchWaitingList.getTrainer().getId());
 
         Match match = Match.builder()
                 .member(matchWaitingList.getMember())
@@ -101,19 +116,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public ResponseDto<GetSubscriptionResponseDto> getSubscription(Long userId) {
         GetSubscriptionResponseDto response = null;
 
-        User user = userRepository.findById(userId).orElse(null);
+        User user = getUserById(userId);
 
-        if(user == null){
-            return ResponseDto.fail(ResponseCode.MEMBER_NOT_FOUND, ResponseMessage.TRAINER_NOT_FOUND);
-        }
 
         Long memberId = user.getMember().getMemberId();
 
-        Subscription subscription = subscriptionRepository.findByMember_MemberId(memberId).orElse(null);
-
-        if(subscription == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_SUBSCRIPTION, ResponseMessage.NOT_EXISTS_PAYMENT);
-        }
+        Subscription subscription = getSubscriptionByMember_MemberId(memberId);
 
         response = new GetSubscriptionResponseDto(
                 subscription.getMember().getUser().getName(),
