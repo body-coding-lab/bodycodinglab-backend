@@ -1,5 +1,6 @@
 package com.bcl.fitmate.backend.service.impl;
 
+import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.common.constants.ResponseCode;
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
 import com.bcl.fitmate.backend.common.enums.matchWaitingList.ApprovedStatus;
@@ -34,7 +35,6 @@ import java.util.stream.Collectors;
 public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     private final MatchWaitingListRepository matchWaitingListRepository;
     private final UserRepository userRepository;
-    private final UploadFileService uploadFileService;
 
     @Override
     public User getUserById(Long userId) {
@@ -79,7 +79,6 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
         MatchWaitingList matchWaitingList = MatchWaitingList.builder()
                 .member(member)
                 .trainer(trainer)
-                .appliedAt(DateUtils.parse(DateUtils.format(LocalDateTime.now())))
                 .approvedStatus(ApprovedStatus.NOT_APPROVED)
                 .build();
 
@@ -99,7 +98,15 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
 
         MatchWaitingList matchWaitingList = getMatchWaitingListByMemberId(userId);
 
+        User trainer = getUserById(matchWaitingList.getTrainer().getId());
+
         String profileImageUrl = null;
+
+        UploadFile trainerProfileImage = trainer.getProfileImage();
+        if(trainerProfileImage != null){
+            profileImageUrl = ApiMappingPattern.FILE_API + "/single/" + trainerProfileImage.getId();
+        }
+
 
         response = new GetMemberMatchWaitingListResponseDto(
                 matchWaitingList.getId(),
@@ -107,7 +114,7 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
                 profileImageUrl,
                 matchWaitingList.getTrainer().getName(),
                 matchWaitingList.getTrainer().getTrainer().getJobAddress(),
-                matchWaitingList.getAppliedAt(),
+                DateUtils.format(matchWaitingList.getCreatedAt()),
                 matchWaitingList.getApprovedStatus(),
                 matchWaitingList.getRejectResponse()
         );
@@ -150,7 +157,7 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
                             list.getMember().getName(),
                             age,
                             list.getMember().getGender(),
-                            list.getAppliedAt(),
+                            DateUtils.format(list.getCreatedAt()),
                             list.getApprovedStatus()
                     );
                 }).toList();

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Note {
+public class Note extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,9 +27,6 @@ public class Note {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "note_receiver", nullable = false)
     private User noteReceiver;
-
-    @Column(name = "created_at")
-    private LocalDateTime noteCreateTime;
 
     @Column(name = "is_read", nullable = false)
     private boolean isRead = false;

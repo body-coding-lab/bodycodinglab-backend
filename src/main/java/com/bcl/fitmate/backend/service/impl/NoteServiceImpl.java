@@ -54,7 +54,6 @@ public class NoteServiceImpl implements NoteService {
                 .noteText(dto.getNoteText())
                 .noteWriter(writer)
                 .noteReceiver(receiver)
-                .noteCreateTime(LocalDateTime.now())
                 .build();
 
         writer.addWriterNotes(note);
@@ -79,7 +78,7 @@ public class NoteServiceImpl implements NoteService {
                 note.getNoteText(),
                 note.getNoteWriter().getName(),
                 note.getNoteReceiver().getName(),
-                DateUtils.format(note.getNoteCreateTime())
+                DateUtils.format(note.getCreatedAt())
         ));
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, response);
@@ -105,7 +104,7 @@ public class NoteServiceImpl implements NoteService {
                 note.getNoteText(),
                 note.getNoteWriter().getName(),
                 note.getNoteReceiver().getName(),
-                DateUtils.format(note.getNoteCreateTime()),
+                DateUtils.format(note.getCreatedAt()),
                 note.isRead()
         );
 
@@ -143,7 +142,7 @@ public class NoteServiceImpl implements NoteService {
                 note.getNoteText(),
                 note.getNoteWriter().getName(),
                 note.getNoteReceiver().getName(),
-                DateUtils.format(note.getNoteCreateTime())
+                DateUtils.format(note.getCreatedAt())
         ));
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, response);
@@ -160,7 +159,7 @@ public class NoteServiceImpl implements NoteService {
                 note.getNoteText(),
                 note.getNoteWriter().getName(),
                 note.getNoteReceiver().getName(),
-                DateUtils.format(note.getNoteCreateTime())
+                DateUtils.format(note.getCreatedAt())
         ));
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, response);

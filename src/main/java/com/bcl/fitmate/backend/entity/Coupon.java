@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @Setter
 @Getter
-public class Coupon {
+public class Coupon extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

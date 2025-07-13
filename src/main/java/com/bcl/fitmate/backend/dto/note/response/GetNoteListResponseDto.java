@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class GetNoteListResponseDto {
     private Long id;
     private String noteText;
-    private String noteWriter;
-    private String noteReceiver;
+    private String noteWriterName;
+    private String noteReceiverName;
     private String noteCreateTime;
 }

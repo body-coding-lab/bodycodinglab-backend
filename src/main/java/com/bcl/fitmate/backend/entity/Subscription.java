@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @Setter
-public class Subscription {
+public class Subscription extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -25,6 +25,4 @@ public class Subscription {
     @Column(name = "price", nullable = false)
     private int price;
 
-    @Column(name = "payment_date", nullable = false)
-    private LocalDateTime paymentDate;
 }

@@ -16,7 +16,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class Member {
+public class Member extends BaseTime{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

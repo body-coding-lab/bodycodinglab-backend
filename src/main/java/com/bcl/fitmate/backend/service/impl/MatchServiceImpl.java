@@ -1,7 +1,9 @@
 package com.bcl.fitmate.backend.service.impl;
 
+import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.common.constants.ResponseCode;
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
+import com.bcl.fitmate.backend.common.util.DateUtils;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetMemberMatchResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetTrainerMatchListResponseDto;
@@ -27,7 +29,6 @@ public class MatchServiceImpl implements MatchService {
     private final MatchRepository matchRepository;
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
-    private final UploadFileService uploadFileService;
     private final PaymentRepository paymentRepository;
     private final MemberFormRepository memberFormRepository;
 
@@ -59,7 +60,15 @@ public class MatchServiceImpl implements MatchService {
             throw new EntityNotFoundException(ResponseMessage.NOT_EXISTS_MATCH);
         }
 
+        Match match = member.getMemberMatch();
+
+        User trainer = getTrainerById(match.getTrainer().getId());
+
         String profileImageUrl = null;
+        UploadFile trainerProfileImage = trainer.getProfileImage();
+        if(trainerProfileImage != null){
+            profileImageUrl = ApiMappingPattern.FILE_API + "/single/" + trainerProfileImage.getId();
+        }
 
 
         response = new GetMemberMatchResponseDto(
@@ -67,7 +76,7 @@ public class MatchServiceImpl implements MatchService {
                 member.getMemberMatch().getTrainer().getId(),
                 profileImageUrl,
                 member.getMemberMatch().getTrainer().getName(),
-                member.getMemberMatch().getMatchedAt(),
+                DateUtils.format(member.getMemberMatch().getCreatedAt()),
                 member.getMemberMatch().getTrainer().getTrainer().getJobAddress()
         );
 
@@ -140,10 +149,19 @@ public class MatchServiceImpl implements MatchService {
             throw new EntityNotFoundException(ResponseMessage.TRAINER_NOT_FOUND);
         }
 
+        User member = getMemberById(match.getMember().getId());
+
+        String profileImageUrl = null;
+        UploadFile memberProfileImage = member.getProfileImage();
+        if(memberProfileImage != null){
+            profileImageUrl = ApiMappingPattern.FILE_API + "/single/" + memberProfileImage.getId();
+        }
+
+
         LocalDate birthdate = match.getMember().getBirthdate();
         int age = Period.between(birthdate, LocalDate.now()).getYears();
 
-        String profileImageUrl = null;
+
 
         if(match.getMember().getMember().getMemberForm() != null){
             GetMemberFormResponseDto memberFormResponseDto = new GetMemberFormResponseDto(
