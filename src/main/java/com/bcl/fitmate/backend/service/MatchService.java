@@ -11,9 +11,6 @@ import com.bcl.fitmate.backend.entity.User;
 import java.util.List;
 
 public interface MatchService {
-    User getMemberById(Long userId);
-
-    User getTrainerById(Long userId);
 
     Match getMatchById(Long matchId);
 

@@ -13,6 +13,7 @@ import com.bcl.fitmate.backend.entity.User;
 import com.bcl.fitmate.backend.repository.CouponRepository;
 import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.CouponService;
+import com.bcl.fitmate.backend.service.UserService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class CouponServiceImpl implements CouponService {
 
     private final CouponRepository couponRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional
     @Scheduled(cron = "0 0 0 * * *")
@@ -86,11 +88,7 @@ public class CouponServiceImpl implements CouponService {
         couponRepository.deleteAll(oldCompleteCoupons);
     }
 
-    @Override
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.USER_NOT_FOUND));
-    }
+
 
     @Override
     public Coupon getCouponById(Long couponId) {
@@ -101,9 +99,9 @@ public class CouponServiceImpl implements CouponService {
     @Override
     @Transactional
     public void createCoupon(Long userId, Long trainerId){
-        User member = getUserById(userId);
+        User member = userService.getUserById(userId);
 
-        User trainer = getUserById(trainerId);
+        User trainer = userService.getUserById(trainerId);
 
         Coupon coupon = Coupon.builder()
                 .member(member)
@@ -120,10 +118,11 @@ public class CouponServiceImpl implements CouponService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<List<GetMemberCouponResponseDto>> getMemberCoupons(Long userId, CouponStatus status) {
         List<GetMemberCouponResponseDto> responseCoupons = null;
 
-        User member = getUserById(userId);
+        User member = userService.getUserById(userId);
 
 
         List<Coupon> coupons = member.getMemberCoupons();
@@ -160,10 +159,11 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<List<GetTrainerCouponResponseDto>> getTrainerCoupons(Long userId, CouponStatus status) {
         List<GetTrainerCouponResponseDto> responseCoupons = null;
 
-        User trainer = getUserById(userId);
+        User trainer = userService.getUserById(userId);
 
         List<Coupon> coupons = trainer.getTrainerCoupons();
 

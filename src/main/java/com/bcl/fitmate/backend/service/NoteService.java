@@ -7,15 +7,12 @@ import com.bcl.fitmate.backend.dto.note.response.CreateNoteResponseDto;
 import com.bcl.fitmate.backend.dto.note.response.GetNoteListResponseDto;
 import com.bcl.fitmate.backend.dto.note.response.GetNoteResponseDto;
 import com.bcl.fitmate.backend.entity.Note;
-import com.bcl.fitmate.backend.entity.User;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 
 public interface NoteService {
-
-    User getUserById(Long userId);
 
     Note getNoteById(Long noteId);
 

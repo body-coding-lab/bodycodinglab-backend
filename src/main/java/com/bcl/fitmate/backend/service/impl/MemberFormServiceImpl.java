@@ -69,6 +69,7 @@ public class MemberFormServiceImpl implements MemberFormService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<GetMemberFormResponseDto> getMemberForm(Long userId) {
         GetMemberFormResponseDto response = null;
 

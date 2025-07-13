@@ -13,6 +13,7 @@ import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.repository.*;
 import com.bcl.fitmate.backend.service.MatchService;
 import com.bcl.fitmate.backend.service.UploadFileService;
+import com.bcl.fitmate.backend.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,22 +28,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MatchServiceImpl implements MatchService {
     private final MatchRepository matchRepository;
-    private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final PaymentRepository paymentRepository;
     private final MemberFormRepository memberFormRepository;
+    private final UserService userService;
 
-    @Override
-    public User getMemberById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.MEMBER_NOT_FOUND));
-    }
-
-    @Override
-    public User getTrainerById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.TRAINER_NOT_FOUND));
-    }
 
     @Override
     public Match getMatchById(Long matchId) {
@@ -51,10 +41,11 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<GetMemberMatchResponseDto> getMemberMatch(Long userId) {
         GetMemberMatchResponseDto response = null;
 
-        User member = getMemberById(userId);
+        User member = userService.getUserById(userId);
 
         if(member.getMemberMatch() == null){
             throw new EntityNotFoundException(ResponseMessage.NOT_EXISTS_MATCH);
@@ -62,7 +53,7 @@ public class MatchServiceImpl implements MatchService {
 
         Match match = member.getMemberMatch();
 
-        User trainer = getTrainerById(match.getTrainer().getId());
+        User trainer = userService.getUserById(match.getTrainer().getId());
 
         String profileImageUrl = null;
         UploadFile trainerProfileImage = trainer.getProfileImage();
@@ -89,10 +80,10 @@ public class MatchServiceImpl implements MatchService {
        Match match = getMatchById(matchId);
 
 
-       User member = getMemberById(userId);
+       User member = userService.getUserById(userId);
 
 
-       User trainer = getTrainerById(match.getTrainer().getId());
+       User trainer = userService.getUserById(match.getTrainer().getId());
 
 
        member.setMemberMatch(null);
@@ -118,10 +109,11 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<List<GetTrainerMatchListResponseDto>> getTrainerMatchList(Long userId) {
         List<GetTrainerMatchListResponseDto> matchList = null;
 
-        User trainer = getTrainerById(userId);
+        User trainer = userService.getUserById(userId);
 
 
         if(trainer.getMemberMatch() == null){
@@ -136,10 +128,11 @@ public class MatchServiceImpl implements MatchService {
                         match.getMember().getGender()
                 )).toList();
 
-        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, matchList);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<GetTrainerMatchResponseDto> getTrainerMatch(Long userId, Long matchId) {
         GetTrainerMatchResponseDto response = null;
         Match match = getMatchById(matchId);
@@ -149,7 +142,7 @@ public class MatchServiceImpl implements MatchService {
             throw new EntityNotFoundException(ResponseMessage.TRAINER_NOT_FOUND);
         }
 
-        User member = getMemberById(match.getMember().getId());
+        User member = userService.getUserById(match.getMember().getId());
 
         String profileImageUrl = null;
         UploadFile memberProfileImage = member.getProfileImage();

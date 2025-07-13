@@ -18,6 +18,7 @@ import com.bcl.fitmate.backend.repository.MatchWaitingListRepository;
 import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.MatchWaitingListService;
 import com.bcl.fitmate.backend.service.UploadFileService;
+import com.bcl.fitmate.backend.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,13 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     private final MatchWaitingListRepository matchWaitingListRepository;
-    private final UserRepository userRepository;
-
-    @Override
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.USER_NOT_FOUND));
-    }
+    private final UserService userService;
 
     @Override
     public MatchWaitingList getMatchWaitingListById(Long matchWaitingListId) {
@@ -59,9 +54,9 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     public ResponseDto<CreateMatchWaitingListResponseDto> createMatchWaitingList(Long trainerId, Long userId) {
         CreateMatchWaitingListResponseDto response = null;
 
-        User trainer = getUserById(trainerId);
+        User trainer = userService.getUserById(trainerId);
 
-        User member = getUserById(userId);
+        User member = userService.getUserById(userId);
 
         if(member.getMemberMatch() != null){
             throw new IllegalStateException(ResponseMessage.ALREADY_EXISTS_MATCH);
@@ -93,12 +88,13 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<GetMemberMatchWaitingListResponseDto> getMemberMatchWaitingList(Long userId) {
         GetMemberMatchWaitingListResponseDto response = null;
 
         MatchWaitingList matchWaitingList = getMatchWaitingListByMemberId(userId);
 
-        User trainer = getUserById(matchWaitingList.getTrainer().getId());
+        User trainer = userService.getUserById(matchWaitingList.getTrainer().getId());
 
         String profileImageUrl = null;
 
@@ -125,11 +121,11 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     @Override
     @Transactional
     public ResponseDto<Void> matchCancel(Long userId, Long matchWaitingListId) {
-        User member = getUserById(userId);
+        User member = userService.getUserById(userId);
 
         MatchWaitingList matchWaitingList = getMatchWaitingListById(matchWaitingListId);
 
-        User trainer = getUserById(matchWaitingList.getTrainer().getId());
+        User trainer = userService.getUserById(matchWaitingList.getTrainer().getId());
 
         member.setMatchWaitingListAsMember(null);
 
@@ -141,6 +137,7 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<List<GetTrainerMatchWaitingListResponse>> getTrainerMatchWaitingList(Long userId) {
         List<GetTrainerMatchWaitingListResponse> response = null;
 

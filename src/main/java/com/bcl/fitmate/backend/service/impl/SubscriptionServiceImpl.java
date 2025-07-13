@@ -12,35 +12,26 @@ import com.bcl.fitmate.backend.dto.subscription.response.CreateSubscriptionRespo
 import com.bcl.fitmate.backend.dto.subscription.response.GetSubscriptionResponseDto;
 import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.repository.*;
+import com.bcl.fitmate.backend.service.MatchWaitingListService;
+import com.bcl.fitmate.backend.service.PaymentService;
 import com.bcl.fitmate.backend.service.SubscriptionService;
+import com.bcl.fitmate.backend.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+
 
 @Service
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
-
-    private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final MatchWaitingListRepository matchWaitingListRepository;
     private final MatchRepository matchRepository;
-    private final PaymentRepository paymentRepository;
-
-    @Override
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.TRAINER_NOT_FOUND));
-    }
-
-    @Override
-    public Payment getPaymentByOrderId(String orderId) {
-        return paymentRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_PAYMENT));
-    }
+    private final UserService userService;
+    private final PaymentService paymentService;
+    private final MatchWaitingListService matchWaitingListService;
 
     @Override
     public Subscription getSubscriptionByMember_MemberId(Long memberId) {
@@ -48,18 +39,13 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_SUBSCRIPTION));
     }
 
-    @Override
-    public MatchWaitingList getMatchWaitingListByMemberId(Long userId) {
-        return matchWaitingListRepository.findByMember_Id(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_MATCH_WAITING_LIST_PERMISSION));
-    }
 
     @Override
     @Transactional
     public ResponseDto<CreateSubscriptionResponseDto> createSubscription(Long userId, ConfirmPaymentRequestDto dto) {
         CreateSubscriptionResponseDto response = null;
 
-        Payment payment = getPaymentByOrderId(dto.getOrderId());
+        Payment payment = paymentService.getPaymentByOrderId(dto.getOrderId());
 
 
 
@@ -87,9 +73,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         member.setSubscription(subscription);
         member.setStatus(MemberStatus.SUBSCRIPTION);
 
-        MatchWaitingList matchWaitingList = getMatchWaitingListByMemberId(userId);
+        MatchWaitingList matchWaitingList = matchWaitingListService.getMatchWaitingListByMemberId(userId);
 
-        User trainer = getUserById(matchWaitingList.getTrainer().getId());
+        User trainer = userService.getUserById(matchWaitingList.getTrainer().getId());
 
         Match match = Match.builder()
                 .member(matchWaitingList.getMember())
@@ -111,10 +97,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<GetSubscriptionResponseDto> getSubscription(Long userId) {
         GetSubscriptionResponseDto response = null;
 
-        User user = getUserById(userId);
+        User user = userService.getUserById(userId);
 
 
         Long memberId = user.getMember().getMemberId();
