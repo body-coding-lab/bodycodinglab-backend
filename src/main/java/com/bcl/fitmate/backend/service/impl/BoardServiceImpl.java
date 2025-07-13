@@ -15,9 +15,9 @@ import com.bcl.fitmate.backend.dto.board.response.BoardListResponseDto;
 import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.repository.BoardRepository;
 import com.bcl.fitmate.backend.repository.MatchRepository;
-import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.BoardService;
 import com.bcl.fitmate.backend.service.UploadFileService;
+import com.bcl.fitmate.backend.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @Service
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final MatchRepository matchRepository;
     private final UploadFileService uploadFileService;
 
@@ -45,12 +45,7 @@ public class BoardServiceImpl implements BoardService {
     public ResponseDto<BoardDetailResponseDto> createPost(Long id, Long matchId, BoardRequestDto dto, List<MultipartFile> files) {
         BoardDetailResponseDto data = null;
 
-        User user = userRepository.findById(id)
-                .orElse(null);
-
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
+        User user = userService.getUserById(id);
 
         Match match = matchRepository.findById(matchId)
                 .orElse(null);
@@ -107,12 +102,7 @@ public class BoardServiceImpl implements BoardService {
     public ResponseDto<BoardDetailResponseDto> updatePost(Long id, Long matchId, Long postId, BoardRequestDto dto, List<MultipartFile> files) {
         BoardDetailResponseDto data = null;
 
-        User user = userRepository.findById(id)
-                .orElse(null);
-
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
+        User user = userService.getUserById(id);
 
         Match match = matchRepository.findById(matchId)
                 .orElse(null);
@@ -173,13 +163,6 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public ResponseDto<Void> deletePost(Long id, Long matchId, Long postId) {
-        User user = userRepository.findById(id)
-                .orElse(null);
-
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
-
         Match match = matchRepository.findById(matchId)
                 .orElse(null);
 
@@ -209,13 +192,6 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<BoardDetailResponseDto> getPost(Long id, Long matchId, Long postId) {
-        User user = userRepository.findById(id)
-                .orElse(null);
-
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
-
         Match match = matchRepository.findById(matchId)
                 .orElse(null);
 
@@ -264,13 +240,6 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<Page<BoardListResponseDto>> getPostList(Long id, Long matchId, Category category, int page, int size) {
-        User user = userRepository.findById(id)
-                .orElse(null);
-
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
-
         Match match = matchRepository.findById(matchId)
                 .orElse(null);
 
@@ -304,13 +273,6 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<Page<BoardListResponseDto>> searchPostByName(Long id, Long matchId, Category category, String writerName, int page, int size) {
-        User user = userRepository.findById(id)
-                .orElse(null);
-
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
-
         Match match = matchRepository.findById(matchId)
                 .orElse(null);
 
@@ -344,13 +306,6 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<Page<BoardListResponseDto>> searchPostByTitle(Long id, Long matchId, Category category, String title, int page, int size) {
-        User user = userRepository.findById(id)
-                .orElse(null);
-
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
-
         Match match = matchRepository.findById(matchId)
                 .orElse(null);
 
@@ -384,13 +339,6 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<Page<BoardListResponseDto>> searchPostByContent(Long id, Long matchId, Category category, String content, int page, int size) {
-        User user = userRepository.findById(id)
-                .orElse(null);
-
-        if(user == null) {
-            return ResponseDto.fail(ResponseCode.USER_NOT_FOUND, ResponseMessage.USER_NOT_FOUND);
-        }
-
         Match match = matchRepository.findById(matchId)
                 .orElse(null);
 

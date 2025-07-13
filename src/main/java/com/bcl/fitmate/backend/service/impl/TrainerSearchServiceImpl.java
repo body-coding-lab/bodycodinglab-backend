@@ -6,15 +6,13 @@ import com.bcl.fitmate.backend.common.enums.uploadFile.TargetType;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.trainer.response.*;
 import com.bcl.fitmate.backend.dto.uploadFile.response.FileResponseDto;
-import com.bcl.fitmate.backend.entity.Trainer;
-import com.bcl.fitmate.backend.entity.TrainerCareer;
-import com.bcl.fitmate.backend.entity.TrainerLicense;
-import com.bcl.fitmate.backend.entity.UploadFile;
+import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.repository.TrainerCareerRepository;
 import com.bcl.fitmate.backend.repository.TrainerLicenseRepository;
 import com.bcl.fitmate.backend.repository.TrainerRepository;
 import com.bcl.fitmate.backend.repository.UploadFileRepository;
 import com.bcl.fitmate.backend.service.TrainerSearchService;
+import com.bcl.fitmate.backend.service.TrainerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +25,7 @@ public class TrainerSearchServiceImpl implements TrainerSearchService {
     private final TrainerCareerRepository trainerCareerRepository;
     private final TrainerLicenseRepository trainerLicenseRepository;
     private final TrainerRepository trainerRepository;
+    private final TrainerService trainerService;
     private final UploadFileRepository uploadFileRepository;
 
     @Override
@@ -100,8 +99,7 @@ public class TrainerSearchServiceImpl implements TrainerSearchService {
     public ResponseDto<TrainerDetailResponseDto> getTrainerById(Long trainerId) {
         TrainerDetailResponseDto data = null;
 
-        Trainer trainer = trainerRepository.findById(trainerId)
-                .orElseThrow(() -> new IllegalArgumentException(ResponseMessage.TRAINER_NOT_FOUND));
+        Trainer trainer = trainerService.getTrainerById(trainerId);
 
         List<TrainerCareerResponseDto> careers = trainer.getTrainerCareers().stream()
                 .map(career -> TrainerCareerResponseDto.builder()
@@ -139,7 +137,7 @@ public class TrainerSearchServiceImpl implements TrainerSearchService {
                 trainerId, TargetType.INFO
         );
 
-        List<FileResponseDto> infoImageDtos = files.stream()
+        List<FileResponseDto> infoImageDtos = infoFiles.stream()
                 .map(FileResponseDto::fromEntity)
                 .collect(Collectors.toList());
 
