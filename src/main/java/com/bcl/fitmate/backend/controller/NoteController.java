@@ -46,10 +46,10 @@ public class NoteController {
     public ResponseEntity<ResponseDto<Page<GetNoteListResponseDto>>> getAllNote(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "0") int size
+            @RequestParam(defaultValue = "10") int size
     ){
         Long userId = userPrincipal.getId();
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noteCreateTime"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return ResponseDto.toResponseEntity(HttpStatus.OK, noteService.getAllNote(userId, pageable));
     }
 
@@ -83,7 +83,7 @@ public class NoteController {
             @RequestParam(defaultValue = "10") int size
     ){
         Long userId = userPrincipal.getId();
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noteCreateTime"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return ResponseDto.toResponseEntity(HttpStatus.OK, noteService.getReceivedNotes(userId, pageable));
     }
 
@@ -96,7 +96,7 @@ public class NoteController {
             @RequestParam(defaultValue = "10") int size
     ){
         Long userId = userPrincipal.getId();
-        Pageable pageable =  PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noteCreateTime"));
+        Pageable pageable =  PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return ResponseDto.toResponseEntity(HttpStatus.OK, noteService.getSentNotes(userId, pageable));
     }
 }

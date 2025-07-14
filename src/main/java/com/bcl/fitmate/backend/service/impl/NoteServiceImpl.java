@@ -42,7 +42,7 @@ public class NoteServiceImpl implements NoteService {
 
         User writer = userService.getUserById(userId);
 
-        User receiver = userService.getUserById(userId);
+        User receiver = userService.getUserById(dto.getNoteReceiver());
 
         Note note = Note.builder()
                 .noteText(dto.getNoteText())
@@ -80,7 +80,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public ResponseDto<GetNoteResponseDto> getNoteById(Long userId, Long noteId) {
         GetNoteResponseDto response = null;
 
