@@ -33,7 +33,7 @@ public class PaymentController {
 
         return ResponseDto.toResponseEntity(HttpStatus.CREATED, paymentService.createPayment(userId, dto));
     }
-
+    @PreAuthorize("hasRole('MEMBER')")
     @PostMapping(FAIL)
     public ResponseEntity<ResponseDto<Void>> paymentFailWebHook(@RequestParam String orderId){
         return ResponseDto.toResponseEntity(HttpStatus.CREATED, paymentService.paymentFailWebHook(orderId));
