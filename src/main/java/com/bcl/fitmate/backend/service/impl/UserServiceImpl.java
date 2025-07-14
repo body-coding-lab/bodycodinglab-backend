@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
                 )
                 .build();
 
-        return ResponseDto.success(ResponseCode.SUCCESS, ResponseCode.SUCCESS, data);
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
                 .memberAddress(user.getMember().getMemberAddress())
                 .build();
 
-        return ResponseDto.success(ResponseCode.SUCCESS, ResponseCode.SUCCESS, data);
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.save(user);
 
-        return ResponseDto.success(ResponseCode.SUCCESS, ResponseCode.SUCCESS);
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
     @Override
@@ -165,12 +165,12 @@ public class UserServiceImpl implements UserService {
         User user = getUserById(id);
 
         if (profileImage == null || profileImage.isEmpty()) {
-            return ResponseDto.fail(ResponseCode.FILE_NOT_ATTACHED, ResponseCode.FILE_NOT_ATTACHED);
+            return ResponseDto.fail(ResponseCode.FILE_NOT_ATTACHED, ResponseMessage.FILE_NOT_ATTACHED);
         }
 
         user.setProfileImage(uploadFileService.updateSingleFile(user.getProfileImage().getId(), user.getId(), TargetType.PROFILE, profileImage));
 
-        return ResponseDto.success(ResponseMessage.SUCCESS, ResponseMessage.SUCCESS);
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
     @Override

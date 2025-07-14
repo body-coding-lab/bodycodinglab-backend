@@ -157,7 +157,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElse(null);
 
         if (user == null) {
-            ResponseDto.fail(ResponseCode.NO_EXIST_USER_ID, ResponseMessage.NO_EXIST_USER_ID);
+            return ResponseDto.fail(ResponseCode.NO_EXIST_USER_ID, ResponseMessage.NO_EXIST_USER_ID);
         }
 
         if (!checkPassword(user, dto.getPassword())) {
@@ -207,7 +207,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElse(null);
 
         if (user == null) {
-            ResponseDto.fail(ResponseCode.NO_EXIST_EMAIL, ResponseMessage.NO_EXIST_EMAIL);
+            return ResponseDto.fail(ResponseCode.NO_EXIST_EMAIL, ResponseMessage.NO_EXIST_EMAIL);
         }
 
         if (!user.getName().equals(dto.getName()) || !user.getBirthdate().equals(dto.getBirthdate())) {
@@ -226,7 +226,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElse(null);
 
         if (user == null) {
-            ResponseDto.fail(ResponseCode.NO_EXIST_USER_ID, ResponseMessage.NO_EXIST_USER_ID);
+            return ResponseDto.fail(ResponseCode.NO_EXIST_USER_ID, ResponseMessage.NO_EXIST_USER_ID);
         }
 
         if (!user.getName().equals(dto.getName())
@@ -257,10 +257,10 @@ public class AuthServiceImpl implements AuthService {
                 .orElse(null);
 
         if (user == null) {
-            ResponseDto.fail(ResponseCode.NO_EXIST_EMAIL, ResponseMessage.NO_EXIST_EMAIL);
+            return ResponseDto.fail(ResponseCode.NO_EXIST_EMAIL, ResponseMessage.NO_EXIST_EMAIL);
         }
 
-        if (!dto.getNewPassword().equals(user.getPassword())) {
+        if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
             return ResponseDto.fail(ResponseCode.NOT_MATCH_PASSWORD, ResponseMessage.NOT_MATCH_PASSWORD);
         }
 
