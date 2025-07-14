@@ -63,6 +63,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v2/members/**").hasRole("MEMBER")
                         .requestMatchers("/api/v2/trainers/**").hasRole("TRAINER")
                         .requestMatchers("/api/v2/notes/**").hasAnyRole("MEMBER", "TRAINER", "ADMIN")
+                        .requestMatchers("/api/v2/admins/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v2/users/**").hasAnyRole("MEMBER", "TRAINER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
