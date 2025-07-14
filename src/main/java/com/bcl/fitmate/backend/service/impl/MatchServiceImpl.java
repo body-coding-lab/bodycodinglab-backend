@@ -116,7 +116,7 @@ public class MatchServiceImpl implements MatchService {
         User trainer = userService.getUserById(userId);
 
 
-        if(trainer.getMemberMatch() == null){
+        if(trainer.getTrainerMatches() == null){
             throw new EntityNotFoundException(ResponseMessage.NOT_EXISTS_MATCH);
         }
 
@@ -188,7 +188,7 @@ public class MatchServiceImpl implements MatchService {
                     memberFormResponseDto
             );
 
-            return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+            return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, response);
         }else{
             response = new GetTrainerMatchResponseDto(
                     profileImageUrl,

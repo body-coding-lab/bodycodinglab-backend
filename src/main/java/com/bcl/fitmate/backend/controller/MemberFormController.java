@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(ApiMappingPattern.MEMBER_FORM_API)
 @RequiredArgsConstructor
 public class MemberFormController {
-    private MemberFormService memberFormService;
+    private final MemberFormService memberFormService;
 
     @PreAuthorize("hasRole('MEMBER')")
     @PostMapping
@@ -28,7 +28,7 @@ public class MemberFormController {
             @Valid @RequestBody CreateMemberFormRequestDto dto
             ){
         Long userId = userPrincipal.getId();
-        return ResponseDto.toResponseEntity(HttpStatus.CREATED, memberFormService.createMemberForm(userId, dto));
+        return ResponseDto.toResponseEntity(HttpStatus.CREATED,  memberFormService.createMemberForm(userId, dto));
     }
 
 
@@ -38,6 +38,6 @@ public class MemberFormController {
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ){
         Long userId = userPrincipal.getId();
-        return ResponseDto.toResponseEntity(HttpStatus.OK, memberFormService.getMemberForm(userId));
+        return ResponseDto.toResponseEntity(HttpStatus.OK,  memberFormService.getMemberForm(userId));
     }
 }

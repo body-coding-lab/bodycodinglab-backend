@@ -8,9 +8,11 @@ import com.bcl.fitmate.backend.dto.memberForm.response.CreateMemberFormResponseD
 import com.bcl.fitmate.backend.dto.memberForm.response.GetMemberFormResponseDto;
 import com.bcl.fitmate.backend.entity.Member;
 import com.bcl.fitmate.backend.entity.MemberForm;
+import com.bcl.fitmate.backend.entity.User;
 import com.bcl.fitmate.backend.repository.MemberFormRepository;
 import com.bcl.fitmate.backend.repository.MemberRepository;
 import com.bcl.fitmate.backend.service.MemberFormService;
+import com.bcl.fitmate.backend.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class MemberFormServiceImpl implements MemberFormService {
 
     private final MemberRepository memberRepository;
     private final MemberFormRepository memberFormRepository;
+
 
 
     @Override
