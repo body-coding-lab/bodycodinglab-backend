@@ -153,7 +153,7 @@ public class OneDayTicketServiceImpl implements OneDayTicketService {
         memberRepository.findByUserId(memberUser.getId())
                 .orElseThrow(() -> new Exception(ResponseMessage.MEMBER_NOT_FOUND));
 
-        couponService.createCoupon(ticket.getMember().getId());
+        couponService.createCoupon(ticket.getMember().getId(), ticket.getTrainer().getId());
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
