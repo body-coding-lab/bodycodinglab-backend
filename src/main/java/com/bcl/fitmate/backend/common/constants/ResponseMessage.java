@@ -66,7 +66,7 @@ public interface ResponseMessage {
     String NOT_COMMENT_OWNER = "해당 댓글의 작성자가 아닙니다.";
 
     String NOT_EXISTS_ONE_DAY_TICKET = "체험권이 존재하지 않습니다.";
-    String NOT_TRIAL_CHANCE_LEFT = "체험권 유효 횟수가 부족합니다.";
+    String NOT_TRIAL_CHANCE_LEFT = "회원의 체험권 유효 횟수가 부족합니다.";
     String INVALID_TICKET_STATUS = "체험권의 상태가 유효하지 않습니다.";
 
     String NOT_EXISTS_COUPON = "쿠폰이 존재하지 않습니다.";

@@ -58,6 +58,8 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v2/auth/**").permitAll()
+                        .requestMatchers("/api/v2/admins/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v2/users/**").hasAnyRole("MEMBER", "TRAINER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(AbstractHttpConfigurer::disable)

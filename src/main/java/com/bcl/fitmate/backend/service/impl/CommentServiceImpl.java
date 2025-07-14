@@ -7,7 +7,6 @@ import com.bcl.fitmate.backend.dto.comment.request.CommentRequestDto;
 import com.bcl.fitmate.backend.entity.Board;
 import com.bcl.fitmate.backend.entity.Comment;
 import com.bcl.fitmate.backend.entity.User;
-import com.bcl.fitmate.backend.repository.BoardRepository;
 import com.bcl.fitmate.backend.repository.CommentRepository;
 import com.bcl.fitmate.backend.service.BoardService;
 import com.bcl.fitmate.backend.service.CommentService;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
-    private final BoardRepository boardRepository;
     private final UserService userService;
     private final BoardService boardService;
 
