@@ -40,13 +40,13 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
     @Override
     public MatchWaitingList getMatchWaitingListById(Long matchWaitingListId) {
         return matchWaitingListRepository.findById(matchWaitingListId)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.USER_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_MATCH_WAITING_LIST));
     }
 
     @Override
     public MatchWaitingList getMatchWaitingListByMemberId(Long userId) {
         return matchWaitingListRepository.findByMember_Id(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.MEMBER_NOT_FOUND));
+                .orElse(null);
     }
 
     @Override
