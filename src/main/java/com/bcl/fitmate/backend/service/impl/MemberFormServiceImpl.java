@@ -42,6 +42,10 @@ public class MemberFormServiceImpl implements MemberFormService {
 
         Member member = getMemberByUserId(userId);
 
+        if(member.getMemberForm() != null){
+            throw new IllegalStateException(ResponseMessage.ALREADY_EXISTS_FORM);
+        }
+
         MemberForm memberForm = new MemberForm(
                 null,
                 member,

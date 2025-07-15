@@ -3,11 +3,14 @@ package com.bcl.fitmate.backend.dto.memberForm.request;
 import com.bcl.fitmate.backend.common.enums.memberForm.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-
+import lombok.NoArgsConstructor;
 
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Valid
 public class CreateMemberFormRequestDto {
     @NotNull(message = "체형은 필수 입력란입니다.")

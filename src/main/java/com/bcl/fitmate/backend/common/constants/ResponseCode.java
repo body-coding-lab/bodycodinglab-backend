@@ -72,6 +72,7 @@ public interface ResponseCode {
     String NOT_EXISTS_COUPON = "NEC";
     String NOT_EXISTS_COUPON_PERMISSION = "NECP";
     String NOT_EXISTS_FORM = "NEF";
+    String ALREADY_EXISTS_FORM = "AEF";
 
     String ALREADY_EXISTS_MATCH = "AEM";
     String NOT_EXISTS_MATCH_WAITING_LIST = "NEMWL";
