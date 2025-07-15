@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
         name = "matches",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"member_id", "trainer_id"}),
-                @UniqueConstraint(columnNames = {"member_Id"})
+                @UniqueConstraint(columnNames = {"member_id"})
         }
 )
 @NoArgsConstructor
