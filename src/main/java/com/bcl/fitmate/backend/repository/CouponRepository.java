@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
      Optional<List<Coupon>> findByCouponStatus(CouponStatus status);
 
-    List<Coupon> findByExpirationPeriodBeforeAndCouponStatus(LocalDate date, CouponStatus status);
+    List<Coupon> findByExpirationPeriodLessThanEqualAndCouponStatus(LocalDate date, CouponStatus status);
 
     List<Coupon> findByCouponStatusAndUsedDateBefore(CouponStatus status, LocalDateTime usedDate);
 
