@@ -77,6 +77,7 @@ public interface ResponseMessage {
 
     String ALREADY_EXISTS_MATCH = "이미 매칭 되어있습니다.";
     String NOT_EXISTS_MATCH_WAITING_LIST = "매칭 대기 목록이 존재하지 않습니다.";
+    String ALREADY_EXISTS_MATCH_WAITING_LIST = "매칭 대기 목록이 이미 존재합니다.";
     String NOT_EXISTS_MATCH_WAITING_LIST_PERMISSION = "매칭 대기 목록에 접근할 권한이 없습니다.";
     String NOT_EXISTS_MATCH = "매칭 기록이 존재하지 않습니다.";
     String NOT_EXISTS_MATCH_PERMISSION = "매칭에 접근할 권한이 존재하지 않습니다.";

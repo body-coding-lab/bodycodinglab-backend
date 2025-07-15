@@ -11,13 +11,11 @@ import com.bcl.fitmate.backend.dto.coupon.response.GetTrainerCouponResponseDto;
 import com.bcl.fitmate.backend.entity.Coupon;
 import com.bcl.fitmate.backend.entity.User;
 import com.bcl.fitmate.backend.repository.CouponRepository;
-import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.CouponService;
 import com.bcl.fitmate.backend.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +46,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 1 * * *")
     public void deleteExpireCoupon() {
         LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
 
@@ -142,7 +140,7 @@ public class CouponServiceImpl implements CouponService {
 
 
         if(!coupon.getMember().getId().equals(userId)){
-            throw new EntityNotFoundException(ResponseMessage.NOT_EXISTS_COUPON_PERMISSION);
+            return ResponseDto.fail(ResponseCode.NOT_EXISTS_COUPON_PERMISSION, ResponseMessage.NOT_EXISTS_COUPON_PERMISSION);
         }
 
         coupon.setCouponStatus(CouponStatus.APPLICATION);
@@ -191,9 +189,8 @@ public class CouponServiceImpl implements CouponService {
     public ResponseDto<Void> putTrainerCoupon(Long userId, Long couponId, PutCouponRequestDto dto) {
         Coupon coupon = getCouponById(couponId);
 
-
         if(!coupon.getTrainer().getId().equals(userId)){
-            throw new AccessDeniedException(ResponseMessage.NOT_EXISTS_COUPON_PERMISSION);
+            return ResponseDto.fail(ResponseCode.NOT_EXISTS_COUPON_PERMISSION, ResponseMessage.NOT_EXISTS_COUPON_PERMISSION);
         }
 
         LocalDateTime usedDate = LocalDate.parse(dto.getUsedDate(), DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay();

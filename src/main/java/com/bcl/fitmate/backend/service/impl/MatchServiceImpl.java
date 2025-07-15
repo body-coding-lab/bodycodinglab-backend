@@ -48,7 +48,7 @@ public class MatchServiceImpl implements MatchService {
         User member = userService.getUserById(userId);
 
         if(member.getMemberMatch() == null){
-            throw new EntityNotFoundException(ResponseMessage.NOT_EXISTS_MATCH);
+            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
         }
 
         Match match = member.getMemberMatch();
@@ -67,7 +67,7 @@ public class MatchServiceImpl implements MatchService {
                 member.getMemberMatch().getTrainer().getId(),
                 profileImageUrl,
                 member.getMemberMatch().getTrainer().getName(),
-                DateUtils.format(member.getMemberMatch().getCreatedAt()),
+                member.getMemberMatch().getCreatedAt(),
                 member.getMemberMatch().getTrainer().getTrainer().getJobAddress()
         );
 
@@ -117,7 +117,7 @@ public class MatchServiceImpl implements MatchService {
 
 
         if(trainer.getTrainerMatches() == null){
-            throw new EntityNotFoundException(ResponseMessage.NOT_EXISTS_MATCH);
+           return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
         }
 
         matchList = trainer.getTrainerMatches().stream()
@@ -139,7 +139,7 @@ public class MatchServiceImpl implements MatchService {
 
 
         if(!match.getTrainer().getId().equals(userId)){
-            throw new EntityNotFoundException(ResponseMessage.TRAINER_NOT_FOUND);
+          return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH_PERMISSION, ResponseMessage.NOT_EXISTS_MATCH_PERMISSION);
         }
 
         User member = userService.getUserById(match.getMember().getId());

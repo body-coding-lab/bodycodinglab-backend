@@ -17,6 +17,6 @@ public class GetTrainerMatchWaitingListResponse {
     private String memberName;
     private int memberAge;
     private Gender memberGender;
-    private String appliedAt;
+    private LocalDateTime appliedAt;
     private ApprovedStatus approvedStatus;
 }

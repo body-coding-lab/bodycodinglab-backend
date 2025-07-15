@@ -43,7 +43,7 @@ public class MemberFormServiceImpl implements MemberFormService {
         Member member = getMemberByUserId(userId);
 
         if(member.getMemberForm() != null){
-            throw new IllegalStateException(ResponseMessage.ALREADY_EXISTS_FORM);
+            return ResponseDto.fail(ResponseCode.ALREADY_EXISTS_FORM, ResponseMessage.ALREADY_EXISTS_FORM);
         }
 
         MemberForm memberForm = new MemberForm(
@@ -83,6 +83,10 @@ public class MemberFormServiceImpl implements MemberFormService {
         Member member = getMemberByUserId(userId);
 
         MemberForm memberForm = member.getMemberForm();
+
+        if(memberForm == null){
+            return ResponseDto.fail(ResponseCode.NOT_EXISTS_FORM, ResponseMessage.NOT_EXISTS_FORM);
+        }
 
 
         response = new GetMemberFormResponseDto(

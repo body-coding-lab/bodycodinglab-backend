@@ -32,7 +32,7 @@ public class Coupon extends BaseTime {
     private LocalDate expirationPeriod;
 
 
-    @Column(name = "used_date", insertable = false, updatable = false)
+    @Column(name = "used_date")
     private LocalDateTime usedDate;
 
     @Column(name = "coupon_status", nullable = false)
