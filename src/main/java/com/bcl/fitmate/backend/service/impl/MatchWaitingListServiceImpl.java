@@ -58,8 +58,10 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
 
         User member = userService.getUserById(userId);
 
+
+
         if(member.getMemberMatch() != null){
-            throw new IllegalStateException(ResponseMessage.ALREADY_EXISTS_MATCH);
+           return ResponseDto.fail(ResponseCode.ALREADY_EXISTS_MATCH, ResponseMessage.ALREADY_EXISTS_MATCH);
         }
 
         MatchWaitingList existing = getMatchWaitingListByMemberId(userId);
@@ -69,6 +71,10 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
 
             matchWaitingListRepository.delete(existing);
             matchWaitingListRepository.flush();
+        }
+
+        if(member.getMatchWaitingListAsMember() != null){
+            return ResponseDto.fail(ResponseCode.ALREADY_EXISTS_MATCH_WAITING_LIST, ResponseMessage.ALREADY_EXISTS_MATCH_WAITING_LIST);
         }
 
         MatchWaitingList matchWaitingList = MatchWaitingList.builder()
@@ -110,7 +116,7 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
                 profileImageUrl,
                 matchWaitingList.getTrainer().getName(),
                 matchWaitingList.getTrainer().getTrainer().getJobAddress(),
-                DateUtils.format(matchWaitingList.getCreatedAt()),
+                matchWaitingList.getCreatedAt(),
                 matchWaitingList.getApprovedStatus(),
                 matchWaitingList.getRejectResponse()
         );
@@ -154,7 +160,7 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
                             list.getMember().getName(),
                             age,
                             list.getMember().getGender(),
-                            DateUtils.format(list.getCreatedAt()),
+                            list.getCreatedAt(),
                             list.getApprovedStatus()
                     );
                 }).toList();
