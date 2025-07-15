@@ -14,7 +14,6 @@ import com.bcl.fitmate.backend.repository.CouponRepository;
 import com.bcl.fitmate.backend.repository.UserRepository;
 import com.bcl.fitmate.backend.service.CouponService;
 import com.bcl.fitmate.backend.service.UserService;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -33,29 +32,23 @@ import java.util.stream.Collectors;
 public class CouponServiceImpl implements CouponService {
 
     private final CouponRepository couponRepository;
-    private final UserRepository userRepository;
     private final UserService userService;
 
     @Transactional
     @Scheduled(cron = "0 0 0 * * *")
     public void changeExpireCoupons(){
-        LocalDate today = LocalDate.now();
-        List<Coupon> couponsToExpire = couponRepository.findByExpirationPeriodBeforeAndCouponStatus(today, CouponStatus.NOT_USED);
 
-       for (Coupon coupon : couponsToExpire){
-           coupon.setCouponStatus(CouponStatus.EXPIRED);
+            LocalDate today = LocalDate.now();
+            List<Coupon> couponsToExpire = couponRepository.findByExpirationPeriodLessThanEqualAndCouponStatus(today, CouponStatus.NOT_USED);
 
-           User member = coupon.getMember();
-           if(member != null){
-               member.removeMemberCoupons(coupon);
-               member.addMemberCoupons(coupon);
-           }
-       }
-        couponRepository.flush();
+            for (Coupon coupon : couponsToExpire) {
+                coupon.setCouponStatus(CouponStatus.EXPIRED);
+            }
+
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 1 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void deleteExpireCoupon() {
         LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
 
@@ -67,7 +60,7 @@ public class CouponServiceImpl implements CouponService {
                 member.removeMemberCoupons(coupon);
             }
         }
-        couponRepository.flush();
+        couponRepository.deleteAll(expiredCouponsToDelete);
     }
 
     @Transactional
