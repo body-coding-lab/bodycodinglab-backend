@@ -36,7 +36,7 @@ public class TrainerLicenseController {
     @PostMapping(POST_TRAINER_LICENSE)
     public ResponseEntity<ResponseDto<TrainerLicenseResponseDto>> postTrainerLicense(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
-            @ModelAttribute TrainerLicenseRequestDto dto,
+            @Valid @ModelAttribute(value = "dto") TrainerLicenseRequestDto dto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
         Long id = userPrincipal.getId();
@@ -48,7 +48,7 @@ public class TrainerLicenseController {
     public ResponseEntity<ResponseDto<TrainerLicenseResponseDto>> updateTrainerLicense(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long licenseId,
-            @ModelAttribute TrainerLicenseRequestDto dto,
+            @Valid @ModelAttribute(value = "dto") TrainerLicenseRequestDto dto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
         Long id = userPrincipal.getId();

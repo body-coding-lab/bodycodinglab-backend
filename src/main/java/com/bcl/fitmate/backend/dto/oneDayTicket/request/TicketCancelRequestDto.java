@@ -8,6 +8,5 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class TicketCancelRequestDto {
-    private Long ticketId;
     private String cancelReason;
 }

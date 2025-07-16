@@ -32,7 +32,7 @@ public class TrainerController {
     @PutMapping(UPDATE_TRAINER_INFO)
     public ResponseEntity<ResponseDto<TrainerInfoResponseDto>> updateTrainerInfo(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
-            @ModelAttribute TrainerInfoRequestDto dto,
+            @Valid @ModelAttribute(value = "dto") TrainerInfoRequestDto dto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
         Long id = userPrincipal.getId();
