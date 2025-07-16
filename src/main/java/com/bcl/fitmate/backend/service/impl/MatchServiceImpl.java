@@ -3,11 +3,13 @@ package com.bcl.fitmate.backend.service.impl;
 import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.common.constants.ResponseCode;
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
+import com.bcl.fitmate.backend.common.enums.user.UserRole;
 import com.bcl.fitmate.backend.common.util.DateUtils;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetMemberMatchResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetTrainerMatchListResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetTrainerMatchResponseDto;
+import com.bcl.fitmate.backend.dto.match.response.GetUserMatchResponseDto;
 import com.bcl.fitmate.backend.dto.memberForm.response.GetMemberFormResponseDto;
 import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.repository.*;
@@ -38,6 +40,34 @@ public class MatchServiceImpl implements MatchService {
     public Match getMatchById(Long matchId) {
         return matchRepository.findById(matchId)
                 .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_MATCH));
+    }
+
+    @Override
+    public ResponseDto<List<GetUserMatchResponseDto>> getUserMatchList(Long userId) {
+        List<GetUserMatchResponseDto> response = null;
+
+        User user = userService.getUserById(userId);
+
+        if(user.getRole().getName() == UserRole.MEMBER){
+
+        }else if(user.getRole().getName() == UserRole.TRAINER){
+          response = user.getTrainerMatches().stream().
+                        map(match -> {
+
+                            LocalDate birthdate = match.getMember().getBirthdate();
+                            int age = Period.between(birthdate, LocalDate.now()).getYears();
+
+                            return new GetUserMatchResponseDto(
+                                match.getId(),
+                                user.getRole().getName(),
+                                match.getMember().getName(),
+                                match.getMember().getGender(),
+                                    age
+                        );}).toList();
+        }
+
+
+        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, response);
     }
 
     @Override
@@ -201,4 +231,6 @@ public class MatchServiceImpl implements MatchService {
         }
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, response);
     }
+
+
 }
