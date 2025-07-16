@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,14 +28,13 @@ public class BoardController {
     private final BoardService boardService;
 
     private static final String CREATE_POST = "/{matchId}";
-    private static final String UPDATE_POST = "/{matchId}/posts/{postId}";
-    private static final String DELETE_POST = "/{matchId}/posts/{postId}";
-    private static final String GET_POST_DETAIL = "/{matchId}/posts/{postId}";
+    private static final String POST_DETAIL = "/{matchId}/posts/{postId}";
     private static final String GET_POST_LIST = "/{matchId}/posts";
     private static final String SEARCH_POST_BY_NAME = "/{matchId}/search-name";
     private static final String SEARCH_POST_BY_TITLE = "/{matchId}/search-title";
     private static final String SEARCH_POST_BY_CONTENT = "/{matchId}/search-content";
 
+    @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
     @PostMapping(CREATE_POST)
     public ResponseEntity<ResponseDto<BoardDetailResponseDto>> createPost(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
@@ -46,7 +46,8 @@ public class BoardController {
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.createPost(id, matchId, dto, files));
     }
 
-    @PutMapping(UPDATE_POST)
+    @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
+    @PutMapping(POST_DETAIL)
     public ResponseEntity<ResponseDto<BoardDetailResponseDto>> updatePost(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
@@ -58,7 +59,8 @@ public class BoardController {
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.updatePost(id, matchId, postId, dto, files));
     }
 
-    @DeleteMapping(DELETE_POST)
+    @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
+    @DeleteMapping(POST_DETAIL)
     public ResponseEntity<ResponseDto<Void>> deletePost(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
@@ -68,7 +70,8 @@ public class BoardController {
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.deletePost(id, matchId, postId));
     }
 
-    @GetMapping(GET_POST_DETAIL)
+    @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
+    @GetMapping(POST_DETAIL)
     public ResponseEntity<ResponseDto<BoardDetailResponseDto>> getPost(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
@@ -78,6 +81,7 @@ public class BoardController {
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.getPost(id, matchId, postId));
     }
 
+    @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
     @GetMapping(GET_POST_LIST)
     public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> getPostList(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
@@ -90,6 +94,7 @@ public class BoardController {
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.getPostList(id, matchId, category, page, size));
     }
 
+    @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
     @GetMapping(SEARCH_POST_BY_NAME)
     public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> searchPostByName(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
@@ -103,6 +108,7 @@ public class BoardController {
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.searchPostByName(id, matchId, category, writerName, page, size));
     }
 
+    @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
     @GetMapping(SEARCH_POST_BY_TITLE)
     public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> searchPostByTitle(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
@@ -116,6 +122,7 @@ public class BoardController {
         return ResponseDto.toResponseEntity(HttpStatus.OK, boardService.searchPostByTitle(id, matchId, category, title, page, size));
     }
 
+    @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
     @GetMapping(SEARCH_POST_BY_CONTENT)
     public ResponseEntity<ResponseDto<Page<BoardListResponseDto>>> searchPostByContent(
             @AuthenticationPrincipal UserPrincipal userPrincipal,

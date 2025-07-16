@@ -22,15 +22,12 @@ import java.util.List;
 public class TrainerCareerController {
     private final TrainerCareerService trainerCareerService;
 
-    private static final String POST_TRAINER_CAREER = "/me/careers";
-    private static final String UPDATE_TRAINER_CAREER = "/me/careers/{careerId}";
-    private static final String DELETE_TRAINER_CAREER = "/me/careers/{careerId}";
-    private static final String DELETE_ALL_TRAINER_CAREER = "/me/careers";
-    private static final String GET_ALL_TRAINER_CAREER = "/me/careers";
+    private static final String TRAINER_CAREER = "/me/careers";
+    private static final String TRAINER_CAREER_DETAIL = "/me/careers/{careerId}";
     private static final String GET_RECENT_TRAINER_CAREER = "/me/careers/recent";
 
     @PreAuthorize("hasRole('TRAINER')")
-    @PostMapping(POST_TRAINER_CAREER)
+    @PostMapping(TRAINER_CAREER)
     public ResponseEntity<ResponseDto<TrainerCareerResponseDto>> postTrainerCareer(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @Valid @RequestBody TrainerCareerRequestDto dto
@@ -40,7 +37,7 @@ public class TrainerCareerController {
     }
 
     @PreAuthorize("hasRole('TRAINER')")
-    @PutMapping(UPDATE_TRAINER_CAREER)
+    @PutMapping(TRAINER_CAREER_DETAIL)
     public ResponseEntity<ResponseDto<TrainerCareerResponseDto>> updateTrainerCareer(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long careerId,
@@ -51,7 +48,7 @@ public class TrainerCareerController {
     }
 
     @PreAuthorize("hasRole('TRAINER')")
-    @DeleteMapping(DELETE_TRAINER_CAREER)
+    @DeleteMapping(TRAINER_CAREER_DETAIL)
     public ResponseEntity<ResponseDto<TrainerCareerResponseDto>> deleteTrainerCareer(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long careerId
@@ -61,7 +58,7 @@ public class TrainerCareerController {
     }
 
     @PreAuthorize("hasRole('TRAINER')")
-    @DeleteMapping(DELETE_ALL_TRAINER_CAREER)
+    @DeleteMapping(TRAINER_CAREER)
     public ResponseEntity<ResponseDto<Void>> deleteAllTrainerCareer(
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
@@ -70,7 +67,7 @@ public class TrainerCareerController {
     }
 
     @PreAuthorize("hasRole('TRAINER')")
-    @GetMapping(GET_ALL_TRAINER_CAREER)
+    @GetMapping(TRAINER_CAREER)
     public ResponseEntity<ResponseDto<List<TrainerCareerResponseDto>>> getAllTrainerCareer(
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {

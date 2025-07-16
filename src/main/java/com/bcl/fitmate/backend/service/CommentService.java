@@ -6,8 +6,8 @@ import com.bcl.fitmate.backend.entity.Comment;
 import jakarta.validation.Valid;
 
 public interface CommentService {
-    ResponseDto<Void> createComment(Long id, Long boardId, @Valid CommentRequestDto dto);
-    ResponseDto<Void> updateComment(Long id, Long boardId, Long commentId, @Valid CommentRequestDto dto);
-    ResponseDto<Void> deleteComment(Long id, Long boardId, Long commentId);
+    ResponseDto<Void> createComment(Long id, Long matchId, Long postId, @Valid CommentRequestDto dto);
+    ResponseDto<Void> updateComment(Long id, Long matchId, Long postId, Long commentId, @Valid CommentRequestDto dto);
+    ResponseDto<Void> deleteComment(Long id, Long matchId, Long postId, Long commentId);
     Comment getComment(Long id);
 }

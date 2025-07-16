@@ -20,5 +20,5 @@ public interface BoardService {
     ResponseDto<Page<BoardListResponseDto>> searchPostByName(Long id, Long matchId, Category category, String writerName, int page, int size);
     ResponseDto<Page<BoardListResponseDto>> searchPostByTitle(Long id, Long matchId, Category category, String title, int page, int size);
     ResponseDto<Page<BoardListResponseDto>> searchPostByContent(Long id, Long matchId, Category category, String content, int page, int size);
-    Board getBoardById(Long id);
+    Board getBoardByMatchId(Long matchId);
 }

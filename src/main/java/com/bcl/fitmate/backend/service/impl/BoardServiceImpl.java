@@ -379,8 +379,8 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional(readOnly = true)
-    public Board getBoardById(Long id) {
-        return boardRepository.findById(id)
+    public Board getBoardByMatchId(Long matchId) {
+        return boardRepository.findByMatchId(matchId)
                 .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_POST));
     }
 
