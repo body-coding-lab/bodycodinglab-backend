@@ -5,6 +5,7 @@ import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetMemberMatchResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetTrainerMatchListResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetTrainerMatchResponseDto;
+import com.bcl.fitmate.backend.dto.match.response.GetUserMatchResponseDto;
 import com.bcl.fitmate.backend.entity.Match;
 import com.bcl.fitmate.backend.entity.User;
 
@@ -21,4 +22,6 @@ public interface MatchService {
     ResponseDto<List<GetTrainerMatchListResponseDto>> getTrainerMatchList(Long userId);
 
     ResponseDto<GetTrainerMatchResponseDto> getTrainerMatch(Long userId, Long matchId);
+
+    ResponseDto<List<GetUserMatchResponseDto>> getUserMatchList(Long userId);
 }

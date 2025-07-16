@@ -17,6 +17,7 @@ public interface ApiMappingPattern {
     String MEMBER_FORM_API = MEMBER_API + "/me/form";
     String MEMBER_MATCH_WAITING_LIST_API = MEMBER_API + "/me/match-waiting-list";
     String TRAINER_MATCH_WAITING_LIST_API = TRAINER_API + "/me/match-waiting-list";
+    String USER_MATCH_API = USER_API + "match-list";
     String MEMBER_MATCH_API = MEMBER_API + "/me/match-list";
     String TRAINER_MATCH_API = TRAINER_API + "/me/match-list";
     String MEMBER_SUBSCRIPTION_API = MEMBER_API + "/me/subscription";
