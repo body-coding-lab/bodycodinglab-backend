@@ -7,9 +7,10 @@ import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.board.request.BoardRequestDto;
 import com.bcl.fitmate.backend.dto.board.response.BoardDetailResponseDto;
 import com.bcl.fitmate.backend.dto.board.response.BoardListResponseDto;
-import com.bcl.fitmate.backend.dto.trainer.response.TrainerListResponseDto;
 import com.bcl.fitmate.backend.service.BoardService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +19,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(ApiMappingPattern.BOARD_API)
+@RequestMapping(ApiMappingPattern.MATCH_API)
 public class BoardController {
     private final BoardService boardService;
 
     private static final String CREATE_POST = "/{matchId}";
-    private static final String UPDATE_POST = "/{matchId}";
+    private static final String UPDATE_POST = "/{matchId}/posts/{postId}";
     private static final String DELETE_POST = "/{matchId}/posts/{postId}";
     private static final String GET_POST_DETAIL = "/{matchId}/posts/{postId}";
     private static final String GET_POST_LIST = "/{matchId}/posts";
@@ -34,12 +35,11 @@ public class BoardController {
     private static final String SEARCH_POST_BY_TITLE = "/{matchId}/search-title";
     private static final String SEARCH_POST_BY_CONTENT = "/{matchId}/search-content";
 
-
     @PostMapping(CREATE_POST)
     public ResponseEntity<ResponseDto<BoardDetailResponseDto>> createPost(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
-            @ModelAttribute BoardRequestDto dto,
+            @Valid @RequestPart(value = "dto") BoardRequestDto dto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ){
         Long id = userPrincipal.getId();
@@ -51,7 +51,7 @@ public class BoardController {
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long matchId,
             @PathVariable Long postId,
-            @ModelAttribute BoardRequestDto dto,
+            @Valid @RequestPart(value = "dto") BoardRequestDto dto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ){
         Long id = userPrincipal.getId();

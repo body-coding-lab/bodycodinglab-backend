@@ -47,8 +47,7 @@ public class BoardServiceImpl implements BoardService {
 
         User user = userService.getUserById(id);
 
-        Match match = matchRepository.findById(matchId)
-                .orElse(null);
+        Match match = matchRepository.findById(matchId).orElse(null);
 
         if(match == null) {
             return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
@@ -61,11 +60,20 @@ public class BoardServiceImpl implements BoardService {
             return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
         }
 
+        Category category = dto.getCategory();
+        if((category == Category.MEAL || category == Category.ROUTINE) && !isTrainer) {
+            return ResponseDto.fail(ResponseCode.NO_PERMISSION, ResponseMessage.NO_PERMISSION);
+        }
+
         Board board = Board.builder()
                 .category(dto.getCategory())
                 .title(dto.getTitle())
                 .content(dto.getContent())
+                .match(match)
+                .writer(user)
+                .viewCount(0L)
                 .build();
+
         boardRepository.save(board);
 
         List<FileResponseDto> uploadedImages = Collections.emptyList();
@@ -76,13 +84,13 @@ public class BoardServiceImpl implements BoardService {
                     .collect(Collectors.toList());
 
             if(!nonEmptyFiles.isEmpty()) {
-                uploadFileService.uploadMultiFiles(nonEmptyFiles, board.getId(), TargetType.BOARD);
+                uploadedImages = uploadFileService.uploadMultiFiles(nonEmptyFiles, board.getId(), TargetType.BOARD);
             }
         }
 
         data = BoardDetailResponseDto.builder()
                 .boardId(board.getId())
-                .matchId(match.getId())
+                .matchId(board.getMatch().getId())
                 .writerId(user.getId())
                 .writerName(user.getName())
                 .category(board.getCategory())
@@ -139,7 +147,7 @@ public class BoardServiceImpl implements BoardService {
                     .collect(Collectors.toList());
 
             if(!nonEmptyFiles.isEmpty()) {
-                uploadFileService.uploadMultiFiles(nonEmptyFiles, board.getId(), TargetType.BOARD);
+                uploadedImages = uploadFileService.uploadMultiFiles(nonEmptyFiles, board.getId(), TargetType.BOARD);
             }
         }
 

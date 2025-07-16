@@ -10,6 +10,5 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 public class TicketUseRequestDto {
-    private Long ticketId;
     private LocalDate usedAt;
 }
