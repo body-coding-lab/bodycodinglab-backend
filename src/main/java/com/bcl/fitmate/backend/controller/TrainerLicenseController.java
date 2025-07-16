@@ -25,15 +25,12 @@ import java.util.List;
 public class TrainerLicenseController {
     private final TrainerLicenseService trainerLicenseService;
 
-    private static final String POST_TRAINER_LICENSE = "/me/licenses";
-    private static final String UPDATE_TRAINER_LICENSE = "/me/licenses/{licenseId}";
-    private static final String DELETE_TRAINER_LICENSE = "/me/licenses/{licenseId}";
-    private static final String DELETE_ALL_TRAINER_LICENSE = "/me/licenses";
-    private static final String GET_ALL_TRAINER_LICENSE = "/me/licenses";
+    private static final String TRAINER_LICENSE = "/me/licenses";
+    private static final String TRAINER_LICENSE_DETAIL = "/me/licenses/{licenseId}";
     private static final String GET_RECENT_TRAINER_LICENSE = "/me/licenses/recent";
 
     @PreAuthorize("hasRole('TRAINER')")
-    @PostMapping(POST_TRAINER_LICENSE)
+    @PostMapping(TRAINER_LICENSE)
     public ResponseEntity<ResponseDto<TrainerLicenseResponseDto>> postTrainerLicense(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @Valid @ModelAttribute(value = "dto") TrainerLicenseRequestDto dto,
@@ -44,7 +41,7 @@ public class TrainerLicenseController {
     }
 
     @PreAuthorize("hasRole('TRAINER')")
-    @PutMapping(UPDATE_TRAINER_LICENSE)
+    @PutMapping(TRAINER_LICENSE_DETAIL)
     public ResponseEntity<ResponseDto<TrainerLicenseResponseDto>> updateTrainerLicense(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long licenseId,
@@ -56,7 +53,7 @@ public class TrainerLicenseController {
     }
 
     @PreAuthorize("hasRole('TRAINER')")
-    @DeleteMapping(DELETE_TRAINER_LICENSE)
+    @DeleteMapping(TRAINER_LICENSE_DETAIL)
     public ResponseEntity<ResponseDto<TrainerLicenseResponseDto>> deleteTrainerLicense(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long licenseId
@@ -66,7 +63,7 @@ public class TrainerLicenseController {
     }
 
     @PreAuthorize("hasRole('TRAINER')")
-    @DeleteMapping(DELETE_ALL_TRAINER_LICENSE)
+    @DeleteMapping(TRAINER_LICENSE)
     public ResponseEntity<ResponseDto<Void>> deleteAllTrainerLicense(
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
@@ -75,7 +72,7 @@ public class TrainerLicenseController {
     }
 
     @PreAuthorize("hasRole('TRAINER')")
-    @GetMapping(GET_ALL_TRAINER_LICENSE)
+    @GetMapping(TRAINER_LICENSE)
     public ResponseEntity<ResponseDto<List<TrainerLicenseDetailResponseDto>>> getAllTrainerLicense(
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
