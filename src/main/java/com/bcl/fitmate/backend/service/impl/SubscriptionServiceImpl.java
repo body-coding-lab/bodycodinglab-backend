@@ -83,7 +83,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 .isMaintained(true)
                 .build();
 
-        match.getMember().setMemberMatch(match);
+        match.getMember().addMemberMatches(match);
         trainer.addTrainerMatches(match);
         matchRepository.save(match);
 

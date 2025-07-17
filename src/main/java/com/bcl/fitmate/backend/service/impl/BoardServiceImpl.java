@@ -53,6 +53,7 @@ public class BoardServiceImpl implements BoardService {
             return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
         }
 
+
         boolean isTrainer = match.getTrainer().getId().equals(id);
         boolean isMember = match.getMember().getId().equals(id);
 

@@ -11,6 +11,7 @@ import com.bcl.fitmate.backend.dto.matchWatingList.request.PutRejectMatchWaiting
 import com.bcl.fitmate.backend.dto.matchWatingList.response.CreateMatchWaitingListResponseDto;
 import com.bcl.fitmate.backend.dto.matchWatingList.response.GetMemberMatchWaitingListResponseDto;
 import com.bcl.fitmate.backend.dto.matchWatingList.response.GetTrainerMatchWaitingListResponse;
+import com.bcl.fitmate.backend.entity.Match;
 import com.bcl.fitmate.backend.entity.MatchWaitingList;
 import com.bcl.fitmate.backend.entity.UploadFile;
 import com.bcl.fitmate.backend.entity.User;
@@ -59,10 +60,12 @@ public class MatchWaitingListServiceImpl implements MatchWaitingListService {
         User member = userService.getUserById(userId);
 
 
-
-        if(member.getMemberMatch() != null){
-           return ResponseDto.fail(ResponseCode.ALREADY_EXISTS_MATCH, ResponseMessage.ALREADY_EXISTS_MATCH);
+        for(Match match :member.getMemberMatches()){
+            if(match.getIsMaintained()){
+                return ResponseDto.fail(ResponseCode.ALREADY_EXISTS_MATCH, ResponseMessage.ALREADY_EXISTS_MATCH);
+            }
         }
+
 
         MatchWaitingList existing = getMatchWaitingListByMemberId(userId);
         if(existing != null && existing.getApprovedStatus() == ApprovedStatus.REJECT){

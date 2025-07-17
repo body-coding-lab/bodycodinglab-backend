@@ -138,13 +138,13 @@ public class UserServiceImpl implements UserService {
         User user = getUserById(id);
 
         boolean hasMemberWaiting = user.getMatchWaitingListAsMember() != null;
-        boolean hasMemberMatch = user.getMemberMatch() != null;
+       // boolean hasMemberMatch = user.getMemberMatch() != null;
         boolean hasTrainerWaiting = !user.getMatchWaitingListAsTrainers().isEmpty();
         boolean hasTrainerMatch = !user.getTrainerMatches().isEmpty();
 
-        if (hasMemberWaiting || hasMemberMatch || hasTrainerWaiting || hasTrainerMatch) {
-            return ResponseDto.fail(ResponseCode.CANNOT_DELETE_USER, ResponseMessage.CANNOT_DELETE_USER);
-        }
+       //   if (hasMemberWaiting || hasMemberMatch || hasTrainerWaiting || hasTrainerMatch) {
+       //     return ResponseDto.fail(ResponseCode.CANNOT_DELETE_USER, ResponseMessage.CANNOT_DELETE_USER);
+       // }
 
         if (!dto.getDeleteMessage().equals("탈퇴하겠습니다.")) {
             return ResponseDto.fail(ResponseCode.INVALID_INPUT, ResponseMessage.INVALID_INPUT);

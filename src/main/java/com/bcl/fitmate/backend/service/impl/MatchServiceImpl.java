@@ -3,18 +3,17 @@ package com.bcl.fitmate.backend.service.impl;
 import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.common.constants.ResponseCode;
 import com.bcl.fitmate.backend.common.constants.ResponseMessage;
+import com.bcl.fitmate.backend.common.enums.member.MemberStatus;
 import com.bcl.fitmate.backend.common.enums.user.UserRole;
-import com.bcl.fitmate.backend.common.util.DateUtils;
 import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetMemberMatchResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetTrainerMatchListResponseDto;
 import com.bcl.fitmate.backend.dto.match.response.GetTrainerMatchResponseDto;
-import com.bcl.fitmate.backend.dto.match.response.GetUserMatchResponseDto;
+import com.bcl.fitmate.backend.dto.match.response.GetUserMatchListResponseDto;
 import com.bcl.fitmate.backend.dto.memberForm.response.GetMemberFormResponseDto;
 import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.repository.*;
 import com.bcl.fitmate.backend.service.MatchService;
-import com.bcl.fitmate.backend.service.UploadFileService;
 import com.bcl.fitmate.backend.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,13 +41,25 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
-    public ResponseDto<List<GetUserMatchResponseDto>> getUserMatchList(Long userId) {
-        List<GetUserMatchResponseDto> response = null;
+    public ResponseDto<List<GetUserMatchListResponseDto>> getUserMatchList(Long userId) {
+        List<GetUserMatchListResponseDto> response = null;
 
         User user = userService.getUserById(userId);
 
         if(user.getRole().getName() == UserRole.MEMBER){
+           response = user.getMemberMatches().stream().
+                        map(match -> {
+                            LocalDate birthdate = match.getTrainer().getBirthdate();
+                            int age = Period.between(birthdate, LocalDate.now()).getYears();
 
+                            return new GetUserMatchListResponseDto(
+                                    match.getId(),
+                                    user.getRole().getName(),
+                                    match.getTrainer().getName(),
+                                    match.getTrainer().getGender(),
+                                    age
+                            );
+                        }).toList();
         }else if(user.getRole().getName() == UserRole.TRAINER){
           response = user.getTrainerMatches().stream().
                         map(match -> {
@@ -57,7 +67,7 @@ public class MatchServiceImpl implements MatchService {
                             LocalDate birthdate = match.getMember().getBirthdate();
                             int age = Period.between(birthdate, LocalDate.now()).getYears();
 
-                            return new GetUserMatchResponseDto(
+                            return new GetUserMatchListResponseDto(
                                 match.getId(),
                                 user.getRole().getName(),
                                 match.getMember().getName(),
@@ -77,11 +87,18 @@ public class MatchServiceImpl implements MatchService {
 
         User member = userService.getUserById(userId);
 
-        if(member.getMemberMatch() == null){
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
+        Match match = null;
+
+        for(Match existMatch : member.getMemberMatches()){
+            if(existMatch.getIsMaintained()){
+                match = existMatch;
+            }
         }
 
-        Match match = member.getMemberMatch();
+
+        if(match == null){
+           return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
+        }
 
         User trainer = userService.getUserById(match.getTrainer().getId());
 
@@ -93,12 +110,12 @@ public class MatchServiceImpl implements MatchService {
 
 
         response = new GetMemberMatchResponseDto(
-                member.getMemberMatch().getId(),
-                member.getMemberMatch().getTrainer().getId(),
+                match.getId(),
+                match.getTrainer().getId(),
                 profileImageUrl,
-                member.getMemberMatch().getTrainer().getName(),
-                member.getMemberMatch().getCreatedAt(),
-                member.getMemberMatch().getTrainer().getTrainer().getJobAddress()
+                match.getTrainer().getName(),
+                match.getCreatedAt(),
+                match.getTrainer().getTrainer().getJobAddress()
         );
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, response);
@@ -113,17 +130,16 @@ public class MatchServiceImpl implements MatchService {
        User member = userService.getUserById(userId);
 
 
-       User trainer = userService.getUserById(match.getTrainer().getId());
-
-
-       member.setMemberMatch(null);
-       trainer.removeTrainerMatches(match);
-       matchRepository.delete(match);
+       for (Match memberMatch: member.getMemberMatches()){
+           if(memberMatch.getIsMaintained()){
+               memberMatch.setIsMaintained(false);
+           }
+       }
 
        Subscription subscription = match.getMember().getMember().getSubscription();
-
        member.getMember().setSubscription(null);
        subscriptionRepository.delete(subscription);
+       member.getMember().setStatus(MemberStatus.NOT_SUBSCRIPTION);
 
        Payment payment = match.getMember().getMember().getPayment();
        member.getMember().setPayment(null);
@@ -146,11 +162,8 @@ public class MatchServiceImpl implements MatchService {
         User trainer = userService.getUserById(userId);
 
 
-        if(trainer.getTrainerMatches() == null){
-           return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
-        }
-
         matchList = trainer.getTrainerMatches().stream()
+                .filter(Match::getIsMaintained)
                 .map(match -> new GetTrainerMatchListResponseDto(
                         match.getId(),
                         match.getMember().getId(),
