@@ -1,5 +1,6 @@
 package com.bcl.fitmate.backend.repository;
 
+import com.bcl.fitmate.backend.common.enums.user.UserRole;
 import com.bcl.fitmate.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,4 +13,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByPhone(String phone);
     Optional<User> findByEmail(String email);
     Optional<User> findByUsernameAndName(String username, String name);
+    Long countByRole_Name(UserRole roleName);
 }
