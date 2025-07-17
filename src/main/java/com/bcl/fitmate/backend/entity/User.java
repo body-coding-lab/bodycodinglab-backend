@@ -84,12 +84,13 @@ public class User extends BaseTime {
     )
     private List<MatchWaitingList> matchWaitingListAsTrainers = new ArrayList<>();
 
-    @OneToOne(
+    @OneToMany(
             mappedBy = "member",
+            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Match memberMatch;
+    private List<Match> memberMatches = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "trainer",
@@ -154,6 +155,10 @@ public class User extends BaseTime {
     public void removeMatchWaitingListAsTrainers(MatchWaitingList matchWaitingList) {
         matchWaitingListAsTrainers.remove(matchWaitingList);
     }
+
+    public void addMemberMatches(Match match) {memberMatches.add(match);}
+
+    public void removeMemberMatches(Match match) {memberMatches.remove(match);}
 
     public void addTrainerMatches(Match match) {
         trainerMatches.add(match);

@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @Setter
 @Getter
-public class GetUserMatchResponseDto {
+public class GetUserMatchListResponseDto {
     private Long matchId;
     private UserRole role;
     private String name;

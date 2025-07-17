@@ -68,17 +68,5 @@ public class PaymentServiceImpl implements PaymentService {
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, response);
     }
 
-    @Override
-    @Transactional
-    public ResponseDto<Void> paymentFailWebHook(String orderId) {
-        Payment payment = getPaymentByOrderId(orderId);
 
-        if(payment.getPaymentStatus() == PaymentStatus.READY){
-            payment.setPaymentStatus(PaymentStatus.FAIL);
-        }
-
-        paymentRepository.save(payment);
-
-        return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
-    }
 }

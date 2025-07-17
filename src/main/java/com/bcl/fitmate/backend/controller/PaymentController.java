@@ -28,14 +28,11 @@ public class PaymentController {
     public ResponseEntity<ResponseDto<CreatePaymentResponseDto>> createPayment(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @RequestBody CreatePaymentRequestDto dto
-            ){
+    ) {
         Long userId = userPrincipal.getId();
 
         return ResponseDto.toResponseEntity(HttpStatus.CREATED, paymentService.createPayment(userId, dto));
     }
 
-    @PostMapping(FAIL)
-    public ResponseEntity<ResponseDto<Void>> paymentFailWebHook(@RequestParam String orderId){
-        return ResponseDto.toResponseEntity(HttpStatus.CREATED, paymentService.paymentFailWebHook(orderId));
-    }
+
 }

@@ -3,7 +3,7 @@ package com.bcl.fitmate.backend.controller.match;
 import com.bcl.fitmate.backend.common.constants.ApiMappingPattern;
 import com.bcl.fitmate.backend.config.security.UserPrincipal;
 import com.bcl.fitmate.backend.dto.ResponseDto;
-import com.bcl.fitmate.backend.dto.match.response.GetUserMatchResponseDto;
+import com.bcl.fitmate.backend.dto.match.response.GetUserMatchListResponseDto;
 import com.bcl.fitmate.backend.service.MatchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class UserMatchController {
 
     @PreAuthorize("hasAnyRole('MEMBER', 'TRAINER')")
     @GetMapping
-    public ResponseEntity<ResponseDto<List<GetUserMatchResponseDto>>> getUserMatchList(
+    public ResponseEntity<ResponseDto<List<GetUserMatchListResponseDto>>> getUserMatchList(
             @AuthenticationPrincipal UserPrincipal userPrincipal
             ){
         Long userId = userPrincipal.getId();

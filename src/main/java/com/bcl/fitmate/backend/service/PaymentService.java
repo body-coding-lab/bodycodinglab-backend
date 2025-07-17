@@ -13,5 +13,4 @@ public interface PaymentService {
 
     ResponseDto<CreatePaymentResponseDto> createPayment(Long userId, CreatePaymentRequestDto dto);
 
-    ResponseDto<Void> paymentFailWebHook(String orderId);
 }

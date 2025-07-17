@@ -6,13 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-        name = "matches",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"member_id", "trainer_id"}),
-                @UniqueConstraint(columnNames = {"member_id"})
-        }
-)
+@Table(name = "matches")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -23,7 +17,7 @@ public class Match extends BaseTime{
     @Column(name = "id")
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false)
     private User member;
 
