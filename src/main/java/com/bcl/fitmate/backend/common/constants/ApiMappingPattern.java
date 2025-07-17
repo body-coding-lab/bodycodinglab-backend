@@ -22,5 +22,5 @@ public interface ApiMappingPattern {
     String TRAINER_MATCH_API = TRAINER_API + "/me/match-list";
     String MEMBER_SUBSCRIPTION_API = MEMBER_API + "/me/subscription";
     String PAYMENT_API = MEMBER_API + "/me/payment";
-    String STATISTIC_API = "/api/v2/statistic";
+    String STATISTIC_API = "/api/v2/statistics";
 }
