@@ -98,4 +98,6 @@ public class UserController {
         Long id = userPrincipal.getId();
         return ResponseDto.toResponseEntity(HttpStatus.OK, userService.deleteProfileImage(id));
     }
+
+
 }
