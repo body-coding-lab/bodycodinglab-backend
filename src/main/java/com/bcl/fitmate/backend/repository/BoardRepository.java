@@ -13,8 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    Optional<Board> findByMatchId(Long matchId);
-
     Page<Board> findAllByMatchIdAndCategory(Long matchId, Category category, Pageable pageable);
 
     @Query("SELECT b FROM Board b " +

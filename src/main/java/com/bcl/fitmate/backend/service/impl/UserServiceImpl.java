@@ -12,6 +12,7 @@ import com.bcl.fitmate.backend.dto.user.request.UpdateTrainerInfoRequestDto;
 import com.bcl.fitmate.backend.dto.user.response.GetMemberInfoResponseDto;
 import com.bcl.fitmate.backend.dto.user.response.GetTrainerInfoResponseDto;
 import com.bcl.fitmate.backend.dto.user.response.GetUserInfoResponseDto;
+import com.bcl.fitmate.backend.entity.Match;
 import com.bcl.fitmate.backend.entity.UploadFile;
 import com.bcl.fitmate.backend.entity.User;
 import com.bcl.fitmate.backend.repository.UserRepository;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -32,6 +34,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UploadFileService uploadFileService;
     private final AuthService authService;
+
+    private static final String REQUIRED_DELETE_MESSAGE = "탈퇴하겠습니다.";
 
     @Override
     @Transactional(readOnly = true)
@@ -138,15 +142,17 @@ public class UserServiceImpl implements UserService {
         User user = getUserById(id);
 
         boolean hasMemberWaiting = user.getMatchWaitingListAsMember() != null;
-       // boolean hasMemberMatch = user.getMemberMatch() != null;
+        boolean hasMemberMatch = user.getMemberMatches().stream()
+                .anyMatch(Match::getIsMaintained);
         boolean hasTrainerWaiting = !user.getMatchWaitingListAsTrainers().isEmpty();
-        boolean hasTrainerMatch = !user.getTrainerMatches().isEmpty();
+        boolean hasTrainerMatch = user.getTrainerMatches().stream()
+                .anyMatch(Match::getIsMaintained);
 
-       //   if (hasMemberWaiting || hasMemberMatch || hasTrainerWaiting || hasTrainerMatch) {
-       //     return ResponseDto.fail(ResponseCode.CANNOT_DELETE_USER, ResponseMessage.CANNOT_DELETE_USER);
-       // }
+          if (hasMemberWaiting || hasMemberMatch || hasTrainerWaiting || hasTrainerMatch) {
+            return ResponseDto.fail(ResponseCode.CANNOT_DELETE_USER, ResponseMessage.CANNOT_DELETE_USER);
+        }
 
-        if (!dto.getDeleteMessage().equals("탈퇴하겠습니다.")) {
+        if (!dto.getDeleteMessage().equals(REQUIRED_DELETE_MESSAGE)) {
             return ResponseDto.fail(ResponseCode.INVALID_INPUT, ResponseMessage.INVALID_INPUT);
         }
 
