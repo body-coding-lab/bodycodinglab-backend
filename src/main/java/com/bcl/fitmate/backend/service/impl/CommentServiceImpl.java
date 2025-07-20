@@ -6,12 +6,10 @@ import com.bcl.fitmate.backend.dto.ResponseDto;
 import com.bcl.fitmate.backend.dto.comment.request.CommentRequestDto;
 import com.bcl.fitmate.backend.entity.Board;
 import com.bcl.fitmate.backend.entity.Comment;
-import com.bcl.fitmate.backend.entity.Match;
 import com.bcl.fitmate.backend.entity.User;
 import com.bcl.fitmate.backend.repository.CommentRepository;
 import com.bcl.fitmate.backend.service.BoardService;
 import com.bcl.fitmate.backend.service.CommentService;
-import com.bcl.fitmate.backend.service.MatchService;
 import com.bcl.fitmate.backend.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +27,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public ResponseDto<Void> createComment(Long id, Long matchId, Long postId, CommentRequestDto dto) {
         User user = userService.getUserById(id);
-        Board board = boardService.getBoardByMatchId(matchId);
+        Board board = boardService.getBoardById(postId);
 
         Comment comment = Comment.builder()
                 .board(board)
@@ -46,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public ResponseDto<Void> updateComment(Long id, Long matchId, Long postId, Long commentId, CommentRequestDto dto) {
         User user = userService.getUserById(id);
-        Board board = boardService.getBoardByMatchId(matchId);
+        Board board = boardService.getBoardById(postId);
         Comment comment = getComment(commentId);
 
         if (!user.getId().equals(comment.getCommenter().getId())) {
@@ -67,7 +65,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public ResponseDto<Void> deleteComment(Long id, Long matchId, Long postId, Long commentId) {
         User user = userService.getUserById(id);
-        Board board = boardService.getBoardByMatchId(matchId);
+        Board board = boardService.getBoardById(postId);
         Comment comment = getComment(commentId);
 
         if (!user.getId().equals(comment.getCommenter().getId())) {
