@@ -10,12 +10,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NoteRepository extends JpaRepository<Note, Long> {
-    Page<Note> findByNoteReceiver_Id(Long receiverId, Pageable pageable);
-
-    Page<Note> findByNoteWriter_Id(Long writerId, Pageable pageable);
-
-    Page<Note> findByNoteWriter_IdOrNoteReceiver_Id(Long noteWriter, Long noteReceiver, Pageable pageable);
-
     Page<Note> findByNoteWriter_IdAndSenderDeletedFalse(Long writerId, Pageable pageable);
 
     Page<Note> findByNoteReceiver_IdAndReceiverDeletedFalse(Long receiverId, Pageable pageable);
