@@ -54,7 +54,7 @@ public class MatchServiceImpl implements MatchService {
 
                             return new GetUserMatchListResponseDto(
                                     match.getId(),
-                                    user.getRole().getName(),
+                                    match.getTrainer().getRole().getName(),
                                     match.getTrainer().getName(),
                                     match.getTrainer().getGender(),
                                     age
@@ -69,7 +69,7 @@ public class MatchServiceImpl implements MatchService {
 
                             return new GetUserMatchListResponseDto(
                                 match.getId(),
-                                user.getRole().getName(),
+                                match.getMember().getRole().getName(),
                                 match.getMember().getName(),
                                 match.getMember().getGender(),
                                     age
