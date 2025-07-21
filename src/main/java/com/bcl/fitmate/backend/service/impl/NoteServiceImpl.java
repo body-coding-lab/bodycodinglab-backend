@@ -66,7 +66,7 @@ public class NoteServiceImpl implements NoteService {
     public ResponseDto<Page<GetNoteListResponseDto>> getAllNote(Long userId, Pageable pageable) {
         Page<GetNoteListResponseDto> response = null;
 
-        Page<Note> notePage = noteRepository.findByNoteWriter_IdOrNoteReceiver_Id(userId, userId, pageable);
+        Page<Note> notePage = noteRepository.findVisibleNotesByUserId(userId, pageable);
 
         response = notePage.map(note -> new GetNoteListResponseDto(
                 note.getId(),
@@ -116,13 +116,27 @@ public class NoteServiceImpl implements NoteService {
              throw new EntityNotFoundException(ResponseMessage.NOT_EXISTS_NOTE_PERMISSION);
         }
 
-        User writer = note.getNoteWriter();
-        User receiver = note.getNoteReceiver();
+        if(note.getNoteWriter().getId().equals(userId)){
+            note.setSenderDeleted(true);
+        }
 
-        writer.removeWriterNotes(note);
-        receiver.removeReceiverNotes(note);
+        if(note.getNoteReceiver().getId().equals(userId)){
+            note.setReceiverDeleted(true);
+        }
 
-        noteRepository.delete(note);
+        if(note.isSenderDeleted() && note.isReceiverDeleted()){
+            noteRepository.delete(note);
+        }else{
+            noteRepository.save(note);
+        }
+
+//        User writer = note.getNoteWriter();
+//        User receiver = note.getNoteReceiver();
+//
+//        writer.removeWriterNotes(note);
+//        receiver.removeReceiverNotes(note);
+//
+//        noteRepository.delete(note);
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
@@ -131,7 +145,7 @@ public class NoteServiceImpl implements NoteService {
     public ResponseDto<Page<GetNoteListResponseDto>> getReceivedNotes(Long userId, Pageable pageable) {
         Page<GetNoteListResponseDto> response = null;
 
-        Page<Note> notes = noteRepository.findByNoteReceiver_Id(userId, pageable);
+        Page<Note> notes = noteRepository.findByNoteReceiver_IdAndReceiverDeletedFalse(userId, pageable);
 
         response = notes.map(note -> new GetNoteListResponseDto(
                 note.getId(),
@@ -148,7 +162,7 @@ public class NoteServiceImpl implements NoteService {
     public ResponseDto<Page<GetNoteListResponseDto>> getSentNotes(Long userId, Pageable pageable) {
         Page<GetNoteListResponseDto> response = null;
 
-        Page<Note> notes = noteRepository.findByNoteWriter_Id(userId, pageable);
+        Page<Note> notes = noteRepository.findByNoteWriter_IdAndSenderDeletedFalse(userId, pageable);
 
         response = notes.map(note -> new GetNoteListResponseDto(
                 note.getId(),

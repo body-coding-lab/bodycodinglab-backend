@@ -30,5 +30,11 @@ public class Note extends BaseTime {
 
     @Column(name = "is_read", nullable = false)
     private boolean isRead = false;
+
+    @Column(name = "sender_deleted", nullable = false)
+    private boolean senderDeleted = false;
+
+    @Column(name = "receiver_deleted", nullable = false)
+    private boolean receiverDeleted = false;
 }
 
