@@ -22,8 +22,8 @@ public class BoardDetailResponseDto {
     private String title;
     private String content;
     private Long viewCount;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String createdAt;
+    private String updatedAt;
     private List<FileResponseDto> boardImages;
     private List<GetCommentResponseDto> comments;
 }

@@ -17,5 +17,5 @@ public class BoardListResponseDto {
     private String title;
     private String writerName;
     private Long viewCount;
-    private LocalDateTime createdAt;
+    private String createdAt;
 }
