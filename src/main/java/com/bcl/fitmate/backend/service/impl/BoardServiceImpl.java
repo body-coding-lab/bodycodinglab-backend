@@ -16,6 +16,7 @@ import com.bcl.fitmate.backend.entity.*;
 import com.bcl.fitmate.backend.repository.BoardRepository;
 import com.bcl.fitmate.backend.repository.MatchRepository;
 import com.bcl.fitmate.backend.service.BoardService;
+import com.bcl.fitmate.backend.service.MatchService;
 import com.bcl.fitmate.backend.service.UploadFileService;
 import com.bcl.fitmate.backend.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final UserService userService;
-    private final MatchRepository matchRepository;
+    private final MatchService matchService;
     private final UploadFileService uploadFileService;
 
     @Override
@@ -47,12 +48,7 @@ public class BoardServiceImpl implements BoardService {
 
         User user = userService.getUserById(id);
 
-        Match match = matchRepository.findById(matchId).orElse(null);
-
-        if(match == null) {
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
-        }
-
+        Match match = matchService.getMatchById(matchId);
 
         boolean isTrainer = match.getTrainer().getId().equals(id);
         boolean isMember = match.getMember().getId().equals(id);
@@ -89,6 +85,9 @@ public class BoardServiceImpl implements BoardService {
             }
         }
 
+        String formattedCreatedAt = DateUtils.format(board.getCreatedAt());
+        String formattedUpdatedAt = DateUtils.format(board.getUpdatedAt());
+
         data = BoardDetailResponseDto.builder()
                 .boardId(board.getId())
                 .matchId(board.getMatch().getId())
@@ -98,8 +97,8 @@ public class BoardServiceImpl implements BoardService {
                 .title(board.getTitle())
                 .content(board.getContent())
                 .viewCount(board.getViewCount())
-                .createdAt(board.getCreatedAt())
-                .updatedAt(board.getUpdatedAt())
+                .createdAt(formattedCreatedAt)
+                .updatedAt(formattedUpdatedAt)
                 .boardImages(uploadedImages)
                 .build();
 
@@ -113,12 +112,7 @@ public class BoardServiceImpl implements BoardService {
 
         User user = userService.getUserById(id);
 
-        Match match = matchRepository.findById(matchId)
-                .orElse(null);
-
-        if(match == null) {
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
-        }
+        Match match = matchService.getMatchById(matchId);
 
         boolean isTrainer = match.getTrainer().getId().equals(id);
         boolean isMember = match.getMember().getId().equals(id);
@@ -138,8 +132,6 @@ public class BoardServiceImpl implements BoardService {
         board.setTitle(dto.getTitle());
         board.setContent(dto.getContent());
 
-        Board updatedBoard = boardRepository.save(board);
-
         List<FileResponseDto> uploadedImages = Collections.emptyList();
 
         if(files != null && !files.isEmpty()) {
@@ -152,17 +144,20 @@ public class BoardServiceImpl implements BoardService {
             }
         }
 
+        String formattedCreatedAt = DateUtils.format(board.getCreatedAt());
+        String formattedUpdatedAt = DateUtils.format(board.getUpdatedAt());
+
         data = BoardDetailResponseDto.builder()
-                .boardId(updatedBoard.getId())
-                .matchId(updatedBoard.getMatch().getId())
+                .boardId(board.getId())
+                .matchId(board.getMatch().getId())
                 .writerId(user.getId())
-                .writerName(updatedBoard.getWriter().getName())
-                .category(updatedBoard.getCategory())
-                .title(updatedBoard.getTitle())
-                .content(updatedBoard.getContent())
-                .viewCount(updatedBoard.getViewCount())
-                .createdAt(updatedBoard.getCreatedAt())
-                .updatedAt(updatedBoard.getUpdatedAt())
+                .writerName(board.getWriter().getName())
+                .category(board.getCategory())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .viewCount(board.getViewCount())
+                .createdAt(formattedCreatedAt)
+                .updatedAt(formattedUpdatedAt)
                 .boardImages(uploadedImages)
                 .build();
 
@@ -172,12 +167,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public ResponseDto<Void> deletePost(Long id, Long matchId, Long postId) {
-        Match match = matchRepository.findById(matchId)
-                .orElse(null);
-
-        if(match == null) {
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
-        }
+        Match match = matchService.getMatchById(matchId);
 
         boolean isTrainer = match.getTrainer().getId().equals(id);
         boolean isMember = match.getMember().getId().equals(id);
@@ -201,12 +191,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<BoardDetailResponseDto> getPost(Long id, Long matchId, Long postId) {
-        Match match = matchRepository.findById(matchId)
-                .orElse(null);
-
-        if(match == null) {
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
-        }
+        Match match = matchService.getMatchById(matchId);
 
         boolean isTrainer = match.getTrainer().getId().equals(id);
         boolean isMember = match.getMember().getId().equals(id);
@@ -229,6 +214,9 @@ public class BoardServiceImpl implements BoardService {
                 .map(this::toGetCommentResponseDto)
                 .collect(Collectors.toList());
 
+        String formattedCreatedAt = DateUtils.format(board.getCreatedAt());
+        String formattedUpdatedAt = DateUtils.format(board.getUpdatedAt());
+
         BoardDetailResponseDto data = BoardDetailResponseDto.builder()
                 .boardId(board.getId())
                 .matchId(board.getMatch().getId())
@@ -238,8 +226,8 @@ public class BoardServiceImpl implements BoardService {
                 .title(board.getTitle())
                 .content(board.getContent())
                 .viewCount(board.getViewCount())
-                .createdAt(board.getCreatedAt())
-                .updatedAt(board.getUpdatedAt())
+                .createdAt(formattedCreatedAt)
+                .updatedAt(formattedUpdatedAt)
                 .boardImages(boardImages)
                 .comments(comments)
                 .build();
@@ -249,12 +237,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<Page<BoardListResponseDto>> getPostList(Long id, Long matchId, Category category, int page, int size) {
-        Match match = matchRepository.findById(matchId)
-                .orElse(null);
-
-        if(match == null) {
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
-        }
+        Match match = matchService.getMatchById(matchId);
 
         boolean isTrainer = match.getTrainer().getId().equals(id);
         boolean isMember = match.getMember().getId().equals(id);
@@ -273,7 +256,7 @@ public class BoardServiceImpl implements BoardService {
                 .title(board.getTitle())
                 .writerName(board.getWriter().getName())
                 .viewCount(board.getViewCount())
-                .createdAt(board.getCreatedAt())
+                .createdAt(DateUtils.format(board.getCreatedAt()))
                 .build());
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
@@ -282,12 +265,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<Page<BoardListResponseDto>> searchPostByName(Long id, Long matchId, Category category, String writerName, int page, int size) {
-        Match match = matchRepository.findById(matchId)
-                .orElse(null);
-
-        if(match == null) {
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
-        }
+        Match match = matchService.getMatchById(matchId);
 
         boolean isTrainer = match.getTrainer().getId().equals(id);
         boolean isMember = match.getMember().getId().equals(id);
@@ -306,7 +284,7 @@ public class BoardServiceImpl implements BoardService {
                 .title(board.getTitle())
                 .writerName(board.getWriter().getName())
                 .viewCount(board.getViewCount())
-                .createdAt(board.getCreatedAt())
+                .createdAt(DateUtils.format(board.getCreatedAt()))
                 .build());
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
@@ -315,12 +293,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<Page<BoardListResponseDto>> searchPostByTitle(Long id, Long matchId, Category category, String title, int page, int size) {
-        Match match = matchRepository.findById(matchId)
-                .orElse(null);
-
-        if(match == null) {
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
-        }
+        Match match = matchService.getMatchById(matchId);
 
         boolean isTrainer = match.getTrainer().getId().equals(id);
         boolean isMember = match.getMember().getId().equals(id);
@@ -339,7 +312,7 @@ public class BoardServiceImpl implements BoardService {
                 .title(board.getTitle())
                 .writerName(board.getWriter().getName())
                 .viewCount(board.getViewCount())
-                .createdAt(board.getCreatedAt())
+                .createdAt(DateUtils.format(board.getCreatedAt()))
                 .build());
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
@@ -348,12 +321,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public ResponseDto<Page<BoardListResponseDto>> searchPostByContent(Long id, Long matchId, Category category, String content, int page, int size) {
-        Match match = matchRepository.findById(matchId)
-                .orElse(null);
-
-        if(match == null) {
-            return ResponseDto.fail(ResponseCode.NOT_EXISTS_MATCH, ResponseMessage.NOT_EXISTS_MATCH);
-        }
+        Match match = matchService.getMatchById(matchId);
 
         boolean isTrainer = match.getTrainer().getId().equals(id);
         boolean isMember = match.getMember().getId().equals(id);
@@ -372,7 +340,7 @@ public class BoardServiceImpl implements BoardService {
                 .title(board.getTitle())
                 .writerName(board.getWriter().getName())
                 .viewCount(board.getViewCount())
-                .createdAt(board.getCreatedAt())
+                .createdAt(DateUtils.format(board.getCreatedAt()))
                 .build());
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, data);
