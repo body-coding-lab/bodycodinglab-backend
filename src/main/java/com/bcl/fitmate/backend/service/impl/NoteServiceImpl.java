@@ -130,13 +130,6 @@ public class NoteServiceImpl implements NoteService {
             noteRepository.save(note);
         }
 
-//        User writer = note.getNoteWriter();
-//        User receiver = note.getNoteReceiver();
-//
-//        writer.removeWriterNotes(note);
-//        receiver.removeReceiverNotes(note);
-//
-//        noteRepository.delete(note);
 
         return ResponseDto.success(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
